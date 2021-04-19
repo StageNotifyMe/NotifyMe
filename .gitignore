@@ -2,6 +2,7 @@
 *.class
 
 .gradle/
+.idea/
 
 # Log file
 *.log
@@ -28,3 +29,7 @@ hs_err_pid*
 .idea/vcs.xml
 build/generated/
 
+.idea/aws.xml
+.idea/checkstyleidea.tmp/
+.idea/modules/testModule/
+src/test/resources/
