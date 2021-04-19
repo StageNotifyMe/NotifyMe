@@ -5,4 +5,11 @@
       <map />
     </option>
   </component>
+  <component name="ExternalSystem" externalSystem="GRADLE" externalSystemModuleGroup="be.xplore" externalSystemModuleType="sourceSet" externalSystemModuleVersion="0.0.1-SNAPSHOT" linkedProjectId=":main:test" linkedProjectPath="$MODULE_DIR$/../../../main" rootProjectPath="$MODULE_DIR$/../../.." />
+  <component name="FacetManager">
+    <facet type="Spring" name="Spring">
+      <configuration />
+    </facet>
+  </component>
+  <component name="TestModuleProperties" production-module="notifyme.main.main" />
 </module>

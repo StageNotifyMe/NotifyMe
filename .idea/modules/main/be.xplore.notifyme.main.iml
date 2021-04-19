@@ -5,4 +5,5 @@
       <map />
     </option>
   </component>
+  <component name="ExternalSystem" externalSystem="GRADLE" externalSystemModuleGroup="be.xplore" externalSystemModuleVersion="0.0.1-SNAPSHOT" linkedProjectId=":main" linkedProjectPath="$MODULE_DIR$/../../../main" rootProjectPath="$MODULE_DIR$/../../.." />
 </module>

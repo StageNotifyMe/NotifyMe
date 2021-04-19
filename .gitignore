@@ -2,6 +2,7 @@
 *.class
 
 .gradle/
+.idea/
 
 # Log file
 *.log
@@ -35,3 +36,5 @@ main/src/test/resources/
 main2/build/generated/
 main2/src/main/resources/
 main2/src/test/resources/
+.idea/aws.xml
+src/test/resources/
