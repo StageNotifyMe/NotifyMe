@@ -1,45 +1,7 @@
-plugins {
-	id 'org.springframework.boot' version '2.4.5'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
-	id 'checkstyle'
-}
-
-group = 'be.xplore'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
-
 apply plugin: 'checkstyle'
 checkstyle {
 	toolVersion '8.29'
 	configFile file("config/checkstyle/checkstyle.xml")
 	ignoreFailures = false
 	maxWarnings = 0
-}
-checkstyleMain {
-	source ='src/main/java'
-}
-checkstyleTest {
-	source ='src/test/java'
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-test {
-	useJUnitPlatform()
 }
