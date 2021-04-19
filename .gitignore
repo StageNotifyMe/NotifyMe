@@ -28,3 +28,10 @@ hs_err_pid*
 .idea/vcs.xml
 build/generated/
 
+.idea/checkstyleidea.tmp/
+.idea/modules/testModule/
+main/build/generated/
+main/src/test/resources/
+main2/build/generated/
+main2/src/main/resources/
+main2/src/test/resources/
