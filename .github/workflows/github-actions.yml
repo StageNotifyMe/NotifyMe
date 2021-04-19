@@ -12,6 +12,3 @@ jobs:
       - name: "Build with Gradle"
         run: "./gradlew build"
 name: "Run tests"
-true:
-  - push
-  - pull_request
