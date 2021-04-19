@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+.gradle/
+.idea/
+
 # Log file
 *.log
 
@@ -12,6 +15,7 @@
 
 # Package Files #
 *.jar
+!/gradle/wrapper/gradle-wrapper.jar
 *.war
 *.nar
 *.ear
@@ -24,3 +28,8 @@ hs_err_pid*
 .gradle/6.8.3/vcsMetadata-1/
 .idea/vcs.xml
 build/generated/
+
+.idea/aws.xml
+.idea/checkstyleidea.tmp/
+.idea/modules/testModule/
+src/test/resources/
