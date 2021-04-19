@@ -29,6 +29,7 @@ hs_err_pid*
 .idea/vcs.xml
 build/
 
+
 .idea/checkstyleidea.tmp/
 .idea/modules/testModule/
 main/build/
