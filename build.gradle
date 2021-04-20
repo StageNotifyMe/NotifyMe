@@ -13,7 +13,9 @@ checkstyle {
 }
 
 sonarqube{
-
+properties{
+	property("sonar.coverage.jacoco.xmlReportPaths", "${project.rootDir}/main/build/reports/jacoco/test/jacocoTestReport.xml")
+}
 }
 
 
