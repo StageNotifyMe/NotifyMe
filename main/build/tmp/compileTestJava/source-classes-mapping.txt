@@ -1,4 +1,0 @@
-be/xplore/notifyme/NotifymeApplicationTests.java
- be.xplore.notifyme.NotifymeApplicationTests
-be/xplore/notifyme/archunittests/CodeConstraints.java
- be.xplore.notifyme.archunittests.CodeConstraints

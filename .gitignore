@@ -32,7 +32,7 @@ build/
 
 .idea/checkstyleidea.tmp/
 .idea/modules/testModule/
-!main/build/
+main/build/
 main/src/test/resources/
 main2/build/
 
