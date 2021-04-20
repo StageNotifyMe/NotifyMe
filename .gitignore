@@ -33,16 +33,9 @@ build/
 .idea/checkstyleidea.tmp/
 .idea/modules/testModule/
 
-main/build/*
-!main/build/reports
-
-main/build/reports/*
-!main/build/reports/jacoco
-!main/build/reports/jacoco/jacocoTestReport.xml
-
+main/build/
 main/src/test/resources/
 main2/build/
-
 main2/src/main/resources/
 main2/src/test/resources/
 .idea/aws.xml
