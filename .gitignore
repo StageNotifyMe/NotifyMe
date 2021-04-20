@@ -32,7 +32,14 @@ build/
 
 .idea/checkstyleidea.tmp/
 .idea/modules/testModule/
-main/build/
+
+main/build/*
+!main/build/reports
+
+main/build/reports/*
+!main/build/reports/jacoco
+!main/build/reports/jacoco/jacocoTestReport.xml
+
 main/src/test/resources/
 main2/build/
 
