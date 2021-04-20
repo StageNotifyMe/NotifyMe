@@ -11,16 +11,4 @@ jobs:
           java-version: "11"
       - name: "Build with Gradle"
         run: "./gradlew build"
-  sonarcloud:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          # Disabling shallow clone is recommended for improving relevancy of reporting
-          fetch-depth: 0
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: "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"
-          SONAR_TOKEN: "3ca0e3717d02bfa17dfa39ab4087877a7840782c"
 name: "Run tests"
