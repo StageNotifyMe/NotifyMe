@@ -25,6 +25,7 @@ configurations {
 }
 
 repositories {
+    jcenter()
     mavenCentral()
 }
 
@@ -34,8 +35,17 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.tngtech.archunit:archunit-junit5:0.18.0'
-
 }
+jacoco{
+    reportsDirectory = layout.projectDirectory.dir("jacoco")
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+        }
+    }
+}
+
 checkstyle{
     ignoreFailures = false
     maxWarnings = 0

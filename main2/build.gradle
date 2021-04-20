@@ -25,6 +25,8 @@ checkstyleTest {
 
 repositories {
     mavenCentral()
+    jcenter()
+
 }
 
 dependencies {
@@ -41,5 +43,4 @@ checkstyle{
 }
 test {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport
 }
