@@ -5,5 +5,5 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class TestController {
 
-  int test = 2;
+  int test = 1;
 }
