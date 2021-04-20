@@ -28,14 +28,14 @@ hs_err_pid*
 .gradle/6.8.3/vcsMetadata-1/
 .idea/vcs.xml
 build/
-!main/build/reports/jacoco/
 
 
 .idea/checkstyleidea.tmp/
 .idea/modules/testModule/
-main/build/
+!main/build/
 main/src/test/resources/
 main2/build/
+
 main2/src/main/resources/
 main2/src/test/resources/
 .idea/aws.xml

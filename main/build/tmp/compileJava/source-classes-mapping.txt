@@ -1,0 +1,8 @@
+be/xplore/notifyme/services/TestService.java
+ be.xplore.notifyme.services.TestService
+be/xplore/notifyme/persistence/TestRepo.java
+ be.xplore.notifyme.persistence.TestRepo
+be/xplore/notifyme/controllers/TestController.java
+ be.xplore.notifyme.controllers.TestController
+be/xplore/notifyme/NotifymeApplication.java
+ be.xplore.notifyme.NotifymeApplication

@@ -1,8 +1,19 @@
+plugins{
+	id 'jacoco'
+	id 'java'
+	id "org.sonarqube" version "3.1.1"
+}
 apply plugin: 'checkstyle'
+group="be.xplore.notifyme"
 checkstyle {
 	toolVersion '8.29'
 	configFile file("config/checkstyle/checkstyle.xml")
 	ignoreFailures = false
 	maxWarnings = 0
 }
+
+sonarqube{
+
+}
+
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="be.xplore.notifyme.archunittests.CodeConstraints" tests="8" skipped="0" failures="0" errors="0" timestamp="2021-04-20T07:49:22" hostname="LAPTOP-7H52MUQ1" time="1.153">
+  <properties/>
+  <testcase name="respectLayeredArchitecture" classname="be.xplore.notifyme.archunittests.CodeConstraints" time="1.145"/>
+  <testcase name="controllerNaming" classname="be.xplore.notifyme.archunittests.CodeConstraints" time="0.0"/>
+  <testcase name="serviceNaming" classname="be.xplore.notifyme.archunittests.CodeConstraints" time="0.001"/>
+  <testcase name="persistenceNaming" classname="be.xplore.notifyme.archunittests.CodeConstraints" time="0.002"/>
+  <testcase name="ControllerAnnotation" classname="be.xplore.notifyme.archunittests.CodeConstraints" time="0.002"/>
+  <testcase name="ServiceAnnotation" classname="be.xplore.notifyme.archunittests.CodeConstraints" time="0.0"/>
+  <testcase name="RepositoryAnnotation" classname="be.xplore.notifyme.archunittests.CodeConstraints" time="0.0"/>
+  <testcase name="InterfaceNaming" classname="be.xplore.notifyme.archunittests.CodeConstraints" time="0.001"/>
+  <system-out><![CDATA[2021-04-20 09:49:22.244  INFO 10920 --- [    Test worker] com.tngtech.archunit.core.PluginLoader   : Detected Java version 11.0.9
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
