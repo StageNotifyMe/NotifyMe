@@ -12,10 +12,10 @@ checkstyle {
 	maxWarnings = 0
 }
 
-sonarqube{
+/*sonarqube{
 properties{
 	property("sonar.coverage.jacoco.xmlReportPaths", "${project.rootDir}/main/jacoco/test/jacocoTestReport.xml")
 }
-}
+}*/
 
 
