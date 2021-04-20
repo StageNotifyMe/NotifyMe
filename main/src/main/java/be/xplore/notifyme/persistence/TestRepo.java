@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class TestRepo {
 
- int test = 0;
+  int test = 0;
 }
