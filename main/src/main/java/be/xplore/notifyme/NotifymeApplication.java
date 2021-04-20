@@ -8,7 +8,6 @@ public class NotifymeApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(NotifymeApplication.class, args);
-    System.out.println("Hallo ik ben er om te testen papa.");
   }
 
 }
