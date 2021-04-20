@@ -19,11 +19,10 @@ subprojects {
 		}
 	}
 }
-/*sonarqube{
+sonarqube{
 properties{
-	property("sonar.coverage.jacoco.xmlReportPaths", "${project.rootDir}/main/jacoco/test/jacocoTestReport.xml")
 	property "sonar.sourceEncoding", "UTF-8"
 }
-}*/
+}
 
 
