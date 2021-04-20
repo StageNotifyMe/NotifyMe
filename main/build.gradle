@@ -3,6 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'checkstyle'
+    id 'jacoco'
 }
 
 group = 'be.xplore'
@@ -41,4 +42,5 @@ checkstyle{
 }
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }

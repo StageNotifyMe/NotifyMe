@@ -5,3 +5,4 @@ checkstyle {
 	ignoreFailures = false
 	maxWarnings = 0
 }
+
