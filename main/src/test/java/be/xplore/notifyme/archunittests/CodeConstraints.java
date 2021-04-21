@@ -10,6 +10,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 
 @AnalyzeClasses(packages = "be.xplore.notifyme", importOptions = {
     ImportOption.DoNotIncludeTests.class})
@@ -39,7 +40,9 @@ public class CodeConstraints {
       .should().haveSimpleNameContaining("Repo");
   @ArchTest
   public static final ArchRule ControllerAnnotation = classes()
-      .that().haveSimpleNameContaining("Controller").should().beAnnotatedWith(Controller.class);
+      .that().haveSimpleNameContaining("Controller").should().beAnnotatedWith(Controller.class)
+      .orShould().beAnnotatedWith(
+          RestController.class);
   @ArchTest
   public static final ArchRule ServiceAnnotation = classes()
       .that().haveSimpleNameContaining("Service").should().beAnnotatedWith(Service.class);
