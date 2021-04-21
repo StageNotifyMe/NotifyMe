@@ -39,7 +39,16 @@ public class AuthorizationServerConfig {
         .scope(OidcScopes.OPENID)
         .scope("articles.read")
         .build();
-    return new InMemoryRegisteredClientRepository(registeredClient);
+    RegisteredClient registeredClient1 = RegisteredClient.withId(UUID.randomUUID().toString())
+        .clientId("notifyme")
+        .clientSecret("secret")
+        .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
+        .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+        .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+        .redirectUri("http://localhost:8080")
+        .scope(OidcScopes.OPENID)
+        .build();
+    return new InMemoryRegisteredClientRepository(registeredClient1);
   }
 
   @Bean
