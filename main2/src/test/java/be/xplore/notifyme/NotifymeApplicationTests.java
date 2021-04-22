@@ -9,9 +9,4 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class NotifymeApplicationTests {
 
-  @Test
-  void contextLoads() {
-    assertEquals(1, 1);
-  }
-
 }
