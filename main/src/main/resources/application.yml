@@ -13,6 +13,7 @@ server:
   port: 9090
   servlet:
     context-path: "/"
+  shutdown: graceful
 
 
 logging:
@@ -38,10 +39,10 @@ keycloak:
     migration:
       importProvider: singleFile
       importLocation: keycloak-realm-config.json
-  -Dkeycloak.migration.strategy=OVERWRITE_EXISTING
+# - Dkeycloak.migration.strategy=OVERWRITE_EXISTING
 # -Dkeycloak.migration.strategy=IGNORE_EXISTING
 #  hostname:
-#    provider: "default"
+#   provider: "default"
 #    default:
 #      frontendUrl: ""
 #      adminUrl: ""
