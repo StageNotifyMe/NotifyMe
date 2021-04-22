@@ -15,12 +15,8 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KeycloakServerProperties {
-  @Value("${keycloak.server.contextPath}")
-  String contextPath;
-  @Value("${keycloak.server.realmImportFile}")
-  String realmImportFile;
-  @Value("${keycloak.server.adminUsername}")
-  String adminUsername;
-  @Value("${keycloak.server.adminPassword}")
-  String adminPassword;
+  String contextPath = "/auth";
+  String realmImportFile = "admin";
+  String adminUsername = "admin";
+  String adminPassword = "notifyme-realm.json";
 }

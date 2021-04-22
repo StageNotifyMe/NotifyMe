@@ -43,8 +43,8 @@ dependencies {
     //embedded keycloak
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.4.5'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.4.5'
-    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
-    implementation group: 'org.jboss.resteasy', name: 'resteasy-jackson2-provider', version: '4.6.0.Final'
+    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+    implementation group: 'org.jboss.resteasy', name: 'resteasy-jackson2-provider', version: '3.12.1.Final'
     implementation group: 'org.keycloak', name: 'keycloak-dependencies-server-all', version: '12.0.4', ext: 'pom'
     implementation group: 'org.keycloak', name: 'keycloak-spring-boot-starter', version: '12.0.4'
     compileOnly group: 'org.keycloak', name: 'keycloak-services', version: '12.0.4'

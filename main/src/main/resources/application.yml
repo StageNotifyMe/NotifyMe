@@ -1,14 +1,8 @@
 server:
-  port: 8083
+  port: 9090
 
 spring:
   datasource:
     username: sa
     url: jdbc:h2:mem:customdb
-
-keycloak:
-  server:
-    contextPath: /auth
-    adminUsername: admin
-    adminPassword: admin
-    realmImportFile: notifyme-realm.json
+    driver-class-name: org.h2.Driver
