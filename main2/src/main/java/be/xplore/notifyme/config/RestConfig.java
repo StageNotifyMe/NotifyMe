@@ -1,16 +1,28 @@
 package be.xplore.notifyme.config;
 
-import java.util.LinkedList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@EnableWebMvc
 public class RestConfig {
+
+ @Bean
+ public WebMvcConfigurer corsConfigurer(){
+   return new WebMvcConfigurer() {
+     @Override
+     public void addCorsMappings(CorsRegistry registry) {
+       registry.addMapping("/**").allowedOriginPatterns("*");
+     }
+   };
+ }
 
   @Bean
   public RestTemplate restTemplate() {
