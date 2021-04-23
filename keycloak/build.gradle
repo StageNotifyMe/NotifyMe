@@ -11,10 +11,10 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 checkstyleMain {
-    source ='src/main/java'
+    source = 'src/main/java'
 }
 checkstyleTest {
-    source ='src/test/java'
+    source = 'src/test/java'
 }
 
 
@@ -27,6 +27,13 @@ configurations {
 repositories {
     jcenter()
     mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'com.github.thomasdarimont.embedded-spring-boot-keycloak-server:embedded-keycloak-server-spring-boot-parent:3.0.1'
+    }
 }
 
 dependencies {
@@ -35,8 +42,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.tngtech.archunit:archunit-junit5:0.18.0'
+
+    //KEYCLOAK EMBED SERVER
+    implementation "com.github.thomasdarimont.embedded-spring-boot-keycloak-server:embedded-keycloak-server-spring-boot-starter:3.0.1"
 }
-jacoco{
+jacoco {
     reportsDirectory = layout.projectDirectory.dir("jacoco")
     jacocoTestReport {
         reports {
@@ -47,7 +57,7 @@ jacoco{
     }
 }
 
-checkstyle{
+checkstyle {
     ignoreFailures = false
     maxWarnings = 0
 }

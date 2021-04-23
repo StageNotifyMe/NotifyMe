@@ -1,4 +1,4 @@
 rootProject.name = 'notifyme'
 include 'main2'
-include 'main'
+include 'keycloak'
 
