@@ -55,7 +55,7 @@ public class UserService {
    * @return ResponseEntity received from keycloak that contains the access token when succesful.
    */
   public ResponseEntity<String> login(String username, String password) {
-    final var passwordConst ="password";
+    final var passwordConst = "password";
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
     map.add("username", username);
     map.add(passwordConst, password);
@@ -67,28 +67,22 @@ public class UserService {
     return restTemplate.postForEntity(tokenUri, request, String.class);
   }
 
-  public ResponseEntity<String> register(String firstname, String lastname, String email,
+  /**
+   * Registers a new user by sending a service request to the keycloak server.
+   */
+  public ResponseEntity register(String firstname, String lastname, String email,
       String username, String password) {
     AdminTokenResponse response = gson
         .fromJson(getAdminAccesstoken().getBody(), AdminTokenResponse.class);
     httpJsonHeader.add("Authorization", "Bearer " + response.accessToken);
-
-    /*HashMap<String, String> map = new HashMap<>();
-    map.put("username", username);
-    map.put("credentials", "[{\"type\":\"password\",\"value\":\""+password+"\",\"temporary\":false}]");
-    map.put("firstName", firstname);
-    map.put("lastName", lastname);
-    map.put("email", email);
-    map.put("enabled","true");*/
     var credentialRepresentation = new CredentialRepresentation("password",
         password, false);
     var userRepresentation = new UserRepresentation(firstname, lastname, email,
-        username, List.of(credentialRepresentation));
+        username, true, List.of(credentialRepresentation));
     String parsedUserRepresentation = gson.toJson(userRepresentation);
     HttpEntity<String> request = new HttpEntity<>(parsedUserRepresentation, httpJsonHeader);
 
-    var test=restTemplate.postForEntity(registerUri, request, String.class);
-    return test;
+    return restTemplate.postForEntity(registerUri, request, void.class);
   }
 
   private ResponseEntity<String> getAdminAccesstoken() {
@@ -128,6 +122,7 @@ public class UserService {
     private String lastName;
     private String email;
     private String username;
+    private Boolean enabled;
     private List<CredentialRepresentation> credentials = new LinkedList<>();
 
   }

@@ -1,12 +1,11 @@
 package be.xplore.notifyme.controller;
 
-import be.xplore.notifyme.dto.UserRegistrationDTO;
+import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.service.UserService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,12 +25,15 @@ public class UserController {
     return userService.login(username, password);
   }
 
-  @GetMapping(value = "/register")
-  public ResponseEntity<String> resgisterNewUser(
-      @RequestBody UserRegistrationDTO userRegistrationDTO) {
+  /**
+   * Allows unregistered users to create an account.
+   */
+  @PostMapping(value = "/register")
+  public ResponseEntity registerNewUser(
+      @RequestBody UserRegistrationDto registrationDto) {
     return userService
-        .register(userRegistrationDTO.getFirstname(), userRegistrationDTO.getLastname(),
-            userRegistrationDTO.getEmail(), userRegistrationDTO.getUsername(),
-            userRegistrationDTO.getPassword());
+        .register(registrationDto.getFirstname(), registrationDto.getLastname(),
+            registrationDto.getEmail(), registrationDto.getUsername(),
+            registrationDto.getPassword());
   }
 }

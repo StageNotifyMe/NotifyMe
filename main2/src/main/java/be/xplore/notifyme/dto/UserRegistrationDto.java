@@ -9,7 +9,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @Getter
 @Setter
-public class UserRegistrationDTO {
+public class UserRegistrationDto {
 
   private String firstname;
   private String lastname;
