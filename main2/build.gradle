@@ -36,6 +36,14 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.tngtech.archunit:archunit-junit5:0.18.0'
 
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    implementation group: 'org.keycloak', name: 'keycloak-spring-boot-starter', version: '12.0.4'
+    implementation group: 'org.keycloak.bom', name: 'keycloak-adapter-bom', version: '12.0.4', ext: 'pom'
+
 }
 checkstyle{
     ignoreFailures = false
@@ -43,4 +51,5 @@ checkstyle{
 }
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
