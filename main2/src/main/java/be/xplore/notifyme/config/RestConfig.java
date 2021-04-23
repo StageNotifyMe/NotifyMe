@@ -10,20 +10,33 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configure settings for rest communication.
+ */
 @Configuration
 @EnableWebMvc
 public class RestConfig {
 
- @Bean
- public WebMvcConfigurer corsConfigurer(){
-   return new WebMvcConfigurer() {
-     @Override
-     public void addCorsMappings(CorsRegistry registry) {
-       registry.addMapping("/**").allowedOriginPatterns("*");
-     }
-   };
- }
+  /**
+   * Configures CORS policy.
+   *
+   * @return new WebMvcConfigurer with our settings.
+   */
+  @Bean
+  public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**").allowedOriginPatterns("*");
+      }
+    };
+  }
 
+  /**
+   * Configures a default rest template.
+   *
+   * @return rest template with reusable settings.
+   */
   @Bean
   public RestTemplate restTemplate() {
     var factory = new SimpleClientHttpRequestFactory();
@@ -32,6 +45,11 @@ public class RestConfig {
     return new RestTemplate(factory);
   }
 
+  /**
+   * Configures a default header for json requests.
+   *
+   * @return header that sets content type to application/json
+   */
   @Bean(name = "jsonRequest")
   public HttpHeaders httpHeadersJson() {
     var headers = new HttpHeaders();
@@ -39,6 +57,11 @@ public class RestConfig {
     return headers;
   }
 
+  /**
+   * Configures a default header for encoded form requests.
+   *
+   * @return header that sets content type to application_form_urlencoded
+   */
   @Bean(name = "xformRequest")
   public HttpHeaders httpHeadersXForm() {
     var headers = new HttpHeaders();

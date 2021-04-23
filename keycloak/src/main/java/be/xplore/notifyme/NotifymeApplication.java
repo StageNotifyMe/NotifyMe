@@ -3,6 +3,9 @@ package be.xplore.notifyme;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Starts the keycloak application.
+ */
 @SpringBootApplication
 public class NotifymeApplication {
 
