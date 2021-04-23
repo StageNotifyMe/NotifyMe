@@ -36,7 +36,6 @@ build/
 main/build/
 main/src/test/resources/
 main2/build/
-main2/src/main/resources/
 main2/src/test/resources/
 .idea/aws.xml
 src/test/resources/
