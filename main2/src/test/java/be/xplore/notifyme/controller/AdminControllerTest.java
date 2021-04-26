@@ -30,7 +30,7 @@ class AdminControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "adminUser",roles = {"user","admin"})
+  @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void adminInfoTestIsAdmin() throws Exception {
     mockMvc.perform(get("/admin/getAdminTest"))
         .andExpect(MockMvcResultMatchers.status().isOk());
