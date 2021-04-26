@@ -11,7 +11,7 @@ class NotifymeApplicationTests {
 
   @Test
   void contextLoads() {
-    assertEquals(1, 1);
+
   }
 
 }

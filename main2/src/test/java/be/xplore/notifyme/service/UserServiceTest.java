@@ -1,6 +1,6 @@
 package be.xplore.notifyme.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -43,6 +43,7 @@ class UserServiceTest {
         .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
     assertEquals(HttpStatus.CREATED, userService.login("user", "User123!").getStatusCode());
   }
+
   @Test
   void registerFail() {
     when(restTemplate.postForEntity(anyString(), any(), any()))
