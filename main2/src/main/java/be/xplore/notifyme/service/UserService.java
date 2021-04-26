@@ -1,13 +1,10 @@
 package be.xplore.notifyme.service;
 
+import be.xplore.notifyme.dto.AdminTokenResponse;
+import be.xplore.notifyme.dto.CredentialRepresentation;
+import be.xplore.notifyme.dto.UserRepresentation;
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,7 +71,7 @@ public class UserService {
       String username, String password) {
     AdminTokenResponse response = gson
         .fromJson(getAdminAccesstoken().getBody(), AdminTokenResponse.class);
-    httpJsonHeader.add("Authorization", "Bearer " + response.accessToken);
+    httpJsonHeader.add("Authorization", "Bearer " + response.getAccessToken());
     var credentialRepresentation = new CredentialRepresentation("password",
         password, false);
     var userRepresentation = new UserRepresentation(firstname, lastname, email,
@@ -93,47 +90,5 @@ public class UserService {
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, httpXformHeader);
 
     return restTemplate.postForEntity(tokenUri, request, String.class);
-  }
-
-  @Getter
-  @Setter
-  @AllArgsConstructor
-  private class AdminTokenResponse {
-
-    @SerializedName(value = "access_token")
-    private String accessToken;
-    @SerializedName(value = "expires_in")
-    private int expiresIn;
-    @SerializedName(value = "refresh_expires_in")
-    private int refreshExpiresIn;
-    @SerializedName(value = "token_type")
-    private String tokenType;
-    @SerializedName(value = "not-before-policy")
-    private int notBeforePolicy;
-    private String scope;
-  }
-
-  @Getter
-  @Setter
-  @AllArgsConstructor
-  private class UserRepresentation {
-
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String username;
-    private Boolean enabled;
-    private List<CredentialRepresentation> credentials = new LinkedList<>();
-
-  }
-
-  @Getter
-  @Setter
-  @AllArgsConstructor
-  private class CredentialRepresentation {
-
-    private String type;
-    private String value;
-    private boolean temporary;
   }
 }
