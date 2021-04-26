@@ -10,14 +10,16 @@ import com.tngtech.archunit.lang.ArchRule;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 
 @AnalyzeClasses(packages = "be.xplore.notifyme", importOptions = {
     ImportOption.DoNotIncludeTests.class})
 public class CodeConstraints {
+
   @ArchTest
   private static final ArchRule respectLayeredArchitecture = layeredArchitecture()
-      .layer("Controller").definedBy("..controllers..")
-      .layer("Service").definedBy("..services..")
+      .layer("Controller").definedBy("..controller..")
+      .layer("Service").definedBy("..service..")
       .layer("Persistence").definedBy("..persistence..")
 
       .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
@@ -31,14 +33,16 @@ public class CodeConstraints {
   @ArchTest
   public static final ArchRule serviceNaming = classes()
       .that().resideInAPackage("..service..")
-      .should().haveSimpleNameContaining("Service");
+      .should().haveSimpleNameContaining("Service").orShould().beInnerClasses();
   @ArchTest
   public static final ArchRule persistenceNaming = classes()
       .that().resideInAPackage("..persistence..")
       .should().haveSimpleNameContaining("Repo");
   @ArchTest
   public static final ArchRule ControllerAnnotation = classes()
-      .that().haveSimpleNameContaining("Controller").should().beAnnotatedWith(Controller.class);
+      .that().haveSimpleNameContaining("Controller").should().beAnnotatedWith(Controller.class)
+      .orShould().beAnnotatedWith(
+          RestController.class);
   @ArchTest
   public static final ArchRule ServiceAnnotation = classes()
       .that().haveSimpleNameContaining("Service").should().beAnnotatedWith(Service.class);
