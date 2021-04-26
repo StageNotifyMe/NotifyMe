@@ -2,6 +2,7 @@ package be.xplore.notifyme.config;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
+import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,20 +17,20 @@ import org.springframework.security.web.authentication.session.RegisterSessionAu
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
 /**
- * Enables web security for the spring project.
- * Support for keycloak is added through extending the KeycloakWebSecurityConfigurerAdapter.
+ * Enables web security for the spring project. Support for keycloak is added through extending the
+ * KeycloakWebSecurityConfigurerAdapter.
  */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(jsr250Enabled = true)
+@KeycloakConfiguration
 public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     super.configure(http);
-    http.authorizeRequests()
-        .anyRequest()
-        .permitAll();
+    http.authorizeRequests().antMatchers("/admin/**").hasRole("admin");
+    http.authorizeRequests().antMatchers("/user/**").permitAll();
     http.csrf().disable();
     http.cors();
   }
