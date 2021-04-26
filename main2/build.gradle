@@ -17,10 +17,10 @@ configurations {
 }
 
 checkstyleMain {
-    source ='src/main/java'
+    source = 'src/main/java'
 }
 checkstyleTest {
-    source ='src/test/java'
+    source = 'src/test/java'
 }
 
 repositories {
@@ -47,9 +47,19 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
 }
-checkstyle{
+checkstyle {
     ignoreFailures = false
     maxWarnings = 0
+}
+jacoco {
+    reportsDirectory = layout.projectDirectory.dir("jacoco")
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.enabled false
+        }
+    }
 }
 test {
     useJUnitPlatform()
