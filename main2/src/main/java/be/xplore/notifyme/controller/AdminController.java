@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,7 +24,7 @@ public class AdminController {
   }
 
   @PostMapping("createOrganisation")
-  public ResponseEntity<Organisation> createOrganisation(@RequestBody String name) {
+  public ResponseEntity<Organisation> createOrganisation(@RequestParam String name) {
     try {
       return ResponseEntity.ok(organisationService.createOrganisation(name));
     } catch (RuntimeException e) {
