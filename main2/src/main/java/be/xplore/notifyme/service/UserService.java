@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -71,15 +72,19 @@ public class UserService {
       String username, String password) {
     AdminTokenResponse response = gson
         .fromJson(getAdminAccesstoken().getBody(), AdminTokenResponse.class);
-    httpJsonHeader.add("Authorization", "Bearer " + response.getAccessToken());
+
+    var headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(response.getAccessToken());
+
     var credentialRepresentation = new CredentialRepresentation("password",
         password, false);
     var userRepresentation = new UserRepresentation(firstname, lastname, email,
         username, true, List.of(credentialRepresentation));
     String parsedUserRepresentation = gson.toJson(userRepresentation);
-    HttpEntity<String> request = new HttpEntity<>(parsedUserRepresentation, httpJsonHeader);
+    HttpEntity<String> request = new HttpEntity<>(parsedUserRepresentation, headers);
 
-    return restTemplate.postForEntity(registerUri, request, void.class);
+    return restTemplate.postForEntity(registerUri, request, Void.class);
   }
 
   private ResponseEntity<String> getAdminAccesstoken() {
