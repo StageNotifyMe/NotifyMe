@@ -2,13 +2,13 @@ package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.dto.AdminTokenResponse;
 import be.xplore.notifyme.dto.CredentialRepresentation;
-import be.xplore.notifyme.dto.UserRepresentation;
+import be.xplore.notifyme.dto.UserRepresentationDto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,7 +84,7 @@ public class UserService {
 
     var credentialRepresentation = new CredentialRepresentation("password",
         password, false);
-    var userRepresentation = new UserRepresentation(firstname, lastname, email,
+    var userRepresentation = new UserRepresentationDto(firstname, lastname, email,
         username, true, List.of(credentialRepresentation));
     String parsedUserRepresentation = gson.toJson(userRepresentation);
     HttpEntity<String> request = new HttpEntity<>(parsedUserRepresentation, headers);
@@ -95,6 +95,11 @@ public class UserService {
     return registerReturn;
   }
 
+  /**
+   * Gets a service account admin access token so spring can execute management actions on keycloak.
+   *
+   * @return ReponseEntity that if successful contains the accesstoken.
+   */
   public ResponseEntity<String> getAdminAccesstoken() {
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
     map.add("grant_type", "client_credentials");
@@ -115,7 +120,14 @@ public class UserService {
     restTemplate.put(uri, request);
   }
 
-  public org.keycloak.representations.account.UserRepresentation getUserInfo(
+  /**
+   * Gets Keycloak Userrepresentation with all of a user's info based on the username.
+   *
+   * @param adminAccesstoken Admin service account token needed to authorize request.
+   * @param username         The username of the user you want to get information from.
+   * @return Keycloak Userrepresentation.
+   */
+  public UserRepresentation getUserInfo(
       String adminAccesstoken, String username) {
     var headers = new HttpHeaders();
     headers.setBearerAuth(adminAccesstoken);
@@ -127,9 +139,9 @@ public class UserService {
     var userinfoReturn =
         restTemplate.exchange(uri, HttpMethod.GET, request, String.class).getBody();
 
-    Type listType = new TypeToken<List<org.keycloak.representations.account.UserRepresentation>>() {
+    Type listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
-    ArrayList<org.keycloak.representations.account.UserRepresentation> result =
+    ArrayList<UserRepresentation> result =
         gson.fromJson(userinfoReturn, listType);
     assert result != null;
     return result.get(0);

@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.dto.AdminTokenResponse;
-import be.xplore.notifyme.dto.UserRepresentation;
+import be.xplore.notifyme.dto.UserRepresentationDto;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ class UserServiceTest {
 
     when(gson.fromJson(anyString(), eq(AdminTokenResponse.class)))
         .thenReturn(new AdminTokenResponse("a", 10, 10, "Access", 5, "scopes"));
-    when(gson.toJson(UserRepresentation.class)).thenReturn("User representation Json");
+    when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
 
     assertEquals(HttpStatus.CREATED,
         userService.register("user", "userlastname", "user@user.be", "user.user", "User123!")
@@ -68,7 +68,7 @@ class UserServiceTest {
 
     when(gson.fromJson(anyString(), eq(AdminTokenResponse.class)))
         .thenReturn(new AdminTokenResponse("a", 10, 10, "Access", 5, "scopes"));
-    when(gson.toJson(UserRepresentation.class)).thenReturn("User representation Json");
+    when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
     assertEquals(HttpStatus.BAD_REQUEST,
         userService.register("user", "userlastname", "user@user.be", "user.user", "User123!")
             .getStatusCode());
