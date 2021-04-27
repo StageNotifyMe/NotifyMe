@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.persistence.OrganisationRepo;
+import be.xplore.notifyme.persistence.IOrganisationRepo;
 import java.util.ArrayList;
 import org.hibernate.HibernateException;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class OrganisationServiceTest {
   @Autowired
   private OrganisationService organisationService;
   @MockBean
-  private OrganisationRepo organisationRepo;
+  private IOrganisationRepo organisationRepo;
 
   @Test
   void createOrganisation() {

@@ -1,5 +1,6 @@
 package be.xplore.notifyme.controller;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.service.OrganisationService;
+import javax.validation.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -48,12 +50,5 @@ class AdminControllerTest {
 
     mockMvc.perform(post("/admin/createOrganisation?name=TestOrg"))
         .andExpect(MockMvcResultMatchers.status().isOk());
-  }
-
-  @Test
-  @WithMockUser(username = "adminUser", roles = {"user", "admin"})
-  void createOrganisationWithoutName() throws Exception {
-    mockMvc.perform(post("/admin/createOrganisation?name="))
-        .andExpect(MockMvcResultMatchers.status().is5xxServerError());
   }
 }

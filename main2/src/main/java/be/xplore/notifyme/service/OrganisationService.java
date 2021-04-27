@@ -1,7 +1,7 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.persistence.OrganisationRepo;
+import be.xplore.notifyme.persistence.IOrganisationRepo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,10 +19,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class OrganisationService {
 
-  private final OrganisationRepo organisationRepo;
+  private final IOrganisationRepo organisationRepo;
 
   /**
    * Constructs an organisation and saves it in the organisationRepository.
+   *
    * @param name the unique name of the organisation
    * @return the newly created organisation with this name.
    */
