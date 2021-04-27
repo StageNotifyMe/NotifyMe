@@ -1,10 +1,12 @@
 package be.xplore.notifyme.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,7 @@ class UserControllerTest {
 
   @Test
   void registerNewUser() throws Exception {
-    when(userService.register(anyString(), anyString(), anyString(), anyString(), anyString()))
+    when(userService.register(any(UserRegistrationDto.class)))
         .thenReturn(ResponseEntity.ok(null));
 
     mockMvc.perform(post("/user/register").content("{\"firstname\":\"Arthur\",\n"
