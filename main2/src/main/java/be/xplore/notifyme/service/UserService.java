@@ -4,12 +4,17 @@ import be.xplore.notifyme.dto.AdminTokenResponse;
 import be.xplore.notifyme.dto.CredentialRepresentation;
 import be.xplore.notifyme.dto.UserRepresentation;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -69,7 +74,7 @@ public class UserService {
    * Registers a new user by sending a service request to the keycloak server.
    */
   public ResponseEntity<Void> register(String firstname, String lastname, String email,
-      String username, String password) {
+                                       String username, String password) {
     AdminTokenResponse response = gson
         .fromJson(getAdminAccesstoken().getBody(), AdminTokenResponse.class);
 
@@ -84,10 +89,13 @@ public class UserService {
     String parsedUserRepresentation = gson.toJson(userRepresentation);
     HttpEntity<String> request = new HttpEntity<>(parsedUserRepresentation, headers);
 
-    return restTemplate.postForEntity(registerUri, request, Void.class);
+    var registerReturn = restTemplate.postForEntity(registerUri, request, Void.class);
+    var userInfo = getUserInfo(response.getAccessToken(), username);
+    sendEmailVerificationRequest(response.getAccessToken(), userInfo.getId());
+    return registerReturn;
   }
 
-  private ResponseEntity<String> getAdminAccesstoken() {
+  public ResponseEntity<String> getAdminAccesstoken() {
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
     map.add("grant_type", "client_credentials");
     map.add("client_id", clientId);
@@ -95,5 +103,35 @@ public class UserService {
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, httpXformHeader);
 
     return restTemplate.postForEntity(tokenUri, request, String.class);
+  }
+
+  private void sendEmailVerificationRequest(String adminAccessToken, String userId) {
+    var headers = new HttpHeaders();
+    headers.setBearerAuth(adminAccessToken);
+
+    String uri = String.format("%s/%s/send-verify-email", registerUri, userId);
+
+    HttpEntity<String> request = new HttpEntity<>(headers);
+    restTemplate.put(uri, request);
+  }
+
+  public org.keycloak.representations.account.UserRepresentation getUserInfo(
+      String adminAccesstoken, String username) {
+    var headers = new HttpHeaders();
+    headers.setBearerAuth(adminAccesstoken);
+
+    String uri = String.format("%s?username=%s", registerUri, username);
+
+    HttpEntity<String> request = new HttpEntity<>(headers);
+
+    var userinfoReturn =
+        restTemplate.exchange(uri, HttpMethod.GET, request, String.class).getBody();
+
+    Type listType = new TypeToken<List<org.keycloak.representations.account.UserRepresentation>>() {
+    }.getType();
+    ArrayList<org.keycloak.representations.account.UserRepresentation> result =
+        gson.fromJson(userinfoReturn, listType);
+    assert result != null;
+    return result.get(0);
   }
 }
