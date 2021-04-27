@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Class that represents a key for the many to many table between organisation and user.
+ */
 @Embeddable
 @Getter
 @Setter
@@ -28,8 +31,8 @@ public class OrganisationUserKey implements Serializable {
       return false;
     }
     OrganisationUserKey that = (OrganisationUserKey) o;
-    return organisationId == that.organisationId &&
-        userId.equals(that.userId);
+    return organisationId == that.organisationId
+        && userId.equals(that.userId);
   }
 
   @Override
