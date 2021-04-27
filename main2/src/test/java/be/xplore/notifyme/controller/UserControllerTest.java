@@ -44,7 +44,7 @@ class UserControllerTest {
   @Test
   void registerNewUser() throws Exception {
     when(userService.register(anyString(), anyString(), anyString(), anyString(), anyString()))
-        .thenReturn(ResponseEntity.ok("User created."));
+        .thenReturn(ResponseEntity.ok(null));
 
     mockMvc.perform(post("/user/register").content("{\"firstname\":\"Arthur\",\n"
         + "    \"lastname\":\"De Craemer\",\n"
