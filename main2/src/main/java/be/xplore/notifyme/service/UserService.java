@@ -67,7 +67,7 @@ public class UserService {
   /**
    * Registers a new user by sending a service request to the keycloak server.
    */
-  public ResponseEntity register(String firstname, String lastname, String email,
+  public ResponseEntity<Void> register(String firstname, String lastname, String email,
       String username, String password) {
     AdminTokenResponse response = gson
         .fromJson(getAdminAccesstoken().getBody(), AdminTokenResponse.class);

@@ -2,9 +2,7 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.service.UserService;
-import javax.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.keycloak.KeycloakSecurityContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +29,7 @@ public class UserController {
    * Allows unregistered users to create an account.
    */
   @PostMapping(value = "/register")
-  public ResponseEntity registerNewUser(
+  public ResponseEntity<Void> registerNewUser(
       @RequestBody UserRegistrationDto registrationDto) {
     return userService
         .register(registrationDto.getFirstname(), registrationDto.getLastname(),

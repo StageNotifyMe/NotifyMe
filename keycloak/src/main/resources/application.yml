@@ -39,6 +39,7 @@ keycloak:
     migration:
       importProvider: singleFile
       importLocation: keycloak-realm-config.json
+
 # - Dkeycloak.migration.strategy=OVERWRITE_EXISTING
 # -Dkeycloak.migration.strategy=IGNORE_EXISTING
 #  hostname:
