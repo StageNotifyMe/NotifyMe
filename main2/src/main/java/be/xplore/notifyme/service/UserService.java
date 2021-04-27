@@ -79,7 +79,7 @@ public class UserService {
     String parsedUserRepresentation = gson.toJson(userRepresentation);
     HttpEntity<String> request = new HttpEntity<>(parsedUserRepresentation, httpJsonHeader);
 
-    return restTemplate.postForEntity(registerUri, request, void.class);
+    return restTemplate.postForEntity(registerUri, request, Void.class);
   }
 
   private ResponseEntity<String> getAdminAccesstoken() {
