@@ -39,4 +39,3 @@ main2/build/
 main2/src/test/resources/
 keycloak/data/
 .idea/aws.xml
-src/test/resources/
