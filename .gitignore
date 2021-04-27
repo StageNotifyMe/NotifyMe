@@ -33,10 +33,10 @@ build/
 .idea/checkstyleidea.tmp/
 .idea/modules/testModule/
 
-main/build/
-main/src/test/resources/
+keycloak/build/
+keycloak/src/test/resources/
 main2/build/
-main2/src/main/resources/
 main2/src/test/resources/
+keycloak/data/
 .idea/aws.xml
 src/test/resources/

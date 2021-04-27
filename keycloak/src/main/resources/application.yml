@@ -20,7 +20,7 @@ logging:
   level:
     org.jgroups: INFO
     org.infinispan: INFO
-    org.keycloak: INFO
+    org.keycloak: DEBUG
     org.keycloak.services.managers.DefaultBruteForceProtector: DEBUG
     org.keycloak.services.scheduled.ClusterAwareScheduledTaskRunner: DEBUG
     org.keycloak.services.managers.UserSessionManager: DEBUG
@@ -39,6 +39,7 @@ keycloak:
     migration:
       importProvider: singleFile
       importLocation: keycloak-realm-config.json
+
 # - Dkeycloak.migration.strategy=OVERWRITE_EXISTING
 # -Dkeycloak.migration.strategy=IGNORE_EXISTING
 #  hostname:

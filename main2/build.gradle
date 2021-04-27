@@ -17,10 +17,10 @@ configurations {
 }
 
 checkstyleMain {
-    source ='src/main/java'
+    source = 'src/main/java'
 }
 checkstyleTest {
-    source ='src/test/java'
+    source = 'src/test/java'
 }
 
 repositories {
@@ -36,11 +36,33 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.tngtech.archunit:archunit-junit5:0.18.0'
 
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    implementation group: 'org.keycloak', name: 'keycloak-spring-boot-starter', version: '12.0.4'
+    implementation group: 'org.keycloak.bom', name: 'keycloak-adapter-bom', version: '12.0.4', ext: 'pom'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.9.0'
+
+    implementation 'com.google.code.gson:gson:2.8.6'
+
 }
-checkstyle{
+checkstyle {
     ignoreFailures = false
     maxWarnings = 0
 }
+jacoco {
+    reportsDirectory = layout.projectDirectory.dir("jacoco")
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.enabled false
+        }
+    }
+}
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
