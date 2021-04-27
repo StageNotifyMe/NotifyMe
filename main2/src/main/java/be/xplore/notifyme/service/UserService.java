@@ -2,11 +2,11 @@ package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.dto.AdminTokenResponse;
 import be.xplore.notifyme.dto.CredentialRepresentation;
+import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -78,36 +78,55 @@ public class UserService {
   /**
    * Registers a new user by sending a service request to the keycloak server.
    */
-  public ResponseEntity register(String firstname, String lastname, String email,
-                                 String username, String password) {
+  public ResponseEntity register(UserRegistrationDto userRegistrationDto) {
     AdminTokenResponse response = gson
         .fromJson(getAdminAccesstoken().getBody(), AdminTokenResponse.class);
 
-    var headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setBearerAuth(response.getAccessToken());
-
-    var credentialRepresentation = new CredentialRepresentation("password",
-        password, false);
-    var userRepresentation = new UserRepresentationDto(firstname, lastname, email,
-        username, true, List.of(credentialRepresentation));
-    String parsedUserRepresentation = gson.toJson(userRepresentation);
-    HttpEntity<String> request = new HttpEntity<>(parsedUserRepresentation, headers);
+    var request = createHttpEntityForUserRegistry(response.getAccessToken(), userRegistrationDto);
 
     var registerReturn = restTemplate.postForEntity(registerUri, request, Void.class);
     //if creation was unsuccessful, don't get user info and send verification email
     if (registerReturn.getStatusCode() == HttpStatus.CREATED) {
       try {
-        var userInfo = getUserInfo(response.getAccessToken(), username);
-        sendEmailVerificationRequest(response.getAccessToken(), userInfo.getId());
+        getUserInfoAndSendVerificationEmail(response.getAccessToken(),
+            userRegistrationDto.getUsername());
       } catch (Exception e) {
-        //TODO: delete account and let user retry later?
-        log.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body("{errorMessage:\"" + e.getMessage() + "\"}");
       }
     }
     return registerReturn;
+  }
+
+  private HttpEntity<String> createHttpEntityForUserRegistry(
+      String accessToken, UserRegistrationDto userRegistrationDto) {
+    var headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(accessToken);
+
+    var credentialRepresentation = new CredentialRepresentation("password",
+        userRegistrationDto.getPassword(), false);
+    var userRepresentation = new UserRepresentationDto(userRegistrationDto.getFirstname(),
+        userRegistrationDto.getLastname(), userRegistrationDto.getEmail(),
+        userRegistrationDto.getUsername(), true, List.of(credentialRepresentation));
+    String parsedUserRepresentation = gson.toJson(userRepresentation);
+    return new HttpEntity<>(parsedUserRepresentation, headers);
+  }
+
+  /**
+   * Gets a user's ID based on their username and sends them an email to verify their email.
+   *
+   * @param accessToken Service account with management role over user accounts.
+   * @param username    username of the user that needs to receive the email.
+   */
+  private void getUserInfoAndSendVerificationEmail(String accessToken, String username) {
+    try {
+      var userInfo = getUserInfo(accessToken, username);
+      sendEmailVerificationRequest(accessToken, userInfo.getId());
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw e;
+    }
   }
 
   /**
@@ -144,15 +163,7 @@ public class UserService {
    */
   public UserRepresentation getUserInfo(
       String adminAccesstoken, String username) {
-    var headers = new HttpHeaders();
-    headers.setBearerAuth(adminAccesstoken);
-
-    String uri = String.format("%s?username=%s", registerUri, username);
-
-    HttpEntity<String> request = new HttpEntity<>(headers);
-
-    var userinfoReturn =
-        restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+    var userinfoReturn = getUserInfoRest(adminAccesstoken, username);
     if (userinfoReturn.getStatusCode() == HttpStatus.OK) {
       Type listType = new TypeToken<List<UserRepresentation>>() {
       }.getType();
@@ -160,11 +171,11 @@ public class UserService {
         ArrayList<UserRepresentation> result =
             gson.fromJson(userinfoReturn.getBody(), listType);
         if (result == null) {
-          throw new RuntimeException("Result from GET on userinfo was null");
+          throw new RestClientException("Result from GET on userinfo was null");
         }
         return result.get(0);
       } catch (Exception e) {
-        throw new RuntimeException(String
+        throw new RestClientException(String
             .format("Could not retrieve user [%s] from database: %s", username, e.getMessage()));
       }
     } else {
@@ -172,5 +183,13 @@ public class UserService {
           .format("Something went wrong retrieving user [%s], statuscode: [%s]", username,
               userinfoReturn.getStatusCodeValue()));
     }
+  }
+
+  private ResponseEntity<String> getUserInfoRest(String accessToken, String username) {
+    var headers = new HttpHeaders();
+    headers.setBearerAuth(accessToken);
+    HttpEntity<String> request = new HttpEntity<>(headers);
+    String uri = String.format("%s?username=%s", registerUri, username);
+    return restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
   }
 }

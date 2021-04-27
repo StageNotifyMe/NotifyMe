@@ -32,8 +32,6 @@ public class UserController {
   public ResponseEntity<Void> registerNewUser(
       @RequestBody UserRegistrationDto registrationDto) {
     return userService
-        .register(registrationDto.getFirstname(), registrationDto.getLastname(),
-            registrationDto.getEmail(), registrationDto.getUsername(),
-            registrationDto.getPassword());
+        .register(registrationDto);
   }
 }

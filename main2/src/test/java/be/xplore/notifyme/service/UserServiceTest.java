@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.dto.AdminTokenResponse;
+import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -49,12 +50,21 @@ class UserServiceTest {
     assertEquals(statusCode, userService.login("user", "User123!").getStatusCode().value());
   }
 
-  @Test
-  void registerSuccess() {
+  private ArrayList<UserRepresentation> getTestUserRepresentation(String id) {
     ArrayList<UserRepresentation> arrayList = new ArrayList<>();
     UserRepresentation userRepresentation = new UserRepresentation();
-    userRepresentation.setId("test-id");
+    userRepresentation.setId(id);
     arrayList.add(userRepresentation);
+    return arrayList;
+  }
+
+  @Test
+  void registerSuccess() {
+    var arrayList = getTestUserRepresentation("test-id");
+    final Type listType = new TypeToken<List<UserRepresentation>>() {
+    }.getType();
+    final UserRegistrationDto userRegistrationDto =
+        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
 
     when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
@@ -67,16 +77,17 @@ class UserServiceTest {
         .thenReturn(new AdminTokenResponse("a", 10, 10, "Access", 5, "scopes"));
     when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
 
-    Type listType = new TypeToken<List<UserRepresentation>>() {}.getType();
     when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
 
     assertEquals(HttpStatus.CREATED,
-        userService.register("user", "userlastname", "user@user.be", "user.user", "User123!")
+        userService.register(userRegistrationDto)
             .getStatusCode());
   }
 
   @Test
   void registerFailOnCreation() {
+    final UserRegistrationDto userRegistrationDto =
+        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
     when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
 
@@ -88,16 +99,15 @@ class UserServiceTest {
     when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
 
     assertEquals(HttpStatus.BAD_REQUEST,
-        userService.register("user", "userlastname", "user@user.be", "user.user", "User123!")
+        userService.register(userRegistrationDto)
             .getStatusCode());
   }
 
   @Test
   void registerFailOnRetrieveUserInfo() {
-    ArrayList<UserRepresentation> arrayList = new ArrayList<>();
-    UserRepresentation userRepresentation = new UserRepresentation();
-    userRepresentation.setId("test-id");
-    arrayList.add(userRepresentation);
+    var arrayList = getTestUserRepresentation("test-id");
+    final UserRegistrationDto userRegistrationDto =
+        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
 
     when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
@@ -110,20 +120,20 @@ class UserServiceTest {
         .thenReturn(new AdminTokenResponse("a", 10, 10, "Access", 5, "scopes"));
     when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
 
-    Type listType = new TypeToken<List<UserRepresentation>>() {}.getType();
+    Type listType = new TypeToken<List<UserRepresentation>>() {
+    }.getType();
     when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
 
     assertEquals(HttpStatus.BAD_REQUEST,
-        userService.register("user", "userlastname", "user@user.be", "user.user", "User123!")
+        userService.register(userRegistrationDto)
             .getStatusCode());
   }
 
   @Test
   void registerFailNoUserFoundInDB() {
-    ArrayList<UserRepresentation> arrayList = new ArrayList<>();
-    UserRepresentation userRepresentation = new UserRepresentation();
-    userRepresentation.setId("test-id");
-    arrayList.add(userRepresentation);
+    var arrayList = getTestUserRepresentation("test-id");
+    final UserRegistrationDto userRegistrationDto =
+        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
 
     when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
@@ -136,11 +146,12 @@ class UserServiceTest {
         .thenReturn(new AdminTokenResponse("a", 10, 10, "Access", 5, "scopes"));
     when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
 
-    Type listType = new TypeToken<List<UserRepresentation>>() {}.getType();
+    Type listType = new TypeToken<List<UserRepresentation>>() {
+    }.getType();
     when(gson.fromJson(eq("[]"), eq(listType))).thenReturn(null);
 
     assertEquals(HttpStatus.BAD_REQUEST,
-        userService.register("user", "userlastname", "user@user.be", "user.user", "User123!")
+        userService.register(userRegistrationDto)
             .getStatusCode());
   }
 }
