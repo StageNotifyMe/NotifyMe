@@ -36,6 +36,5 @@ build/
 keycloak/build/
 keycloak/src/test/resources/
 main2/build/
-main2/src/test/resources/
 keycloak/data/
 .idea/aws.xml
