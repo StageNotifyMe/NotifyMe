@@ -49,6 +49,7 @@ class AdminControllerTest {
     mockMvc.perform(post("/admin/createOrganisation?name=TestOrg"))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
+
   @Test
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void createOrganisationWithoutName() throws Exception {

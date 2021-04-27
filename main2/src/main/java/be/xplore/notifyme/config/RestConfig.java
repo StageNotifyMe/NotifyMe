@@ -63,7 +63,7 @@ public class RestConfig {
    * @return header that sets content type to application_form_urlencoded
    */
   @Bean(name = "xformRequest")
-  public HttpHeaders httpHeadersXForm() {
+  public HttpHeaders httpHeadersXform() {
     var headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
     return headers;
