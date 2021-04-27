@@ -28,6 +28,7 @@ class AdminControllerTest {
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void adminInfoTestIsAdmin() throws Exception {
     mockMvc.perform(get("/admin/getAdminTest"))
-        .andExpect(MockMvcResultMatchers.status().isOk());
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().string("Hello Admin."));
   }
 }
