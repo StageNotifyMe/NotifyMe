@@ -6,8 +6,10 @@ import be.xplore.notifyme.dto.UserRepresentationDto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,17 +17,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * Service for communication with the keycloak server related to user accounts.
  */
 @Service
+@Slf4j
 public class UserService {
 
   private final RestTemplate restTemplate;
@@ -73,8 +78,8 @@ public class UserService {
   /**
    * Registers a new user by sending a service request to the keycloak server.
    */
-  public ResponseEntity<Void> register(String firstname, String lastname, String email,
-                                       String username, String password) {
+  public ResponseEntity register(String firstname, String lastname, String email,
+                                 String username, String password) {
     AdminTokenResponse response = gson
         .fromJson(getAdminAccesstoken().getBody(), AdminTokenResponse.class);
 
@@ -90,8 +95,18 @@ public class UserService {
     HttpEntity<String> request = new HttpEntity<>(parsedUserRepresentation, headers);
 
     var registerReturn = restTemplate.postForEntity(registerUri, request, Void.class);
-    var userInfo = getUserInfo(response.getAccessToken(), username);
-    sendEmailVerificationRequest(response.getAccessToken(), userInfo.getId());
+    //if creation was unsuccessful, don't get user info and send verification email
+    if (registerReturn.getStatusCode() == HttpStatus.CREATED) {
+      try {
+        var userInfo = getUserInfo(response.getAccessToken(), username);
+        sendEmailVerificationRequest(response.getAccessToken(), userInfo.getId());
+      } catch (Exception e) {
+        //TODO: delete account and let user retry later?
+        log.error(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body("{errorMessage:\"" + e.getMessage() + "\"}");
+      }
+    }
     return registerReturn;
   }
 
@@ -137,13 +152,25 @@ public class UserService {
     HttpEntity<String> request = new HttpEntity<>(headers);
 
     var userinfoReturn =
-        restTemplate.exchange(uri, HttpMethod.GET, request, String.class).getBody();
-
-    Type listType = new TypeToken<List<UserRepresentation>>() {
-    }.getType();
-    ArrayList<UserRepresentation> result =
-        gson.fromJson(userinfoReturn, listType);
-    assert result != null;
-    return result.get(0);
+        restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+    if (userinfoReturn.getStatusCode() == HttpStatus.OK) {
+      Type listType = new TypeToken<List<UserRepresentation>>() {
+      }.getType();
+      try {
+        ArrayList<UserRepresentation> result =
+            gson.fromJson(userinfoReturn.getBody(), listType);
+        if (result == null) {
+          throw new RuntimeException("Result from GET on userinfo was null");
+        }
+        return result.get(0);
+      } catch (Exception e) {
+        throw new RuntimeException(String
+            .format("Could not retrieve user [%s] from database: %s", username, e.getMessage()));
+      }
+    } else {
+      throw new RestClientException(String
+          .format("Something went wrong retrieving user [%s], statuscode: [%s]", username,
+              userinfoReturn.getStatusCodeValue()));
+    }
   }
 }

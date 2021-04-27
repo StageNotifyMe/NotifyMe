@@ -9,10 +9,16 @@ import static org.mockito.Mockito.when;
 import be.xplore.notifyme.dto.AdminTokenResponse;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -45,14 +51,24 @@ class UserServiceTest {
 
   @Test
   void registerSuccess() {
-    when(restTemplate.postForEntity(anyString(), any(), eq(void.class)))
+    ArrayList<UserRepresentation> arrayList = new ArrayList<>();
+    UserRepresentation userRepresentation = new UserRepresentation();
+    userRepresentation.setId("test-id");
+    arrayList.add(userRepresentation);
+
+    when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
     when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.OK).body("someResponseToken"));
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("[{id:\"test-id\"}]"));
 
     when(gson.fromJson(anyString(), eq(AdminTokenResponse.class)))
         .thenReturn(new AdminTokenResponse("a", 10, 10, "Access", 5, "scopes"));
     when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
+
+    Type listType = new TypeToken<List<UserRepresentation>>() {}.getType();
+    when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
 
     assertEquals(HttpStatus.CREATED,
         userService.register("user", "userlastname", "user@user.be", "user.user", "User123!")
@@ -60,15 +76,69 @@ class UserServiceTest {
   }
 
   @Test
-  void registerFail() {
-    when(restTemplate.postForEntity(anyString(), any(), eq(void.class)))
+  void registerFailOnCreation() {
+    when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+
     when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.OK).body("someResponseToken"));
 
     when(gson.fromJson(anyString(), eq(AdminTokenResponse.class)))
         .thenReturn(new AdminTokenResponse("a", 10, 10, "Access", 5, "scopes"));
     when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
+
+    assertEquals(HttpStatus.BAD_REQUEST,
+        userService.register("user", "userlastname", "user@user.be", "user.user", "User123!")
+            .getStatusCode());
+  }
+
+  @Test
+  void registerFailOnRetrieveUserInfo() {
+    ArrayList<UserRepresentation> arrayList = new ArrayList<>();
+    UserRepresentation userRepresentation = new UserRepresentation();
+    userRepresentation.setId("test-id");
+    arrayList.add(userRepresentation);
+
+    when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
+    when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("someResponseToken"));
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(""));
+
+    when(gson.fromJson(anyString(), eq(AdminTokenResponse.class)))
+        .thenReturn(new AdminTokenResponse("a", 10, 10, "Access", 5, "scopes"));
+    when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
+
+    Type listType = new TypeToken<List<UserRepresentation>>() {}.getType();
+    when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
+
+    assertEquals(HttpStatus.BAD_REQUEST,
+        userService.register("user", "userlastname", "user@user.be", "user.user", "User123!")
+            .getStatusCode());
+  }
+
+  @Test
+  void registerFailNoUserFoundInDB() {
+    ArrayList<UserRepresentation> arrayList = new ArrayList<>();
+    UserRepresentation userRepresentation = new UserRepresentation();
+    userRepresentation.setId("test-id");
+    arrayList.add(userRepresentation);
+
+    when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
+    when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("someResponseToken"));
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("[]"));
+
+    when(gson.fromJson(anyString(), eq(AdminTokenResponse.class)))
+        .thenReturn(new AdminTokenResponse("a", 10, 10, "Access", 5, "scopes"));
+    when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
+
+    Type listType = new TypeToken<List<UserRepresentation>>() {}.getType();
+    when(gson.fromJson(eq("[]"), eq(listType))).thenReturn(null);
+
     assertEquals(HttpStatus.BAD_REQUEST,
         userService.register("user", "userlastname", "user@user.be", "user.user", "User123!")
             .getStatusCode());
