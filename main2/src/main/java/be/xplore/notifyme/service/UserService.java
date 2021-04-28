@@ -130,7 +130,8 @@ public class UserService {
   }
 
   /**
-   * Gets a service account admin access token so spring can execute management actions on keycloak.
+   * Gets a service account admin access token so spring can execute management actions on
+   * keycloak.
    *
    * @return ReponseEntity that if successful contains the accesstoken.
    */
