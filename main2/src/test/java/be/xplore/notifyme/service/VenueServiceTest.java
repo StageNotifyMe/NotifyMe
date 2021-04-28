@@ -1,6 +1,6 @@
 package be.xplore.notifyme.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -29,7 +29,7 @@ class VenueServiceTest {
   private IVenueRepo venueRepo;
 
   @Test
-  void CreateVenueSuccessful() {
+  void createVenueSuccessful() {
     Principal mockPrincipal = Mockito.mock(Principal.class);
     IDToken mockIdToken = getMockIdToken();
     when(tokenService.decodeToken(mockPrincipal)).thenReturn(mockIdToken);
@@ -42,7 +42,7 @@ class VenueServiceTest {
   }
 
   @Test
-  void CreateVenueUserNotFound() {
+  void createVenueUserNotFound() {
     Principal mockPrincipal = Mockito.mock(Principal.class);
     IDToken mockIdToken = getMockIdToken();
     when(tokenService.decodeToken(mockPrincipal)).thenReturn(mockIdToken);
@@ -56,7 +56,7 @@ class VenueServiceTest {
   }
 
   @Test
-  void CreateVenueTokenDecodeFails() {
+  void createVenueTokenDecodeFails() {
     Principal mockPrincipal = Mockito.mock(Principal.class);
 
     doThrow(new ClassCastException(String.format("Could not convert %s object to IDToken object",
