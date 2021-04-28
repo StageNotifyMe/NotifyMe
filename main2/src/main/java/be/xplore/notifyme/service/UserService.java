@@ -1,14 +1,17 @@
 package be.xplore.notifyme.service;
 
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.AdminTokenResponse;
 import be.xplore.notifyme.dto.CredentialRepresentation;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
+import be.xplore.notifyme.persistence.IUserRepo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
 
   private final RestTemplate restTemplate;
@@ -49,11 +53,7 @@ public class UserService {
   @Value("${keycloak.credentials.secret}")
   private String clientSecret;
   private final Gson gson;
-
-  public UserService(RestTemplate restTemplate, Gson gson) {
-    this.restTemplate = restTemplate;
-    this.gson = gson;
-  }
+  private final IUserRepo userRepo;
 
   /**
    * Sends the user login request to the keycloak server.
@@ -123,10 +123,17 @@ public class UserService {
     try {
       var userInfo = getUserInfo(accessToken, username);
       sendEmailVerificationRequest(accessToken, userInfo.getId());
+      createUserInDatabase(userInfo.getId());
     } catch (Exception e) {
       log.error(e.getMessage());
       throw e;
     }
+  }
+
+  private void createUserInDatabase(String id) {
+    User user = new User();
+    user.setExternalOidcId(id);
+    userRepo.save(user);
   }
 
   /**
@@ -192,5 +199,9 @@ public class UserService {
     HttpEntity<String> request = new HttpEntity<>(headers);
     String uri = String.format("%s?username=%s", registerUri, username);
     return restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+  }
+
+  public User getUser(String id) {
+    return userRepo.getOne(id);
   }
 }

@@ -1,15 +1,24 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.service.OrganisationService;
+import be.xplore.notifyme.service.VenueService;
+import java.security.Principal;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
   private final OrganisationService organisationService;
+  private final VenueService venueService;
 
   @GetMapping("/getAdminTest")
   public ResponseEntity<String> adminInfoTest() {
@@ -45,4 +55,23 @@ public class AdminController {
       return ResponseEntity.status(500).build();
     }
   }
+
+  @RolesAllowed("admin")
+  @PostMapping("createVenue")
+  public ResponseEntity<String> createVenue(@RequestBody CreateVenueDto createVenueDto,
+                                            //@RequestHeader("Authorization") String bearerToken,
+                                            Principal principal) {
+    return venueService.createVenue(createVenueDto, principal);
+  }
+
+  /*@GetMapping("getUserInfo")
+  public String userInfo(Principal principal) {
+    KeycloakAuthenticationToken keycloakAuthenticationToken =
+        (KeycloakAuthenticationToken) principal;
+    AccessToken accessToken = keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext()
+        .getToken();
+    return accessToken.getId();
+  }*/
+
+
 }
