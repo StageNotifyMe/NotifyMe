@@ -44,7 +44,8 @@ public class VenueService {
       venueRepo.save(venue);
       return new ResponseEntity<>(HttpStatus.CREATED);
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+      log.error(String.format("Error while creating venue: %s",e.getMessage()));
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(String.format("{errorMessage:\"%s\"}", e.getMessage()));
     }
 

@@ -1,0 +1,92 @@
+package be.xplore.notifyme.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+
+import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.dto.CreateVenueDto;
+import be.xplore.notifyme.persistence.IVenueRepo;
+import java.security.Principal;
+import org.hibernate.HibernateError;
+import org.junit.jupiter.api.Test;
+import org.keycloak.representations.IDToken;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+
+@SpringBootTest
+class VenueServiceTest {
+  @Autowired
+  private VenueService venueService;
+  @MockBean
+  private UserService userService;
+  @MockBean
+  private TokenService tokenService;
+  @MockBean
+  private IVenueRepo venueRepo;
+
+  @Test
+  void CreateVenueSuccessful() {
+    Principal mockPrincipal = Mockito.mock(Principal.class);
+    IDToken mockIdToken = getMockIdToken();
+    when(tokenService.decodeToken(mockPrincipal)).thenReturn(mockIdToken);
+
+    User user = getTestUser();
+    when(userService.getUser("abcd")).thenReturn(user);
+
+    assertEquals(HttpStatus.CREATED,
+        venueService.createVenue(getTestCreateVenueDto(), mockPrincipal).getStatusCode());
+  }
+
+  @Test
+  void CreateVenueUserNotFound() {
+    Principal mockPrincipal = Mockito.mock(Principal.class);
+    IDToken mockIdToken = getMockIdToken();
+    when(tokenService.decodeToken(mockPrincipal)).thenReturn(mockIdToken);
+
+    doThrow(new HibernateError(
+        String.format("User with id %s could not be found", mockIdToken.getSubject())))
+        .when(userService).getUser("abcd");
+
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
+        venueService.createVenue(getTestCreateVenueDto(), mockPrincipal).getStatusCode());
+  }
+
+  @Test
+  void CreateVenueTokenDecodeFails() {
+    Principal mockPrincipal = Mockito.mock(Principal.class);
+
+    doThrow(new ClassCastException(String.format("Could not convert %s object to IDToken object",
+        mockPrincipal.getClass().getName()))).when(tokenService).decodeToken(mockPrincipal);
+
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
+        venueService.createVenue(getTestCreateVenueDto(), mockPrincipal).getStatusCode());
+  }
+
+  private IDToken getMockIdToken() {
+    IDToken mockIdToken = Mockito.mock(IDToken.class);
+    when(mockIdToken.getSubject()).thenReturn("abcd");
+    return mockIdToken;
+  }
+
+  private User getTestUser() {
+    User user = new User();
+    user.setExternalOidcId("abcd");
+    return user;
+  }
+
+  private CreateVenueDto getTestCreateVenueDto() {
+    CreateVenueDto createVenueDto = new CreateVenueDto();
+    createVenueDto.setName("ConcertHall");
+    createVenueDto.setDescription("A concerthall");
+    createVenueDto.setCountry("Belgium");
+    createVenueDto.setPostalCode("1000");
+    createVenueDto.setVillage("Brussels");
+    createVenueDto.setStreetAndNumber("Concertway 10");
+    return createVenueDto;
+  }
+
+}
