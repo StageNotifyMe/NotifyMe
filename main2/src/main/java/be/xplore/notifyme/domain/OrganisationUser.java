@@ -28,5 +28,5 @@ public class OrganisationUser {
   @JoinColumn(name = "organisation_id")
   Organisation organisation;
 
-  private boolean isUserAdmin;
+  private boolean isUserLeader;
 }
