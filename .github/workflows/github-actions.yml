@@ -11,13 +11,4 @@ jobs:
           java-version: "11"
       - name: "Build with Gradle"
         run: "./gradlew build"
-      - name: "Run jacocoTestReport",
-        run: "./gradlew  jacocoTestReport",
-      - name: "Run jacoco Testcoverage verification",
-        run: "./gradlew jacocoTestCoverageVerification",
-      - name: "Run Sonarqube"
-        run: "./gradlew sonarqube"
-        env:
-          GITHUB_TOKEN: "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"
-          SONAR_TOKEN: "981f07b2fcd15467482fe828d1dee7d159e7a918"
 name: "Run tests"

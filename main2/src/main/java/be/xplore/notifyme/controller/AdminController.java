@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/admin")
+@RolesAllowed("admin")
 @RequiredArgsConstructor
 @Validated
 public class AdminController {
@@ -52,11 +53,10 @@ public class AdminController {
     }
   }
 
-  @RolesAllowed("admin")
   @PostMapping("createVenue")
-  public ResponseEntity<String> createVenue(@RequestBody CreateVenueDto createVenueDto,
-                                            //@RequestHeader("Authorization") String bearerToken,
-                                            Principal principal) {
+  public ResponseEntity<String> createVenue(
+      @RequestBody @NotNull CreateVenueDto createVenueDto,
+      Principal principal) {
     return venueService.createVenue(createVenueDto, principal);
   }
 
