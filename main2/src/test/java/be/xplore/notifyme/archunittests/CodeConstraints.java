@@ -38,6 +38,12 @@ public class CodeConstraints {
   public static final ArchRule persistenceNaming = classes()
       .that().resideInAPackage("..persistence..")
       .should().haveSimpleNameContaining("Repo");
+
+  @ArchTest
+  public static final ArchRule dtoNaming = classes()
+      .that().resideInAPackage("..dto..")
+      .should().haveSimpleNameContaining("Dto");
+
   @ArchTest
   public static final ArchRule ControllerAnnotation = classes()
       .that().haveSimpleNameContaining("Controller").should().beAnnotatedWith(Controller.class)
