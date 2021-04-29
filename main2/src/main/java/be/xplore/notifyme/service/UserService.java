@@ -201,9 +201,15 @@ public class UserService {
     return restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
   }
 
+  /**
+   * Gets a user from the database based on ID.
+   *
+   * @param id of the user to get.
+   * @return the user or throws exception if unable to find a user with given ID.
+   */
   public User getUser(String id) {
     var user = userRepo.getOne(id);
-    if (user.getExternalOidcId()==null) {
+    if (user.getExternalOidcId() == null) {
       throw new CrudException(String.format("Could not retrieve user for id %s", id));
     } else {
       return user;

@@ -26,8 +26,9 @@ public class TokenService {
           (KeycloakAuthenticationToken) principal;
       return keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext()
           .getToken();
-    } catch (Exception e){
-      throw new TokenHandlerException(String.format("Could not extract IDToken from principal object: %s",e.getMessage()));
+    } catch (Exception e) {
+      throw new TokenHandlerException(
+          String.format("Could not extract IDToken from principal object: %s", e.getMessage()));
     }
   }
 }

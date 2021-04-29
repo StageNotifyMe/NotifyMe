@@ -29,7 +29,7 @@ public class VenueManagerController {
   }
 
   @GetMapping("/test")
-  public String vmanagerTest(){
+  public String vmanagerTest() {
     return "Geslaagd!";
   }
 }

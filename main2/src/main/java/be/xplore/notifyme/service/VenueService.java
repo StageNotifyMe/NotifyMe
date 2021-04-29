@@ -2,7 +2,6 @@ package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.domain.VenueManager;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.TokenHandlerException;
@@ -42,22 +41,25 @@ public class VenueService {
           new Address(createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
               createVenueDto.getVillage(), createVenueDto.getCountry());
       var venue =
-          new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address);
-      venue = venueRepo.save(venue);
-      //venue.getManagers().add();
-      venue = venueRepo.save(venue);
+          new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address, user);
+      venueRepo.save(venue);
       return new ResponseEntity<>(HttpStatus.CREATED);
-    //} catch (TokenHandlerException | CrudException e){
-    } catch (Exception e){
+    } catch (TokenHandlerException | CrudException e) {
       log.error(e.getMessage());
       throw e;
     }
   }
 
-  public Venue getVenue(long id){
+  /**
+   * Gets a venue based on ID.
+   *
+   * @param id of the venue to get.
+   * @return the venue matching the ID or thorws error if no matches found.
+   */
+  public Venue getVenue(long id) {
     var venue = venueRepo.getOne(id);
-    if (venue.getName().equals("")){
-      throw new CrudException("Could not retrieve venue for id "+id);
+    if (venue.getName().equals("")) {
+      throw new CrudException("Could not retrieve venue for id " + id);
     }
     return venue;
   }

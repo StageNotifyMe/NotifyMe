@@ -20,6 +20,12 @@ public class EventService {
   @Autowired
   private IEventRepo eventRepo;
 
+  /**
+   * Method to create an event from a createEventDTO (comes from API).
+   *
+   * @param createEventDto contains all the necessary data to create an event.
+   * @return HTTP Response
+   */
   public ResponseEntity<Object> createEvent(CreateEventDto createEventDto) {
     try {
       var venue = venueService.getVenue(createEventDto.getVenueId());

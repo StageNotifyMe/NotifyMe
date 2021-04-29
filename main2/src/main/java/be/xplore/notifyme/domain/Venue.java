@@ -6,8 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,14 +32,22 @@ public class Venue {
   @OneToOne
   @Cascade(CascadeType.ALL)
   private Address address;
-  @OneToMany(mappedBy = "externalOidcId")
-  @Cascade(CascadeType.ALL)
-  private List<VenueManager> managers;
+  @ManyToMany(cascade = javax.persistence.CascadeType.ALL)
+  private List<User> managers;
 
-  public Venue(String name, String description, Address address) {
+  /**
+   * Constructor for venue without auto generated ID.
+   *
+   * @param name        of the venue
+   * @param description of the venue
+   * @param address     of the venue
+   * @param user        who made the venue, gets assigned manager
+   */
+  public Venue(String name, String description, Address address, User user) {
     this.name = name;
     this.description = description;
     this.address = address;
     this.managers = new LinkedList<>();
+    this.managers.add(user);
   }
 }

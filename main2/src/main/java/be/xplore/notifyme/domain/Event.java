@@ -27,16 +27,17 @@ public class Event {
   @ManyToOne
   private Venue venue;
 
-  public Event(String title, String description, String artist, LocalDateTime dateTime,
+  /**
+   * Constructor for API POST methods. Converts a dateTime from ISO to LocalDateTime.
+   *
+   * @param title             event title.
+   * @param description       event description.
+   * @param artist            event artist.
+   * @param isoDateTimeString ISO dateTime string value, is converted to LocalDateTime.
+   * @param venue             the ID of the venue where the event is held.
+   */
+  public Event(String title, String description, String artist, String isoDateTimeString,
                Venue venue) {
-    this.title = title;
-    this.description = description;
-    this.artist = artist;
-    this.dateTime = dateTime;
-    this.venue = venue;
-  }
-
-  public Event(String title, String description, String artist, String isoDateTimeString, Venue venue) {
     this.title = title;
     this.description = description;
     this.artist = artist;

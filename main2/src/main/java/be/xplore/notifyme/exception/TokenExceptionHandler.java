@@ -14,7 +14,7 @@ public class TokenExceptionHandler {
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(value = {TokenHandlerException.class})
-  protected ResponseEntity<Object> handleConversionException(RuntimeException re){
+  protected ResponseEntity<Object> handleConversionException(RuntimeException re) {
     return ResponseEntity.badRequest().body(re.getMessage());
   }
 }
