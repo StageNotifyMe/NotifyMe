@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
 import java.util.ArrayList;
 import org.hibernate.HibernateException;
@@ -35,7 +36,7 @@ class OrganisationServiceTest {
     String orgname = "testOrg";
     Organisation testOrg = new Organisation(1L, orgname, new ArrayList<>());
     when(organisationRepo.save(any())).thenThrow(new HibernateException("HBE"));
-    assertThrows(HibernateException.class, () ->
+    assertThrows(CrudException.class, () ->
         organisationService.createOrganisation(orgname));
   }
 }
