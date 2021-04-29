@@ -5,6 +5,7 @@ import be.xplore.notifyme.dto.AdminTokenResponseDto;
 import be.xplore.notifyme.dto.CredentialRepresentationDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
+import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IUserRepo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -201,6 +202,11 @@ public class UserService {
   }
 
   public User getUser(String id) {
-    return userRepo.getOne(id);
+    var user = userRepo.getOne(id);
+    if (user.getExternalOidcId()==null) {
+      throw new CrudException(String.format("Could not retrieve user for id %s", id));
+    } else {
+      return user;
+    }
   }
 }

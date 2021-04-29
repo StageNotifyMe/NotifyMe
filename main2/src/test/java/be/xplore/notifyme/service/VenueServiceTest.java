@@ -1,11 +1,15 @@
 package be.xplore.notifyme.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.CreateVenueDto;
+import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
 import org.hibernate.HibernateError;
@@ -46,24 +50,26 @@ class VenueServiceTest {
     Principal mockPrincipal = Mockito.mock(Principal.class);
     IDToken mockIdToken = getMockIdToken();
     when(tokenService.decodeToken(mockPrincipal)).thenReturn(mockIdToken);
+    CreateVenueDto cvdto = getTestCreateVenueDto();
 
-    doThrow(new HibernateError(
+    doThrow(new CrudException(
         String.format("User with id %s could not be found", mockIdToken.getSubject())))
         .when(userService).getUser("abcd");
 
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
-        venueService.createVenue(getTestCreateVenueDto(), mockPrincipal).getStatusCode());
+    assertThrows(CrudException.class, () ->
+        venueService.createVenue(cvdto, mockPrincipal));
   }
 
   @Test
   void createVenueTokenDecodeFails() {
     Principal mockPrincipal = Mockito.mock(Principal.class);
+    CreateVenueDto cvdto = getTestCreateVenueDto();
 
-    doThrow(new ClassCastException(String.format("Could not convert %s object to IDToken object",
+    doThrow(new TokenHandlerException(String.format("Could not convert %s object to IDToken object",
         mockPrincipal.getClass().getName()))).when(tokenService).decodeToken(mockPrincipal);
 
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
-        venueService.createVenue(getTestCreateVenueDto(), mockPrincipal).getStatusCode());
+    assertThrows(TokenHandlerException.class, () ->
+        venueService.createVenue(cvdto, mockPrincipal));
   }
 
   private IDToken getMockIdToken() {

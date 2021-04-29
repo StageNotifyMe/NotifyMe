@@ -2,7 +2,10 @@ package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.Venue;
+import be.xplore.notifyme.domain.VenueManager;
 import be.xplore.notifyme.dto.CreateVenueDto;
+import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +34,7 @@ public class VenueService {
    * @param principal      used to identify the user.
    * @return 203 if successful, 400 if unsuccessful.
    */
-  public ResponseEntity<String> createVenue(CreateVenueDto createVenueDto, Principal principal) {
+  public ResponseEntity<Object> createVenue(CreateVenueDto createVenueDto, Principal principal) {
     try {
       var accessToken = tokenService.decodeToken(principal);
       var user = userService.getUser(accessToken.getSubject());
@@ -39,14 +42,23 @@ public class VenueService {
           new Address(createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
               createVenueDto.getVillage(), createVenueDto.getCountry());
       var venue =
-          new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address, user);
-      venueRepo.save(venue);
+          new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address);
+      venue = venueRepo.save(venue);
+      //venue.getManagers().add();
+      venue = venueRepo.save(venue);
       return new ResponseEntity<>(HttpStatus.CREATED);
-    } catch (Exception e) {
-      log.error(String.format("Error while creating venue: %s",e.getMessage()));
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(String.format("{errorMessage:\"%s\"}", e.getMessage()));
+    //} catch (TokenHandlerException | CrudException e){
+    } catch (Exception e){
+      log.error(e.getMessage());
+      throw e;
     }
+  }
 
+  public Venue getVenue(long id){
+    var venue = venueRepo.getOne(id);
+    if (venue.getName().equals("")){
+      throw new CrudException("Could not retrieve venue for id "+id);
+    }
+    return venue;
   }
 }

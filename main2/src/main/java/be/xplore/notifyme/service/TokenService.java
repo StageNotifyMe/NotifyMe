@@ -1,5 +1,6 @@
 package be.xplore.notifyme.service;
 
+import be.xplore.notifyme.exception.TokenHandlerException;
 import java.security.Principal;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -20,9 +21,13 @@ public class TokenService {
    * @return an IDToken containing user information.
    */
   public IDToken decodeToken(Principal principal) {
-    var keycloakAuthenticationToken =
-        (KeycloakAuthenticationToken) principal;
-    return keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext()
-        .getToken();
+    try {
+      var keycloakAuthenticationToken =
+          (KeycloakAuthenticationToken) principal;
+      return keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext()
+          .getToken();
+    } catch (Exception e){
+      throw new TokenHandlerException(String.format("Could not extract IDToken from principal object: %s",e.getMessage()));
+    }
   }
 }
