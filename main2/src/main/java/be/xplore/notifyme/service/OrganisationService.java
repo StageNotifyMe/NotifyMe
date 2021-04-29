@@ -1,12 +1,12 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,9 +30,10 @@ public class OrganisationService {
   public Organisation createOrganisation(String name) {
     try {
       return organisationRepo.save(new Organisation(name));
-    } catch (HibernateException e) {
+    } catch (RuntimeException e) {
       log.error(e.getMessage());
-      throw e;
+      throw new CrudException(
+          "Could not create new organisation. Make sure that the name does not exist.");
     }
   }
 }

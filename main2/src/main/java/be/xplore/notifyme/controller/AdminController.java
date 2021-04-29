@@ -46,11 +46,7 @@ public class AdminController {
   @PostMapping("createOrganisation")
   public ResponseEntity<Organisation> createOrganisation(
       @RequestParam("name") @Valid @NotBlank @NotNull String name) {
-    try {
-      return ResponseEntity.ok(organisationService.createOrganisation(name));
-    } catch (RuntimeException e) {
-      return ResponseEntity.status(500).build();
-    }
+    return ResponseEntity.ok(organisationService.createOrganisation(name));
   }
 
   @PostMapping("createVenue")
