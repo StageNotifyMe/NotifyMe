@@ -30,7 +30,7 @@ class UserControllerTest {
   @Test
   void getAccessTokenForUserValid() throws Exception {
     when(userService.login(anyString(), anyString())).thenReturn(ResponseEntity.ok("userinfo"));
-    mockMvc.perform(get("/user/getToken?username=test&password=test"))
+    mockMvc.perform(get("/user/token?username=test&password=test"))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().string("userinfo"));
   }
@@ -39,7 +39,7 @@ class UserControllerTest {
   void getAccessTokenForUserInvalid() throws Exception {
     when(userService.login(anyString(), anyString()))
         .thenReturn(ResponseEntity.status(401).build());
-    mockMvc.perform(get("/user/getToken?username=test&password=test"))
+    mockMvc.perform(get("/user/token?username=test&password=test"))
         .andExpect(MockMvcResultMatchers.status().isUnauthorized());
   }
 
