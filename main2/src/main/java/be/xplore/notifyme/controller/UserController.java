@@ -20,7 +20,7 @@ public class UserController {
 
   private final UserService userService;
 
-  @GetMapping(value = "/getToken")
+  @GetMapping(value = "/token")
   public ResponseEntity<String> getAccessTokenForUser(String username, String password) {
     return userService.login(username, password);
   }

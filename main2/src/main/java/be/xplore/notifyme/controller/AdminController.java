@@ -32,7 +32,7 @@ public class AdminController {
   private final OrganisationService organisationService;
   private final VenueService venueService;
 
-  @GetMapping("/getAdminTest")
+  @GetMapping("/adminTest")
   public ResponseEntity<String> adminInfoTest() {
     return ResponseEntity.ok("Hello Admin.");
   }
@@ -43,13 +43,13 @@ public class AdminController {
    * @param name is the unique name of the organisation.
    * @return a newly created organisation.
    */
-  @PostMapping("createOrganisation")
+  @PostMapping("/organisation")
   public ResponseEntity<Organisation> createOrganisation(
       @RequestParam("name") @Valid @NotBlank @NotNull String name) {
     return ResponseEntity.ok(organisationService.createOrganisation(name));
   }
 
-  @PostMapping("createVenue")
+  @PostMapping("/venue")
   public ResponseEntity<String> createVenue(
       @RequestBody @NotNull CreateVenueDto createVenueDto,
       Principal principal) {

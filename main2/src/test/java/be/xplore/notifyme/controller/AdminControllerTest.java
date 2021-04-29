@@ -30,14 +30,14 @@ class AdminControllerTest {
   @Test
   @WithMockUser
   void adminInfoTestNotAdmin() throws Exception {
-    mockMvc.perform(get("/admin/getAdminTest"))
+    mockMvc.perform(get("/admin/adminTest"))
         .andExpect(MockMvcResultMatchers.status().isForbidden());
   }
 
   @Test
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void adminInfoTestIsAdmin() throws Exception {
-    mockMvc.perform(get("/admin/getAdminTest"))
+    mockMvc.perform(get("/admin/adminTest"))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().string("Hello Admin."));
   }
@@ -48,7 +48,7 @@ class AdminControllerTest {
     when(organisationService.createOrganisation(anyString()))
         .thenReturn(new Organisation("testOrg"));
 
-    mockMvc.perform(post("/admin/createOrganisation?name=TestOrg"))
+    mockMvc.perform(post("/admin/organisation?name=TestOrg"))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
 }
