@@ -11,4 +11,6 @@ jobs:
           java-version: "11"
       - name: "Build with Gradle"
         run: "./gradlew build"
+      - name: "Run Sonarqube"
+        run: "./gradlew sonarqube"
 name: "Run tests"
