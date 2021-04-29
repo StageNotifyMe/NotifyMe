@@ -20,7 +20,7 @@ public class TokenService {
    * @return an IDToken containing user information.
    */
   public IDToken decodeToken(Principal principal) {
-    KeycloakAuthenticationToken keycloakAuthenticationToken =
+    var keycloakAuthenticationToken =
         (KeycloakAuthenticationToken) principal;
     return keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext()
         .getToken();

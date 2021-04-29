@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CredentialRepresentation {
+public class CredentialRepresentationDto {
 
   private String type;
   private String value;

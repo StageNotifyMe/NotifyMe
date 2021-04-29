@@ -10,15 +10,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.representations.AccessToken;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,15 +59,5 @@ public class AdminController {
                                             Principal principal) {
     return venueService.createVenue(createVenueDto, principal);
   }
-
-  /*@GetMapping("getUserInfo")
-  public String userInfo(Principal principal) {
-    KeycloakAuthenticationToken keycloakAuthenticationToken =
-        (KeycloakAuthenticationToken) principal;
-    AccessToken accessToken = keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext()
-        .getToken();
-    return accessToken.getId();
-  }*/
-
 
 }

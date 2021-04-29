@@ -1,14 +1,13 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.dto.AdminTokenResponse;
-import be.xplore.notifyme.dto.CredentialRepresentation;
+import be.xplore.notifyme.dto.AdminTokenResponseDto;
+import be.xplore.notifyme.dto.CredentialRepresentationDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.persistence.IUserRepo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -79,8 +78,8 @@ public class UserService {
    * Registers a new user by sending a service request to the keycloak server.
    */
   public ResponseEntity register(UserRegistrationDto userRegistrationDto) {
-    AdminTokenResponse response = gson
-        .fromJson(getAdminAccesstoken().getBody(), AdminTokenResponse.class);
+    AdminTokenResponseDto response = gson
+        .fromJson(getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
 
     var request = createHttpEntityForUserRegistry(response.getAccessToken(), userRegistrationDto);
 
@@ -104,7 +103,7 @@ public class UserService {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setBearerAuth(accessToken);
 
-    var credentialRepresentation = new CredentialRepresentation("password",
+    var credentialRepresentation = new CredentialRepresentationDto("password",
         userRegistrationDto.getPassword(), false);
     var userRepresentation = new UserRepresentationDto(userRegistrationDto.getFirstname(),
         userRegistrationDto.getLastname(), userRegistrationDto.getEmail(),
@@ -131,7 +130,7 @@ public class UserService {
   }
 
   private void createUserInDatabase(String id) {
-    User user = new User();
+    var user = new User();
     user.setExternalOidcId(id);
     userRepo.save(user);
   }
@@ -156,7 +155,7 @@ public class UserService {
     var headers = new HttpHeaders();
     headers.setBearerAuth(adminAccessToken);
 
-    String uri = String.format("%s/%s/send-verify-email", registerUri, userId);
+    var uri = String.format("%s/%s/send-verify-email", registerUri, userId);
 
     HttpEntity<String> request = new HttpEntity<>(headers);
     restTemplate.put(uri, request);
@@ -173,7 +172,7 @@ public class UserService {
       String adminAccesstoken, String username) {
     var userinfoReturn = getUserInfoRest(adminAccesstoken, username);
     if (userinfoReturn.getStatusCode() == HttpStatus.OK) {
-      Type listType = new TypeToken<List<UserRepresentation>>() {
+      var listType = new TypeToken<List<UserRepresentation>>() {
       }.getType();
       try {
         ArrayList<UserRepresentation> result =
@@ -197,7 +196,7 @@ public class UserService {
     var headers = new HttpHeaders();
     headers.setBearerAuth(accessToken);
     HttpEntity<String> request = new HttpEntity<>(headers);
-    String uri = String.format("%s?username=%s", registerUri, username);
+    var uri = String.format("%s?username=%s", registerUri, username);
     return restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
   }
 

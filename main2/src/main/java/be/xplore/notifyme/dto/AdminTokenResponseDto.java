@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AdminTokenResponse {
+public class AdminTokenResponseDto {
 
   @SerializedName(value = "access_token")
   private String accessToken;

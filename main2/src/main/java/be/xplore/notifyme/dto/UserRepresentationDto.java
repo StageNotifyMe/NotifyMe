@@ -16,6 +16,6 @@ public class UserRepresentationDto {
   private String email;
   private String username;
   private Boolean enabled;
-  private List<CredentialRepresentation> credentials = new LinkedList<>();
+  private List<CredentialRepresentationDto> credentials = new LinkedList<>();
 
 }

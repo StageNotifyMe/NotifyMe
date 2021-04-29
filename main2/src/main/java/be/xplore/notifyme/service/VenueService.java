@@ -1,7 +1,6 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Address;
-import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.persistence.IVenueRepo;
@@ -35,11 +34,11 @@ public class VenueService {
   public ResponseEntity<String> createVenue(CreateVenueDto createVenueDto, Principal principal) {
     try {
       var accessToken = tokenService.decodeToken(principal);
-      User user = userService.getUser(accessToken.getSubject());
-      Address address =
+      var user = userService.getUser(accessToken.getSubject());
+      var address =
           new Address(createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
               createVenueDto.getVillage(), createVenueDto.getCountry());
-      Venue venue =
+      var venue =
           new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address, user);
       venueRepo.save(venue);
       return new ResponseEntity<>(HttpStatus.CREATED);
