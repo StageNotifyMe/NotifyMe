@@ -3,15 +3,19 @@ package be.xplore.notifyme.service;
 import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateVenueDto;
+import be.xplore.notifyme.dto.GetVenueDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
+import java.util.LinkedList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Contains all functions and processes related to venues.
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class VenueService {
 
   private final TokenService tokenService;
@@ -62,5 +67,19 @@ public class VenueService {
       throw new CrudException("Could not retrieve venue for id " + id);
     }
     return venue;
+  }
+
+  public List<GetVenueDto> getVenuesForUser(String userId) {
+    var user = userService.getUser(userId);
+    if (user == null) {
+      throw new CrudException("Could not retrieve user for id " + userId);
+    }
+    var venues = venueRepo.getAllByManagersIsContaining(user);
+    List<GetVenueDto> venueDtos = new LinkedList<>();
+    for (Venue venue : venues) {
+      venueDtos.add(new GetVenueDto(venue.getId(), venue.getName(), venue.getDescription(),
+          venue.getAddress()));
+    }
+    return venueDtos;
   }
 }

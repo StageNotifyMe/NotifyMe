@@ -175,6 +175,12 @@ public class UserService {
     }
   }
 
+  public UserRepresentation getUserInfo(String username){
+    AdminTokenResponseDto response = gson
+        .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
+    return getUserInfo(response.getAccessToken(), username);
+  }
+
   private ResponseEntity<String> getUserInfoRest(String accessToken, String username) {
     var headers = new HttpHeaders();
     headers.setBearerAuth(accessToken);
@@ -190,11 +196,11 @@ public class UserService {
    * @return the user or throws exception if unable to find a user with given ID.
    */
   public User getUser(String id) {
-    var user = userRepo.getOne(id);
-    if (user.getExternalOidcId() == null) {
-      throw new CrudException(String.format("Could not retrieve user for id %s", id));
+    var user = userRepo.findById(id);
+    if (user.isPresent()){
+       return user.get();
     } else {
-      return user;
+      throw new CrudException(String.format("Could not retrieve user for id %s", id));
     }
   }
 }
