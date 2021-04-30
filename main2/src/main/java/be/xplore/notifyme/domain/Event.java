@@ -1,6 +1,9 @@
 package be.xplore.notifyme.domain;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -42,6 +46,9 @@ public class Event {
     this.description = description;
     this.artist = artist;
     this.venue = venue;
-    this.dateTime = LocalDateTime.parse(isoDateTimeString);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        .withZone(ZoneId.of("Europe/Brussels"));
+    this.dateTime = LocalDateTime.parse(isoDateTimeString, formatter);
+
   }
 }

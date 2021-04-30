@@ -49,7 +49,7 @@ class EventServiceTest {
 
   private CreateEventDto getTestCreateEventDto() {
     return new CreateEventDto("Evenement", "een evenement", "een artiest",
-        "2021-04-30T06:45:30", 1);
+        "2021-04-30 06:45", 1);
   }
 
   private Venue getTestVenue() {

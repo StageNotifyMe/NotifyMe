@@ -38,7 +38,7 @@ public class UserController {
   }
 
   @GetMapping(value = "/userInfo")
-  public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username){
+  public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username) {
     return ResponseEntity.ok(userService.getUserInfo(username));
   }
 }

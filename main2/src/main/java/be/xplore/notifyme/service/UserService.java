@@ -133,7 +133,6 @@ public class UserService {
   }
 
 
-
   private void sendEmailVerificationRequest(String adminAccessToken, String userId) {
     var headers = new HttpHeaders();
     headers.setBearerAuth(adminAccessToken);
@@ -175,7 +174,13 @@ public class UserService {
     }
   }
 
-  public UserRepresentation getUserInfo(String username){
+  /**
+   * Returns a keycloak userrepresentation object.
+   *
+   * @param username of the user to get info from.
+   * @return Keycloak UserRepresentation object.
+   */
+  public UserRepresentation getUserInfo(String username) {
     AdminTokenResponseDto response = gson
         .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
     return getUserInfo(response.getAccessToken(), username);
@@ -197,8 +202,8 @@ public class UserService {
    */
   public User getUser(String id) {
     var user = userRepo.findById(id);
-    if (user.isPresent()){
-       return user.get();
+    if (user.isPresent()) {
+      return user.get();
     } else {
       throw new CrudException(String.format("Could not retrieve user for id %s", id));
     }

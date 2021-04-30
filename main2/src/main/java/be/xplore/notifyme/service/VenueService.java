@@ -69,6 +69,12 @@ public class VenueService {
     return venue;
   }
 
+  /**
+   * Returns all venues of which the user is a manager.
+   *
+   * @param userId of the user
+   * @return list object containing all venues.
+   */
   public List<GetVenueDto> getVenuesForUser(String userId) {
     var user = userService.getUser(userId);
     if (user == null) {

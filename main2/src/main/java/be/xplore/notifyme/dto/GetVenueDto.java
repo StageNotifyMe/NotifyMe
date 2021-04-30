@@ -19,6 +19,14 @@ public class GetVenueDto {
   private String village;
   private String country;
 
+  /**
+   * This dto is used to export a venue to a front end application.
+   *
+   * @param id          of venue
+   * @param name        of venue
+   * @param description of venue
+   * @param address     of venue
+   */
   public GetVenueDto(Long id, String name, String description, Address address) {
     this.id = id;
     this.name = name;
@@ -27,15 +35,5 @@ public class GetVenueDto {
     this.postalCode = address.getPostalCode();
     this.village = address.getVillage();
     this.country = address.getCountry();
-  }
-
-  public GetVenueDto(Long id, CreateVenueDto createVenueDto) {
-    this.id = id;
-    this.name = createVenueDto.getName();
-    this.description = createVenueDto.getDescription();
-    this.streetAndNumber = createVenueDto.getStreetAndNumber();
-    this.postalCode = createVenueDto.getPostalCode();
-    this.village = createVenueDto.getVillage();
-    this.country = createVenueDto.getCountry();
   }
 }
