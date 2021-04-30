@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import be.xplore.notifyme.dto.AdminTokenResponseDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
+import be.xplore.notifyme.persistence.IUserRepo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
@@ -131,7 +132,6 @@ class UserServiceTest {
 
   @Test
   void registerFailNoUserFoundInDB() {
-    var arrayList = getTestUserRepresentation("test-id");
     final UserRegistrationDto userRegistrationDto =
         new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
 

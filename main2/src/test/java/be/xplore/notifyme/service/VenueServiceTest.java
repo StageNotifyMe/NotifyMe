@@ -105,16 +105,16 @@ class VenueServiceTest {
   }
 
   @Test
-  void getVenuesUserNotFound(){
+  void getVenuesUserNotFound() {
     doThrow(CrudException.class).when(userService).getUser("unknown");
 
-    assertThrows(CrudException.class, ()->{
+    assertThrows(CrudException.class, () -> {
       venueService.getVenuesForUser("unknown");
     });
   }
 
   @Test
-  void getVenuesNoVenuesFound(){
+  void getVenuesNoVenuesFound() {
     var user = getTestUser();
     when(userService.getUser("abcd")).thenReturn(user);
     when(venueRepo.getAllByManagersIsContaining(user)).thenReturn(new LinkedList<>());
