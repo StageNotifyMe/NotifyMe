@@ -1,17 +1,22 @@
 package be.xplore.notifyme.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
+import java.util.LinkedList;
 import org.hibernate.HibernateError;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.IDToken;
@@ -70,6 +75,24 @@ class VenueServiceTest {
 
     assertThrows(TokenHandlerException.class, () ->
         venueService.createVenue(cvdto, mockPrincipal));
+  }
+
+  @Test
+  void getVenueSuccessful(){
+    when(venueRepo.getOne(anyLong())).thenReturn(getTestVenue());
+    assertNotNull(venueService.getVenue(1L));
+  }
+
+  @Test
+  void getVenueFail(){
+    when(venueRepo.getOne(anyLong())).thenReturn(new Venue());
+    assertThrows(CrudException.class, ()->{
+      venueService.getVenue(1L);
+    });
+  }
+
+  private Venue getTestVenue(){
+    return new Venue(1L,"Venue","venue",new Address(), new LinkedList<>());
   }
 
   private IDToken getMockIdToken() {

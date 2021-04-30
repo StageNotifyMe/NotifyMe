@@ -58,7 +58,7 @@ public class VenueService {
    */
   public Venue getVenue(long id) {
     var venue = venueRepo.getOne(id);
-    if (venue.getName().equals("")) {
+    if (venue.getId() != id) {
       throw new CrudException("Could not retrieve venue for id " + id);
     }
     return venue;
