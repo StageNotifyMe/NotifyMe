@@ -1,5 +1,6 @@
 package be.xplore.notifyme.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,12 +13,13 @@ import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateVenueDto;
+import be.xplore.notifyme.dto.GetVenueDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
 import java.util.LinkedList;
-import org.hibernate.HibernateError;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.IDToken;
 import org.mockito.Mockito;
@@ -89,6 +91,49 @@ class VenueServiceTest {
     assertThrows(CrudException.class, () -> {
       venueService.getVenue(1L);
     });
+  }
+
+  @Test
+  void getVenuesSuccessful() {
+    var user = getTestUser();
+    when(userService.getUser("abcd")).thenReturn(user);
+    when(venueRepo.getAllByManagersIsContaining(user)).thenReturn(getTestVenues());
+
+    var result = venueService.getVenuesForUser("abcd");
+    assertEquals(getTestGetVenues().size(), result.size());
+    assertEquals(getTestGetVenues().get(0).getId(), result.get(0).getId());
+  }
+
+  @Test
+  void getVenuesUserNotFound() {
+    doThrow(CrudException.class).when(userService).getUser("unknown");
+
+    assertThrows(CrudException.class, () -> {
+      venueService.getVenuesForUser("unknown");
+    });
+  }
+
+  @Test
+  void getVenuesNoVenuesFound() {
+    var user = getTestUser();
+    when(userService.getUser("abcd")).thenReturn(user);
+    when(venueRepo.getAllByManagersIsContaining(user)).thenReturn(new LinkedList<>());
+
+    var result = venueService.getVenuesForUser("abcd");
+    assertEquals(0, result.size());
+  }
+
+  private List<GetVenueDto> getTestGetVenues() {
+    LinkedList<GetVenueDto> venues = new LinkedList<>();
+    venues.add(new GetVenueDto(getTestVenue().getId(), getTestVenue().getName(),
+        getTestVenue().getDescription(), getTestVenue().getAddress()));
+    return venues;
+  }
+
+  private List<Venue> getTestVenues() {
+    LinkedList<Venue> venues = new LinkedList<>();
+    venues.add(getTestVenue());
+    return venues;
   }
 
   private Venue getTestVenue() {
