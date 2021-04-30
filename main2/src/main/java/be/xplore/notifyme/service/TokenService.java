@@ -69,7 +69,13 @@ public class TokenService {
     return restTemplate.postForEntity(tokenUri, request, String.class);
   }
 
-  public MultiValueMap<String, String> addAuthorization(MultiValueMap<String, String> map){
+  /**
+   * Methods takes a multimap and adds client_id and client_secret to it.
+   *
+   * @param map containing values for a body.
+   * @return the map with the client_id and client_secret values added.
+   */
+  public MultiValueMap<String, String> addAuthorization(MultiValueMap<String, String> map) {
     map.add("client_id", clientId);
     map.add("client_secret", clientSecret);
     return map;

@@ -1,6 +1,5 @@
 package be.xplore.notifyme.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -26,8 +25,8 @@ class VenueManagerControllerTest {
   @MockBean
   private EventService eventService;
   private final String body =
-      "{\"title\": \"Evenement\",\n\"description\":\"beschrijving\",\n" +
-          " \"artist\":\"artiest\",\n\"dateTime\":\"2021-04-30T06:45:30\",\n\"venueId\":1\n}";
+      "{\"title\": \"Evenement\",\n\"description\":\"beschrijving\",\n"
+          + " \"artist\":\"artiest\",\n\"dateTime\":\"2021-04-30T06:45:30\",\n\"venueId\":1\n}";
 
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})

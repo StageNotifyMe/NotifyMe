@@ -2,7 +2,6 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.service.EventService;
-import javax.annotation.security.RolesAllowed;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
