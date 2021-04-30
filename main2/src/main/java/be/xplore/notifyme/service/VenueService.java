@@ -76,16 +76,18 @@ public class VenueService {
    * @return list object containing all venues.
    */
   public List<GetVenueDto> getVenuesForUser(String userId) {
-    var user = userService.getUser(userId);
-    if (user == null) {
-      throw new CrudException("Could not retrieve user for id " + userId);
+    try {
+      var user = userService.getUser(userId);
+      var venues = venueRepo.getAllByManagersIsContaining(user);
+      List<GetVenueDto> venueDtos = new LinkedList<>();
+      for (Venue venue : venues) {
+        venueDtos.add(new GetVenueDto(venue.getId(), venue.getName(), venue.getDescription(),
+            venue.getAddress()));
+      }
+      return venueDtos;
+    } catch (CrudException e) {
+      log.error(e.getMessage());
+      throw e;
     }
-    var venues = venueRepo.getAllByManagersIsContaining(user);
-    List<GetVenueDto> venueDtos = new LinkedList<>();
-    for (Venue venue : venues) {
-      venueDtos.add(new GetVenueDto(venue.getId(), venue.getName(), venue.getDescription(),
-          venue.getAddress()));
-    }
-    return venueDtos;
   }
 }
