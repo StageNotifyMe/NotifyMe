@@ -6,7 +6,6 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IEventRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,10 +14,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class EventService {
-  @Autowired
-  private VenueService venueService;
-  @Autowired
-  private IEventRepo eventRepo;
+
+  private final VenueService venueService;
+  private final IEventRepo eventRepo;
 
   /**
    * Method to create an event from a createEventDTO (comes from API).

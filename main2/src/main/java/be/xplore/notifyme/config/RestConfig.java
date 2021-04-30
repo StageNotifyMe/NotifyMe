@@ -64,8 +64,8 @@ public class RestConfig {
    */
   @Bean(name = "xformRequest")
   public HttpHeaders httpHeadersXform() {
-    var headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-    return headers;
+    var httpXformHeader = new HttpHeaders();
+    httpXformHeader.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    return httpXformHeader;
   }
 }
