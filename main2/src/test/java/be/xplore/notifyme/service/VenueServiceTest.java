@@ -78,21 +78,21 @@ class VenueServiceTest {
   }
 
   @Test
-  void getVenueSuccessful(){
+  void getVenueSuccessful() {
     when(venueRepo.getOne(anyLong())).thenReturn(getTestVenue());
     assertNotNull(venueService.getVenue(1L));
   }
 
   @Test
-  void getVenueFail(){
+  void getVenueFail() {
     when(venueRepo.getOne(anyLong())).thenReturn(new Venue());
-    assertThrows(CrudException.class, ()->{
+    assertThrows(CrudException.class, () -> {
       venueService.getVenue(1L);
     });
   }
 
-  private Venue getTestVenue(){
-    return new Venue(1L,"Venue","venue",new Address(), new LinkedList<>());
+  private Venue getTestVenue() {
+    return new Venue(1L, "Venue", "venue", new Address(), new LinkedList<>());
   }
 
   private IDToken getMockIdToken() {
