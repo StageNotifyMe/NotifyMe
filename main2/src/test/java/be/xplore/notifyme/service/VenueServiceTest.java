@@ -1,13 +1,22 @@
 package be.xplore.notifyme.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateVenueDto;
+import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
+import java.util.LinkedList;
 import org.hibernate.HibernateError;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.IDToken;
@@ -46,24 +55,44 @@ class VenueServiceTest {
     Principal mockPrincipal = Mockito.mock(Principal.class);
     IDToken mockIdToken = getMockIdToken();
     when(tokenService.decodeToken(mockPrincipal)).thenReturn(mockIdToken);
+    CreateVenueDto cvdto = getTestCreateVenueDto();
 
-    doThrow(new HibernateError(
+    doThrow(new CrudException(
         String.format("User with id %s could not be found", mockIdToken.getSubject())))
         .when(userService).getUser("abcd");
 
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
-        venueService.createVenue(getTestCreateVenueDto(), mockPrincipal).getStatusCode());
+    assertThrows(CrudException.class, () ->
+        venueService.createVenue(cvdto, mockPrincipal));
   }
 
   @Test
   void createVenueTokenDecodeFails() {
     Principal mockPrincipal = Mockito.mock(Principal.class);
+    CreateVenueDto cvdto = getTestCreateVenueDto();
 
-    doThrow(new ClassCastException(String.format("Could not convert %s object to IDToken object",
+    doThrow(new TokenHandlerException(String.format("Could not convert %s object to IDToken object",
         mockPrincipal.getClass().getName()))).when(tokenService).decodeToken(mockPrincipal);
 
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
-        venueService.createVenue(getTestCreateVenueDto(), mockPrincipal).getStatusCode());
+    assertThrows(TokenHandlerException.class, () ->
+        venueService.createVenue(cvdto, mockPrincipal));
+  }
+
+  @Test
+  void getVenueSuccessful() {
+    when(venueRepo.getOne(anyLong())).thenReturn(getTestVenue());
+    assertNotNull(venueService.getVenue(1L));
+  }
+
+  @Test
+  void getVenueFail() {
+    when(venueRepo.getOne(anyLong())).thenReturn(new Venue());
+    assertThrows(CrudException.class, () -> {
+      venueService.getVenue(1L);
+    });
+  }
+
+  private Venue getTestVenue() {
+    return new Venue(1L, "Venue", "venue", new Address(), new LinkedList<>());
   }
 
   private IDToken getMockIdToken() {

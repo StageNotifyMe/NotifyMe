@@ -31,7 +31,7 @@ public class Organisation {
   @NotNull
   @NotEmpty
   private String name;
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "organisation")
   private List<OrganisationUser> users;
 
   public Organisation(String name) {
