@@ -143,6 +143,49 @@ public class UserService {
     restTemplate.put(uri, request);
   }
 
+
+  /**
+   * Gets Keycloak Userrepresentation with info from all of the users.
+   *
+   * @param adminAccesstoken Admin service account token needed to authorize request.
+   * @return list of Keycloak Userrepresentation.
+   */
+  public List<UserRepresentation> getAllUserInfo(
+      String adminAccesstoken) {
+    var userinfoReturn = getAllUserInfoRest(adminAccesstoken);
+    if (userinfoReturn.getStatusCode() == HttpStatus.OK) {
+      var listType = new TypeToken<List<UserRepresentation>>() {
+      }.getType();
+      try {
+        ArrayList<UserRepresentation> result =
+            gson.fromJson(userinfoReturn.getBody(), listType);
+        if (result == null) {
+          throw new RestClientException("Result from GET on userinfo was null");
+        }
+        return result;
+      } catch (Exception e) {
+        throw new RestClientException(String
+            .format("Could not retrieve users from keycloak: %s", e.getMessage()));
+      }
+    } else {
+      throw new RestClientException(String
+          .format("Something went wrong retrieving users, statuscode: [%s]",
+              userinfoReturn.getStatusCodeValue()));
+    }
+  }
+
+  /**
+   * Returns a keycloak userrepresentation object.
+   *
+   * @param username of the user to get info from.
+   * @return Keycloak UserRepresentation object.
+   */
+  public UserRepresentation getUserInfo(String username) {
+    AdminTokenResponseDto response = gson
+        .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
+    return getUserInfo(response.getAccessToken(), username);
+  }
+
   /**
    * Gets Keycloak Userrepresentation with all of a user's info based on the username.
    *
@@ -174,47 +217,6 @@ public class UserService {
     }
   }
 
-  /**
-   * Gets Keycloak Userrepresentation with info from all of the users.
-   *
-   * @param adminAccesstoken Admin service account token needed to authorize request.
-   * @return list of Keycloak Userrepresentation.
-   */
-  public List<UserRepresentation> getAllUserInfo(
-      String adminAccesstoken) {
-    var userinfoReturn = getAllUserInfoRest(adminAccesstoken);
-    if (userinfoReturn.getStatusCode() == HttpStatus.OK) {
-      var listType = new TypeToken<List<UserRepresentation>>() {
-      }.getType();
-      try {
-        ArrayList<UserRepresentation> result =
-            gson.fromJson(userinfoReturn.getBody(), listType);
-        if (result == null) {
-          throw new RestClientException("Result from GET on userinfo was null");
-        }
-        return result;
-      } catch (Exception e) {
-        throw new RestClientException(String
-            .format("Could not retrieve users from keycloak: %s", e.getMessage()));
-      }
-    } else {
-      throw new RestClientException(String
-          .format("Something went wrong retrieving users, statuscode: [%s]",
-              userinfoReturn.getStatusCodeValue()));
-    }
-  }
-/**
-   * Returns a keycloak userrepresentation object.
-   *
-   * @param username of the user to get info from.
-   * @return Keycloak UserRepresentation object.
-   */
-  public UserRepresentation getUserInfo(String username) {
-    AdminTokenResponseDto response = gson
-        .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
-    return getUserInfo(response.getAccessToken(), username);
-  }
-
   private ResponseEntity<String> getUserInfoRest(String accessToken, String username) {
     var headers = new HttpHeaders();
     headers.setBearerAuth(accessToken);
@@ -222,6 +224,7 @@ public class UserService {
     var uri = String.format("%s?username=%s", registerUri, username);
     return restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
   }
+
   private ResponseEntity<String> getAllUserInfoRest(String accessToken) {
     var headers = new HttpHeaders();
     headers.setBearerAuth(accessToken);
@@ -244,6 +247,11 @@ public class UserService {
     }
   }
 
+  /**
+   * Gets a list of all users in user repository.
+   *
+   * @return list of our domain users.
+   */
   public List<User> getUsers() {
     try {
       return userRepo.findAll();

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,9 +13,10 @@ import lombok.Setter;
  * Class that represents a key for the many to many table between organisation and user.
  */
 @Embeddable
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
+@AllArgsConstructor
 public class OrganisationUserKey implements Serializable {
 
   @Column(name = "user_id")
@@ -41,4 +43,5 @@ public class OrganisationUserKey implements Serializable {
   public int hashCode() {
     return Objects.hash(organisationId, userId);
   }
+
 }

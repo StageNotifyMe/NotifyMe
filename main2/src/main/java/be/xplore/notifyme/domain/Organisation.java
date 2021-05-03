@@ -1,5 +1,6 @@
 package be.xplore.notifyme.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -27,7 +28,8 @@ public class Organisation {
   private Long id;
   @Column(unique = true)
   private String name;
-  @OneToMany(mappedBy = "organisation",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "organisation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonManagedReference
   private List<OrganisationUser> users;
 
   public Organisation(String name) {

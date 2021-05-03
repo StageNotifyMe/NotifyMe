@@ -43,7 +43,7 @@ public class OrganisationService {
    *
    * @return a list of organisations.
    */
-  public List<Organisation> getOrganistions() {
+  public List<Organisation> getOrganisations() {
     try {
       return organisationRepo.findAll();
     } catch (RuntimeException e) {
@@ -74,14 +74,15 @@ public class OrganisationService {
   /**
    * Promotes a user to an organisation manager.
    *
-   * @param userId the id of the user to be promoted.
-   * @param orgId  the id of the organisation to promote the user in.
+   * @param username the username of the user to be promoted.
+   * @param orgId    the id of the organisation to promote the user in.
    */
-  public Organisation promoteUserToOrgManager(String userId, Long orgId) {
+  public Organisation promoteUserToOrgManager(String username, Long orgId) {
     try {
+      var user = userService.getUser(userService.getUserInfo(username).getId());
       var organisation = getOrganisation(orgId);
       organisation.getUsers()
-          .add(new OrganisationUser(organisation, userService.getUser(userId), true));
+          .add(new OrganisationUser(organisation, user, true));
       return organisationRepo.save(organisation);
     } catch (RuntimeException e) {
       log.error(e.getMessage());

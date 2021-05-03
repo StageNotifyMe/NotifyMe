@@ -148,7 +148,7 @@ class VenueServiceTest {
 
   private User getTestUser() {
     User user = new User();
-    user.setExternalOidcId("abcd");
+    user.setUserId("abcd");
     return user;
   }
 

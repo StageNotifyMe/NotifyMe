@@ -7,6 +7,7 @@ import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgPromotionDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.service.OrganisationService;
+import be.xplore.notifyme.service.TokenService;
 import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
 import com.google.gson.Gson;
@@ -40,6 +41,7 @@ public class AdminController {
   private final OrganisationService organisationService;
   private final VenueService venueService;
   private final UserService userService;
+  private final TokenService tokenService;
   private final Gson gson;
 
 
@@ -60,10 +62,27 @@ public class AdminController {
     return ResponseEntity.ok(organisationService.createOrganisation(name));
   }
 
+  /**
+   * API method that gets an organisation by id.
+   *
+   * @param id is the unique id of the organisation.
+   * @return a newly created organisation.
+   */
+  @GetMapping("/organisation")
+  public ResponseEntity<Organisation> getOrganisation(
+      @RequestParam("id") Long id) {
+    return ResponseEntity.ok(organisationService.getOrganisation(id));
+  }
+
+  /**
+   * Gets a list of all the organisations in the system.
+   *
+   * @return a list of organisation DTO
+   */
   @GetMapping("/organisations")
   public ResponseEntity<List<OrganisationDto>> getOrganisations() {
     var organisations = new ArrayList<OrganisationDto>();
-    for (var organisation : organisationService.getOrganistions()) {
+    for (var organisation : organisationService.getOrganisations()) {
       organisations.add(new OrganisationDto(organisation));
     }
     return ResponseEntity.ok(organisations);
@@ -76,6 +95,12 @@ public class AdminController {
     return venueService.createVenue(createVenueDto, principal);
   }
 
+  /**
+   * Promotes a user to manager of a certain organisation.
+   *
+   * @param userOrgPromotionDto which contains the username and org id.
+   * @return the organisation object containing the newly added manager.
+   */
   @PostMapping("/promoteUserToOrgMgr")
   public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(@RequestBody @NotNull
       UserOrgPromotionDto userOrgPromotionDto) {
@@ -84,11 +109,16 @@ public class AdminController {
             userOrgPromotionDto.getOrganisationId())));
   }
 
+  /**
+   * Gets a list of all keycloak users.
+   *
+   * @return a list of keycloak user representations in dto format.
+   */
   @GetMapping("/users")
   public ResponseEntity<List<UserRepresentationDto>> getUsers() {
     var userRepListDto = new ArrayList<UserRepresentationDto>();
     AdminTokenResponseDto response = gson
-        .fromJson(userService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
+        .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
     var userRepresentations = userService
         .getAllUserInfo(response.getAccessToken());
     for (var userRep : userRepresentations) {
