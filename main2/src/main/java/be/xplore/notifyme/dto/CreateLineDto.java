@@ -15,7 +15,4 @@ public class CreateLineDto {
   private int requiredStaff;
   private long facilityId;
   private long eventId;
-
-  //team is not yet created
-  //private Team team;
 }
