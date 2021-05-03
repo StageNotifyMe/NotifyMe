@@ -1,8 +1,10 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.dto.CreateEventDto;
+import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.service.EventService;
+import be.xplore.notifyme.service.FacilityService;
 import be.xplore.notifyme.service.LineService;
 import be.xplore.notifyme.service.VenueService;
 import javax.validation.constraints.NotBlank;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class VenueManagerController {
   private final EventService eventService;
   private final VenueService venueService;
+  private final FacilityService facilityService;
   private final LineService lineService;
 
 
@@ -42,5 +45,18 @@ public class VenueManagerController {
   public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto) {
     var line = lineService.createLine(createLineDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(line);
+  }
+
+  @PostMapping("/facility")
+  public ResponseEntity<Object> createFacility(
+      @RequestBody @NotNull CreateFacilityDto createFacilityDto) {
+    var facility = facilityService.createFacility(createFacilityDto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(facility);
+  }
+
+  @GetMapping("facilities")
+  public ResponseEntity<Object> getAllFacilitiesForVenue(@RequestParam @NotBlank long venueId) {
+    var facilities = facilityService.getAllFacilitesForVenue(venueId);
+    return ResponseEntity.ok(facilities);
   }
 }

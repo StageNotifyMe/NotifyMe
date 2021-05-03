@@ -31,4 +31,11 @@ public class Facility {
   private Venue venue;
   @OneToMany
   private List<Line> lines;
+
+  public Facility(String description, String location, int minimalStaff, int maximalStaff) {
+    this.description = description;
+    this.location = location;
+    this.minimalStaff = minimalStaff;
+    this.maximalStaff = maximalStaff;
+  }
 }
