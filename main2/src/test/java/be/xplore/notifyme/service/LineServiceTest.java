@@ -75,4 +75,17 @@ class LineServiceTest {
       lineService.createLine(createLineDto);
     });
   }
+
+  @Test
+  void createLineFacilityNotFound() {
+    when(eventService.getEvent(1L)).thenReturn(event);
+    doThrow(new CrudException("Could not find facility for id 1")).when(facilityService)
+        .getFacility(1L);
+    when(lineRepo.save(any(Line.class))).thenAnswer(
+        (Answer<Object>) invocation -> invocation.getArguments()[0]);
+
+    assertThrows(CrudException.class, () -> {
+      lineService.createLine(createLineDto);
+    });
+  }
 }
