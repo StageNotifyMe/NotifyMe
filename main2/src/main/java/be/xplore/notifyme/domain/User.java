@@ -1,9 +1,11 @@
 package be.xplore.notifyme.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
@@ -18,8 +20,9 @@ import lombok.Setter;
 public class User {
 
   @Id
-  private String externalOidcId;
-  @OneToMany(mappedBy = "user")
+  private String userId;
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonManagedReference
   private List<OrganisationUser> organisation;
   @ManyToMany(cascade = CascadeType.ALL)
   private List<Venue> venues = new LinkedList<>();
