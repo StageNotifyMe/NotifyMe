@@ -17,10 +17,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OrganisationUserKey implements Serializable {
 
-  @Column(name = "organisation_id")
-  private long organisationId;
   @Column(name = "user_id")
   private String userId;
+  @Column(name = "organisation_id")
+  private Long organisationId;
+  private static final long serialVersionUID = 1L;
+
 
   @Override
   public boolean equals(Object o) {
@@ -31,7 +33,7 @@ public class OrganisationUserKey implements Serializable {
       return false;
     }
     OrganisationUserKey that = (OrganisationUserKey) o;
-    return organisationId == that.organisationId
+    return organisationId.longValue() == that.organisationId.longValue()
         && userId.equals(that.userId);
   }
 

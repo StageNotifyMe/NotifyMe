@@ -2,6 +2,7 @@ package be.xplore.notifyme.domain;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -18,15 +19,21 @@ public class OrganisationUser {
   @EmbeddedId
   private OrganisationUserKey organisationUserKey;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("userId")
-  @JoinColumn(name = "user_id")
-  User user;
+  @JoinColumn(name="user_id")
+  private User user;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("organisationId")
   @JoinColumn(name = "organisation_id")
-  Organisation organisation;
+  private Organisation organisation;
 
-  private boolean isUserLeader;
+  private boolean isOrganisationLeader;
+
+  public OrganisationUser(Organisation organisation,User user,  boolean isOrganisationLeader) {
+    this.user = user;
+    this.organisation = organisation;
+    this.isOrganisationLeader = isOrganisationLeader;
+  }
 }

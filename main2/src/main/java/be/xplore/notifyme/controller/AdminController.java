@@ -1,10 +1,18 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.dto.AdminTokenResponseDto;
 import be.xplore.notifyme.dto.CreateVenueDto;
+import be.xplore.notifyme.dto.OrganisationDto;
+import be.xplore.notifyme.dto.UserOrgPromotionDto;
+import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.service.OrganisationService;
+import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
+import com.google.gson.Gson;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -31,6 +39,9 @@ public class AdminController {
 
   private final OrganisationService organisationService;
   private final VenueService venueService;
+  private final UserService userService;
+  private final Gson gson;
+
 
   @GetMapping("/adminTest")
   public ResponseEntity<String> adminInfoTest() {
@@ -49,11 +60,41 @@ public class AdminController {
     return ResponseEntity.ok(organisationService.createOrganisation(name));
   }
 
+  @GetMapping("/organisations")
+  public ResponseEntity<List<OrganisationDto>> getOrganisations() {
+    var organisations = new ArrayList<OrganisationDto>();
+    for (var organisation : organisationService.getOrganistions()) {
+      organisations.add(new OrganisationDto(organisation));
+    }
+    return ResponseEntity.ok(organisations);
+  }
+
   @PostMapping("/venue")
   public ResponseEntity<String> createVenue(
       @RequestBody @NotNull CreateVenueDto createVenueDto,
       Principal principal) {
     return venueService.createVenue(createVenueDto, principal);
+  }
+
+  @PostMapping("/promoteUserToOrgMgr")
+  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(@RequestBody @NotNull
+      UserOrgPromotionDto userOrgPromotionDto) {
+    return ResponseEntity.ok(new OrganisationDto(
+        organisationService.promoteUserToOrgManager(userOrgPromotionDto.getUsername(),
+            userOrgPromotionDto.getOrganisationId())));
+  }
+
+  @GetMapping("/users")
+  public ResponseEntity<List<UserRepresentationDto>> getUsers() {
+    var userRepListDto = new ArrayList<UserRepresentationDto>();
+    AdminTokenResponseDto response = gson
+        .fromJson(userService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
+    var userRepresentations = userService
+        .getAllUserInfo(response.getAccessToken());
+    for (var userRep : userRepresentations) {
+      userRepListDto.add(new UserRepresentationDto(userRep));
+    }
+    return ResponseEntity.ok(userRepListDto);
   }
 
 }
