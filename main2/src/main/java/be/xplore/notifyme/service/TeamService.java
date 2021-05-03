@@ -1,6 +1,5 @@
 package be.xplore.notifyme.service;
 
-import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.persistence.ITeamRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

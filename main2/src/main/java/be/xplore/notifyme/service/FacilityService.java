@@ -16,6 +16,12 @@ public class FacilityService {
   private final IFacilityRepo facilityRepo;
   private final VenueService venueService;
 
+  /**
+   * Gets a facility based on a facilityId.
+   *
+   * @param facilityId id of the facility to get.
+   * @return a facility object if successful, CrudException if not found.
+   */
   public Facility getFacility(long facilityId) {
     var facility = facilityRepo.findById(facilityId);
     if (facility.isPresent()) {
@@ -24,6 +30,13 @@ public class FacilityService {
     throw new CrudException("Could not find facility for id " + facilityId);
   }
 
+
+  /**
+   * Gets all facilities belonging to a venue.
+   *
+   * @param venueId of which you want to get the facilities.
+   * @return a list of facilities.
+   */
   public List<Facility> getAllFacilitesForVenue(long venueId) {
     try {
       var venue = venueService.getVenue(venueId);
@@ -34,6 +47,12 @@ public class FacilityService {
     }
   }
 
+  /**
+   * Creates a facility based on a createFacilityDto object.
+   *
+   * @param createFacilityDto dto with all relevant properties in a JSON-friendly format.
+   * @return the created facility.
+   */
   public Facility createFacility(CreateFacilityDto createFacilityDto) {
     try {
       var facility =

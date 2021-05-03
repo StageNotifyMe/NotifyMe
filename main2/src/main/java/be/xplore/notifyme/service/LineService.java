@@ -17,15 +17,18 @@ public class LineService {
   private final FacilityService facilityService;
   private final ILineRepo lineRepo;
 
+  /**
+   * Creates a line based on a createLineDto.
+   *
+   * @param createLineDto contains all relevant properties of a line in a JSON-friendly format.
+   * @return the created line.
+   */
   public Line createLine(CreateLineDto createLineDto) {
     try {
       var line = new Line(createLineDto.getNote(), createLineDto.getRequiredStaff());
       var event = eventService.getEvent(createLineDto.getEventId());
       var facility = facilityService.getFacility(createLineDto.getFacilityId());
-      var team = new Team();
-      line.setEvent(event);
-      line.setFacility(facility);
-      line.setTeam(team);
+      line = new Line(line, event, facility, new Team());
       line = lineRepo.save(line);
 
       return line;

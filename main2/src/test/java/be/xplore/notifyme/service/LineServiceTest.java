@@ -1,11 +1,11 @@
 package be.xplore.notifyme.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;

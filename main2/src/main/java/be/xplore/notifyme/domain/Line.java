@@ -37,4 +37,21 @@ public class Line {
     this.note = note;
     this.requiredStaff = requiredStaff;
   }
+
+  /**
+   * Constructor used to add an event, facility and team to a line with only base properties.
+   *
+   * @param line     the original line containing base properties.
+   * @param event    event to which the line belongs.
+   * @param facility for which the line is.
+   * @param team     who will man the line.
+   */
+  public Line(Line line, Event event, Facility facility, Team team) {
+    this.id = line.id;
+    this.note = line.note;
+    this.requiredStaff = line.requiredStaff;
+    this.event = event;
+    this.facility = facility;
+    this.team = team;
+  }
 }

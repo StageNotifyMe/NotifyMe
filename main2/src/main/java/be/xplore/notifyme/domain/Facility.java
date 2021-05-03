@@ -32,6 +32,14 @@ public class Facility {
   @OneToMany
   private List<Line> lines;
 
+  /**
+   * Contructor used to created a facility without relational properties.
+   *
+   * @param description  of the facility.
+   * @param location     of the facility within the venue.
+   * @param minimalStaff required to man the facility.
+   * @param maximalStaff to man the facility.
+   */
   public Facility(String description, String location, int minimalStaff, int maximalStaff) {
     this.description = description;
     this.location = location;

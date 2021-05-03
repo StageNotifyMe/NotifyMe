@@ -43,6 +43,13 @@ public class Organisation {
     this.users = new ArrayList<>();
   }
 
+  /**
+   * Compatibility contructor, might be removed later.
+   *
+   * @param id                of the user, same as in keycloak db.
+   * @param name              of the user.
+   * @param organisationUsers used to map of which organisations the user is a member.
+   */
   public Organisation(long id, String name, List<OrganisationUser> organisationUsers) {
     this.id = id;
     this.name = name;

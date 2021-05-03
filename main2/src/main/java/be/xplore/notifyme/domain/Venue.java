@@ -54,6 +54,15 @@ public class Venue {
     this.managers.add(user);
   }
 
+  /**
+   * Constructor for all properties except facilities.
+   *
+   * @param id          of the venue.
+   * @param name        of the venue.
+   * @param description of the venue.
+   * @param address     of the venue (street, postalcode, country).
+   * @param users       venue managers.
+   */
   public Venue(long id, String name, String description, Address address, List<User> users) {
     this.id = id;
     this.name = name;

@@ -37,11 +37,17 @@ public class EventService {
     }
   }
 
-  public Event getEvent(long eventId){
+  /**
+   * Gets an event object based on an eventId.
+   *
+   * @param eventId id of the event.
+   * @return event if successful, or CrudException if not found.
+   */
+  public Event getEvent(long eventId) {
     var event = eventRepo.findById(eventId);
-    if (event.isPresent()){
+    if (event.isPresent()) {
       return event.get();
     }
-    throw new CrudException("Could not retrieve event for id "+eventId);
+    throw new CrudException("Could not retrieve event for id " + eventId);
   }
 }
