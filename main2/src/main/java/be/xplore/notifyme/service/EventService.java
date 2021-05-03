@@ -36,4 +36,12 @@ public class EventService {
       throw e;
     }
   }
+
+  public Event getEvent(long eventId){
+    var event = eventRepo.findById(eventId);
+    if (event.isPresent()){
+      return event.get();
+    }
+    throw new CrudException("Could not retrieve event for id "+eventId);
+  }
 }
