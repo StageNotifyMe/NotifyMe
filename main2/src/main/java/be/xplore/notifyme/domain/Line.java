@@ -1,10 +1,12 @@
 package be.xplore.notifyme.domain;
 
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
@@ -30,6 +32,8 @@ public class Line {
   private Event event;
   @OneToOne(cascade = CascadeType.ALL)
   private Team team;
+  @ManyToMany
+  private List<User> lineManagers;
 
   public Line(String note, int requiredStaff) {
     this.note = note;

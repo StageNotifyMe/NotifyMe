@@ -9,6 +9,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IUserRepo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -184,6 +185,22 @@ public class UserService {
     AdminTokenResponseDto response = gson
         .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
     return getUserInfo(response.getAccessToken(), username);
+  }
+
+  /**
+   * Gets a user based on the authentication send with an API request (principal).
+   *
+   * @param principal of and API request.
+   * @return user object.
+   */
+  public User getUserFromPrincipal(Principal principal) {
+    try {
+      var decodedToken = tokenService.decodeToken(principal);
+      return this.getUser(decodedToken.getSubject());
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw e;
+    }
   }
 
   private ResponseEntity<String> getUserInfoRest(String accessToken, String username) {

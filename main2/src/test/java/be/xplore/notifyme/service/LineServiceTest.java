@@ -9,13 +9,17 @@ import static org.mockito.Mockito.when;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ILineRepo;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import org.junit.jupiter.api.Test;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +38,9 @@ class LineServiceTest {
   private FacilityService facilityService;
   @MockBean
   private ILineRepo lineRepo;
+  @MockBean
+  @Autowired
+  private UserService userService;
 
   private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
   private final Event event =
@@ -41,15 +48,18 @@ class LineServiceTest {
           new LinkedList<>());
   private final Facility facility =
       new Facility(1L, "descriptie", "locatie", 1, 20, new Venue(), new LinkedList<>());
+  private final User user = new User();
 
   @Test
   void createLineSuccessful() {
+    KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     when(eventService.getEvent(1L)).thenReturn(event);
     when(facilityService.getFacility(1L)).thenReturn(facility);
     when(lineRepo.save(any(Line.class))).thenAnswer(
         (Answer<Object>) invocation -> invocation.getArguments()[0]);
+    when(userService.getUserFromPrincipal(principal)).thenReturn(user);
 
-    var result = lineService.createLine(createLineDto);
+    var result = lineService.createLine(createLineDto, principal);
     assertEquals("note", result.getNote());
     assertEquals(10, result.getRequiredStaff());
     assertEquals(event.getId(), result.getEvent().getId());
@@ -58,18 +68,20 @@ class LineServiceTest {
 
   @Test
   void createLineEventNotFound() {
+    KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     doThrow(new CrudException("Could not find event for id 1")).when(eventService).getEvent(1L);
     when(facilityService.getFacility(1L)).thenReturn(facility);
     when(lineRepo.save(any(Line.class))).thenAnswer(
         (Answer<Object>) invocation -> invocation.getArguments()[0]);
 
     assertThrows(CrudException.class, () -> {
-      lineService.createLine(createLineDto);
+      lineService.createLine(createLineDto, principal);
     });
   }
 
   @Test
   void createLineFacilityNotFound() {
+    KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     when(eventService.getEvent(1L)).thenReturn(event);
     doThrow(new CrudException("Could not find facility for id 1")).when(facilityService)
         .getFacility(1L);
@@ -77,7 +89,7 @@ class LineServiceTest {
         (Answer<Object>) invocation -> invocation.getArguments()[0]);
 
     assertThrows(CrudException.class, () -> {
-      lineService.createLine(createLineDto);
+      lineService.createLine(createLineDto, principal);
     });
   }
 }

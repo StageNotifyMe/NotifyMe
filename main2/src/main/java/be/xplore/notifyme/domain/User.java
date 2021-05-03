@@ -26,5 +26,7 @@ public class User {
   private List<Venue> venues = new LinkedList<>();
   @ManyToMany
   private List<Team> teams;
+  @ManyToMany
+  private List<Line> lines;
 
 }

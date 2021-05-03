@@ -7,6 +7,7 @@ import be.xplore.notifyme.service.EventService;
 import be.xplore.notifyme.service.FacilityService;
 import be.xplore.notifyme.service.LineService;
 import be.xplore.notifyme.service.VenueService;
+import java.security.Principal;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,18 @@ public class VenueManagerController {
     return eventService.createEvent(createEventDto);
   }
 
+  @GetMapping("/event")
+  public ResponseEntity<Object> getEvent(@RequestParam long eventId) {
+    var result = eventService.getEvent(eventId);
+    return ResponseEntity.ok(result);
+  }
+
+  @GetMapping("/lines")
+  public ResponseEntity<Object> getAllLinesForEvent(@RequestParam long eventId) {
+    var result = lineService.getAllLinesByEvent(eventId);
+    return ResponseEntity.ok(result);
+  }
+
   @GetMapping("/venues")
   public ResponseEntity<Object> getAllVenuesForUser(@RequestParam @NotBlank String userId) {
     return ResponseEntity.ok(venueService.getVenuesForUser(userId));
@@ -48,8 +61,9 @@ public class VenueManagerController {
   }
 
   @PostMapping("/line")
-  public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto) {
-    var line = lineService.createLine(createLineDto);
+  public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto,
+                                           Principal principal) {
+    var line = lineService.createLine(createLineDto, principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(line);
   }
 
