@@ -129,7 +129,7 @@ public class UserService {
 
   private void createUserInDatabase(String id) {
     var user = new User();
-    user.setExternalOidcId(id);
+    user.setUserId(id);
     userRepo.save(user);
   }
 
@@ -142,6 +142,37 @@ public class UserService {
 
     HttpEntity<String> request = new HttpEntity<>(headers);
     restTemplate.put(uri, request);
+  }
+
+
+  /**
+   * Gets Keycloak Userrepresentation with info from all of the users.
+   *
+   * @param adminAccesstoken Admin service account token needed to authorize request.
+   * @return list of Keycloak Userrepresentation.
+   */
+  public List<UserRepresentation> getAllUserInfo(
+      String adminAccesstoken) {
+    var userinfoReturn = getAllUserInfoRest(adminAccesstoken);
+    if (userinfoReturn.getStatusCode() == HttpStatus.OK) {
+      var listType = new TypeToken<List<UserRepresentation>>() {
+      }.getType();
+      try {
+        ArrayList<UserRepresentation> result =
+            gson.fromJson(userinfoReturn.getBody(), listType);
+        if (result == null) {
+          throw new RestClientException("Result from GET on userinfo was null");
+        }
+        return result;
+      } catch (Exception e) {
+        throw new RestClientException(String
+            .format("Could not retrieve users from keycloak: %s", e.getMessage()));
+      }
+    } else {
+      throw new RestClientException(String
+          .format("Something went wrong retrieving users, statuscode: [%s]",
+              userinfoReturn.getStatusCodeValue()));
+    }
   }
 
   /**
@@ -211,6 +242,13 @@ public class UserService {
     return restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
   }
 
+  private ResponseEntity<String> getAllUserInfoRest(String accessToken) {
+    var headers = new HttpHeaders();
+    headers.setBearerAuth(accessToken);
+    HttpEntity<String> request = new HttpEntity<>(headers);
+    return restTemplate.exchange(registerUri, HttpMethod.GET, request, String.class);
+  }
+
   /**
    * Gets a user from the database based on ID.
    *
@@ -223,6 +261,20 @@ public class UserService {
       return user.get();
     } else {
       throw new CrudException(String.format("Could not retrieve user for id %s", id));
+    }
+  }
+
+  /**
+   * Gets a list of all users in user repository.
+   *
+   * @return list of our domain users.
+   */
+  public List<User> getUsers() {
+    try {
+      return userRepo.findAll();
+    } catch (RuntimeException ex) {
+      log.error(ex.getMessage());
+      throw new CrudException("Could not retrieve the list of users.");
     }
   }
 }
