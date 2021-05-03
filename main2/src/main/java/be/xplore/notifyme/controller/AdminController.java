@@ -70,7 +70,7 @@ public class AdminController {
   }
 
   @PostMapping("/venue")
-  public ResponseEntity<String> createVenue(
+  public ResponseEntity<Object> createVenue(
       @RequestBody @NotNull CreateVenueDto createVenueDto,
       Principal principal) {
     return venueService.createVenue(createVenueDto, principal);

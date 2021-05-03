@@ -48,12 +48,9 @@ public class UserService {
   private String tokenUri;
   @Value("${userservice.register.url}")
   private String registerUri;
-  @Value("${keycloak.resource}")
-  private String clientId;
-  @Value("${keycloak.credentials.secret}")
-  private String clientSecret;
   private final Gson gson;
   private final IUserRepo userRepo;
+  private final TokenService tokenService;
 
   /**
    * Sends the user login request to the keycloak server.
@@ -68,8 +65,7 @@ public class UserService {
     map.add("username", username);
     map.add(passwordConst, password);
     map.add("grant_type", passwordConst);
-    map.add("client_id", clientId);
-    map.add("client_secret", clientSecret);
+    map = tokenService.addAuthorization(map);
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, httpXformHeader);
 
     return restTemplate.postForEntity(tokenUri, request, String.class);
@@ -80,7 +76,7 @@ public class UserService {
    */
   public ResponseEntity register(UserRegistrationDto userRegistrationDto) {
     AdminTokenResponseDto response = gson
-        .fromJson(getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
+        .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
 
     var request = createHttpEntityForUserRegistry(response.getAccessToken(), userRegistrationDto);
 
@@ -136,21 +132,6 @@ public class UserService {
     userRepo.save(user);
   }
 
-  /**
-   * Gets a service account admin access token so spring can execute management actions on
-   * keycloak.
-   *
-   * @return ReponseEntity that if successful contains the accesstoken.
-   */
-  public ResponseEntity<String> getAdminAccesstoken() {
-    MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-    map.add("grant_type", "client_credentials");
-    map.add("client_id", clientId);
-    map.add("client_secret", clientSecret);
-    HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, httpXformHeader);
-
-    return restTemplate.postForEntity(tokenUri, request, String.class);
-  }
 
   private void sendEmailVerificationRequest(String adminAccessToken, String userId) {
     var headers = new HttpHeaders();
@@ -222,6 +203,17 @@ public class UserService {
               userinfoReturn.getStatusCodeValue()));
     }
   }
+/**
+   * Returns a keycloak userrepresentation object.
+   *
+   * @param username of the user to get info from.
+   * @return Keycloak UserRepresentation object.
+   */
+  public UserRepresentation getUserInfo(String username) {
+    AdminTokenResponseDto response = gson
+        .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
+    return getUserInfo(response.getAccessToken(), username);
+  }
 
   private ResponseEntity<String> getUserInfoRest(String accessToken, String username) {
     var headers = new HttpHeaders();
@@ -237,6 +229,12 @@ public class UserService {
     return restTemplate.exchange(registerUri, HttpMethod.GET, request, String.class);
   }
 
+  /**
+   * Gets a user from the database based on ID.
+   *
+   * @param id of the user to get.
+   * @return the user or throws exception if unable to find a user with given ID.
+   */
   public User getUser(String id) {
     var user = userRepo.findById(id);
     if (user.isPresent()) {
