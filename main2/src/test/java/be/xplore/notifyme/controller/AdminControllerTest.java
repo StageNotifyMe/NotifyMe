@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -110,6 +111,18 @@ class AdminControllerTest {
     when(userService.getAllUserInfo(anyString())).thenReturn(List.of(new UserRepresentation()));
 
     mockMvc.perform(get("/admin/users"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "adminUser", roles = {"user", "admin"})
+  void promoteUserToOrgMgr() throws Exception {
+    when(organisationService.promoteUserToOrgManager(anyString(), anyLong()))
+        .thenReturn(new Organisation());
+
+    mockMvc.perform(post("/admin/promoteUserToOrgMgr").content("{"
+        + "\n\"username\"" + ": \"testuser\"," +
+        "\n\"organisationId\"" + ": 1" + "\n}").contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
 }
