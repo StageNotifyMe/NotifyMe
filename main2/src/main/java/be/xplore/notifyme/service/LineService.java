@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class LineService {
-  private final VenueService venueService;
   private final EventService eventService;
   private final FacilityService facilityService;
   private final ILineRepo lineRepo;
