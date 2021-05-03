@@ -41,6 +41,12 @@ public class VenueManagerController {
     return ResponseEntity.ok(venueService.getVenuesForUser(userId));
   }
 
+  @GetMapping("/venue")
+  public ResponseEntity<Object> getVenue(@RequestParam long venueId) {
+    var venue = venueService.getVenue(venueId);
+    return ResponseEntity.ok(venue);
+  }
+
   @PostMapping("/line")
   public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto) {
     var line = lineService.createLine(createLineDto);
@@ -55,7 +61,7 @@ public class VenueManagerController {
   }
 
   @GetMapping("facilities")
-  public ResponseEntity<Object> getAllFacilitiesForVenue(@RequestParam @NotBlank long venueId) {
+  public ResponseEntity<Object> getAllFacilitiesForVenue(@RequestParam long venueId) {
     var facilities = facilityService.getAllFacilitesForVenue(venueId);
     return ResponseEntity.ok(facilities);
   }

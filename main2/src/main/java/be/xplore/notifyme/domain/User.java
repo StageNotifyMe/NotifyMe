@@ -1,5 +1,6 @@
 package be.xplore.notifyme.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
