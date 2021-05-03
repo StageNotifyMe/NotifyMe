@@ -68,7 +68,7 @@ class LineServiceTest {
 
   @Test
   void createLineEventNotFound() {
-    KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
+    final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     doThrow(new CrudException("Could not find event for id 1")).when(eventService).getEvent(1L);
     when(facilityService.getFacility(1L)).thenReturn(facility);
     when(lineRepo.save(any(Line.class))).thenAnswer(
@@ -81,7 +81,7 @@ class LineServiceTest {
 
   @Test
   void createLineFacilityNotFound() {
-    KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
+    final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     when(eventService.getEvent(1L)).thenReturn(event);
     doThrow(new CrudException("Could not find facility for id 1")).when(facilityService)
         .getFacility(1L);
