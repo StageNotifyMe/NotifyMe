@@ -105,7 +105,9 @@ class AdminControllerTest {
   @Test
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void getUsers() throws Exception {
-    String token = "{ \n\"access_token\"=\"token\",\n\"expires_in\"=200,\n\"refresh_expires_in\"=100,\n\"token_type\"=\"token\",\n\"not-before-policy\"=50,\n\"scope\"=\"roles, users\" }";
+    String token = "{ \n\"access_token\"=\"token\","
+        + "\n\"expires_in\"=200,\n\"refresh_expires_in\"=100,\n\"token_type\"=\"token\","
+        + "\n\"not-before-policy\"=50,\n\"scope\"=\"roles, users\" }";
     when(tokenService.getAdminAccesstoken())
         .thenReturn(ResponseEntity.ok(token));
     when(userService.getAllUserInfo(anyString())).thenReturn(List.of(new UserRepresentation()));
@@ -121,8 +123,8 @@ class AdminControllerTest {
         .thenReturn(new Organisation());
 
     mockMvc.perform(post("/admin/promoteUserToOrgMgr").content("{"
-        + "\n\"username\"" + ": \"testuser\"," +
-        "\n\"organisationId\"" + ": 1" + "\n}").contentType(MediaType.APPLICATION_JSON))
+        + "\n\"username\"" + ": \"testuser\","
+        + "\n\"organisationId\"" + ": 1" + "\n}").contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
 }

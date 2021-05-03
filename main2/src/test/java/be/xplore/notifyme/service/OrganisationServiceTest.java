@@ -90,11 +90,10 @@ class OrganisationServiceTest {
 
   @Test
   void promoteUserToOrgManager() {
-    String orgname = "testOrg";
-    Organisation testOrg = new Organisation(1L, orgname, new ArrayList<>());
+    Organisation testOrg = new Organisation(1L, "testOrg", new ArrayList<>());
     var userRepresentation = new UserRepresentation();
     userRepresentation.setId("TestId");
-    var user=new User();
+    var user = new User();
     user.setUserId("TestId");
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
     when(userService.getUserInfo(anyString())).thenReturn(userRepresentation);
@@ -105,17 +104,16 @@ class OrganisationServiceTest {
 
   @Test
   void promoteUserToOrgManagerDbNotWorking() {
-    String orgname = "testOrg";
-    Organisation testOrg = new Organisation(1L, orgname, new ArrayList<>());
+    Organisation testOrg = new Organisation(1L, "testorg", new ArrayList<>());
     var userRepresentation = new UserRepresentation();
     userRepresentation.setId("TestId");
-    var user=new User();
+    var user = new User();
     user.setUserId("TestId");
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
     when(userService.getUserInfo(anyString())).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
     when(organisationRepo.save(any())).thenThrow(new HibernateException("HBE"));
     assertThrows(CrudException.class, () ->
-        organisationService.promoteUserToOrgManager("testUser",1L));
+        organisationService.promoteUserToOrgManager("testUser", 1L));
   }
 }
