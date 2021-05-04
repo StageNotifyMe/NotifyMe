@@ -47,6 +47,12 @@ public class VenueManagerController {
     return ResponseEntity.ok(result);
   }
 
+  /**
+   * Gets all lines belonging to an event in an easily JSONable format.
+   *
+   * @param eventId id of the event.
+   * @return list of GetLineDto.
+   */
   @GetMapping("/lines")
   public ResponseEntity<Object> getAllLinesForEvent(@RequestParam long eventId) {
     var lines = lineService.getAllLinesByEvent(eventId);
