@@ -26,6 +26,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @SpringBootTest
 class FacilityServiceTest {
 
+  private final CreateFacilityDto createFacilityDto =
+      new CreateFacilityDto("descriptie", "locatie", 1, 10, 1L);
+  private final Venue venue =
+      new Venue(1L, "venue", "descriptie", new Address(), new LinkedList<>(), new LinkedList<>());
   @Autowired
   private FacilityService facilityService;
   @MockBean
@@ -33,11 +37,6 @@ class FacilityServiceTest {
   @MockBean
   @Autowired
   private VenueService venueService;
-
-  private final CreateFacilityDto createFacilityDto =
-      new CreateFacilityDto("descriptie", "locatie", 1, 10, 1L);
-  private final Venue venue =
-      new Venue(1L, "venue", "descriptie", new Address(), new LinkedList<>(), new LinkedList<>());
 
   @Test
   void createFacilitySuccessful() {
@@ -72,7 +71,7 @@ class FacilityServiceTest {
   @Test
   void getFacilityFail() {
     when(facilityRepo.findById(anyLong())).thenReturn(Optional.empty());
-    assertThrows(CrudException.class,()->{
+    assertThrows(CrudException.class, () -> {
       facilityService.getFacility(1L);
     });
   }
