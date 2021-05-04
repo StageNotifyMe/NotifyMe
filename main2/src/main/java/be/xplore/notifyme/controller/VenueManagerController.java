@@ -33,8 +33,9 @@ public class VenueManagerController {
 
 
   @PostMapping("/event")
-  public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto) {
-    return eventService.createEvent(createEventDto);
+  public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto,
+                                            Principal principal) {
+    return eventService.createEvent(createEventDto, principal);
   }
 
   @GetMapping("/event")

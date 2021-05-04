@@ -43,7 +43,7 @@ public class TokenService {
    * @param principal contains information about the user calling the method.
    * @return an IDToken containing user information.
    */
-  public IDToken getIDToken(Principal principal) {
+  public IDToken getIdToken(Principal principal) {
     try {
       var keycloakAuthenticationToken =
           (KeycloakAuthenticationToken) principal;

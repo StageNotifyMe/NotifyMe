@@ -3,8 +3,10 @@ package be.xplore.notifyme.service;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IEventRepo;
 import java.security.Principal;
+import java.util.LinkedList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ public class EventService {
   private final VenueService venueService;
   private final UserService userService;
   private final IEventRepo eventRepo;
+  private final TokenService tokenService;
 
   /**
    * Method to create an event from a createEventDTO (comes from API).
@@ -27,12 +30,13 @@ public class EventService {
    * @param createEventDto contains all the necessary data to create an event.
    * @return HTTP Response
    */
-  public ResponseEntity<Object> createEvent(CreateEventDto createEventDto) {
+  public ResponseEntity<Object> createEvent(CreateEventDto createEventDto, Principal principal) {
     try {
       var venue = venueService.getVenue(createEventDto.getVenueId());
       var event = new Event(createEventDto.getTitle(), createEventDto.getDescription(),
           createEventDto.getArtist(), createEventDto.getDateTime(), venue);
       eventRepo.save(event);
+      makeCreatorLineManager(event, principal);
       return ResponseEntity.status(HttpStatus.CREATED).build();
     } catch (CrudException e) {
       log.error(e.getMessage());
@@ -54,6 +58,36 @@ public class EventService {
     throw new CrudException("Could not retrieve event for id " + eventId);
   }
 
+  /**
+   * Checks whether a user is line manager of an event and returns the event if true.
+   *
+   * @param eventId   to get.
+   * @param principal to check.
+   * @return event if permission is ok.
+   */
+  public Event getEventAndVerifyLineManagerPermission(long eventId, Principal principal) {
+    var event = eventRepo.findById(eventId);
+    if (event.isPresent()) {
+      var eventObject = event.get();
+      var token = tokenService.getIdToken(principal);
+      var user = userService.getUser(token.getPreferredUsername());
+      if (eventObject.getLineManagers().contains(user)) {
+        return eventObject;
+      } else {
+        throw new UnauthorizedException(String.format("User %s is not a line manager of event %d",
+            token.getSubject(), eventId));
+      }
+    }
+    throw new CrudException("Could not retrieve event for id " + eventId);
+  }
+
+  /**
+   * A line manager can edit lines for a specific event,
+   * this method returns all the events where the line manager has access to the lines.
+   *
+   * @param userId of a line manager.
+   * @return list of all events accessible to the line manager.
+   */
   public List<Event> getAllEventsForLineManager(String userId) {
     try {
       var user = userService.getUser(userId);
@@ -64,8 +98,15 @@ public class EventService {
     }
   }
 
-  public void makeUserLineManager(Event event, Principal principal) {
+  /**
+   * Makes an event's creator, line manager of this event.
+   *
+   * @param event     to which the line manager should have access.
+   * @param principal authentication token.
+   */
+  private void makeCreatorLineManager(Event event, Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
+    event.setLineManagers(new LinkedList<>());
     event.getLineManagers().add(user);
     eventRepo.save(event);
   }

@@ -34,6 +34,8 @@ class OrganisationServiceTest {
   @MockBean
   private UserService userService;
 
+  private final Organisation testOrg = new Organisation(1L, "testOrg", new ArrayList<>());
+
   @Test
   void createOrganisation() {
     String orgname = "testOrg";
@@ -94,7 +96,6 @@ class OrganisationServiceTest {
   @Test
   void promoteUserToOrgManager() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
-    Organisation testOrg = new Organisation(1L, "testOrg", new ArrayList<>());
     var userRepresentation = new UserRepresentation();
     userRepresentation.setId("TestId");
     var user = new User();
@@ -109,7 +110,6 @@ class OrganisationServiceTest {
   @Test
   void promoteUserToOrgManagerDbNotWorking() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
-    Organisation testOrg = new Organisation(1L, "testorg", new ArrayList<>());
     var userRepresentation = new UserRepresentation();
     userRepresentation.setId("TestId");
     var user = new User();
@@ -119,6 +119,6 @@ class OrganisationServiceTest {
     when(userService.getUser(any())).thenReturn(user);
     when(organisationRepo.save(any())).thenThrow(new HibernateException("HBE"));
     assertThrows(CrudException.class, () ->
-        organisationService.promoteUserToOrgManager("testUser", 1L,principal));
+        organisationService.promoteUserToOrgManager("testUser", 1L, principal));
   }
 }

@@ -17,6 +17,7 @@ import be.xplore.notifyme.service.EventService;
 import be.xplore.notifyme.service.FacilityService;
 import be.xplore.notifyme.service.LineService;
 import be.xplore.notifyme.service.VenueService;
+import java.security.Principal;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void createEventSuccessful() throws Exception {
-    when(eventService.createEvent(any(CreateEventDto.class)))
+    when(eventService.createEvent(any(CreateEventDto.class), any(Principal.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
 
     mockMvc
@@ -69,7 +70,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "user", roles = {"user"})
   void unauthorizedCreate() throws Exception {
-    when(eventService.createEvent(any(CreateEventDto.class)))
+    when(eventService.createEvent(any(CreateEventDto.class), any(Principal.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
 
     mockMvc
@@ -81,7 +82,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void nullBodyCreate() throws Exception {
-    when(eventService.createEvent(any(CreateEventDto.class)))
+    when(eventService.createEvent(any(CreateEventDto.class), any((Principal.class))))
         .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
 
     mockMvc.perform(post("/vmanager/event"))

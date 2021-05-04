@@ -3,6 +3,7 @@ package be.xplore.notifyme.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +46,7 @@ class LineServiceTest {
   private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
   private final Event event =
       new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), new Venue(),
-          new LinkedList<>(),new LinkedList<>());
+          new LinkedList<>(), new LinkedList<>());
   private final Facility facility =
       new Facility(1L, "descriptie", "locatie", 1, 20, new Venue(), new LinkedList<>());
   private final User user = new User();
@@ -53,7 +54,8 @@ class LineServiceTest {
   @Test
   void createLineSuccessful() {
     KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
-    when(eventService.getEvent(1L)).thenReturn(event);
+    when(eventService.getEventAndVerifyLineManagerPermission(anyLong(), any(Principal.class)))
+        .thenReturn(event);
     when(facilityService.getFacility(1L)).thenReturn(facility);
     when(lineRepo.save(any(Line.class))).thenAnswer(
         (Answer<Object>) invocation -> invocation.getArguments()[0]);
@@ -69,7 +71,8 @@ class LineServiceTest {
   @Test
   void createLineEventNotFound() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
-    doThrow(new CrudException("Could not find event for id 1")).when(eventService).getEvent(1L);
+    doThrow(new CrudException("Could not find event for id 1")).when(eventService)
+        .getEventAndVerifyLineManagerPermission(anyLong(), any(Principal.class));
     when(facilityService.getFacility(1L)).thenReturn(facility);
     when(lineRepo.save(any(Line.class))).thenAnswer(
         (Answer<Object>) invocation -> invocation.getArguments()[0]);
