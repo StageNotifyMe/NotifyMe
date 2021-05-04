@@ -11,12 +11,15 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.hibernate.HibernateException;
 import org.junit.jupiter.api.Test;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.account.UserRepresentation;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,6 +33,8 @@ class OrganisationServiceTest {
   private IOrganisationRepo organisationRepo;
   @MockBean
   private UserService userService;
+
+  private final Organisation testOrg = new Organisation(1L, "testOrg", new ArrayList<>());
 
   @Test
   void createOrganisation() {
@@ -90,30 +95,30 @@ class OrganisationServiceTest {
 
   @Test
   void promoteUserToOrgManager() {
-    Organisation testOrg = new Organisation(1L, "testOrg", new ArrayList<>());
+    final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     var userRepresentation = new UserRepresentation();
     userRepresentation.setId("TestId");
     var user = new User();
     user.setUserId("TestId");
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
-    when(userService.getUserInfo(anyString())).thenReturn(userRepresentation);
+    when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
     when(organisationRepo.save(any())).thenReturn(testOrg);
-    assertEquals(testOrg, organisationService.promoteUserToOrgManager("testuser", 1L));
+    assertEquals(testOrg, organisationService.promoteUserToOrgManager("testuser", 1L, principal));
   }
 
   @Test
   void promoteUserToOrgManagerDbNotWorking() {
-    Organisation testOrg = new Organisation(1L, "testorg", new ArrayList<>());
+    final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     var userRepresentation = new UserRepresentation();
     userRepresentation.setId("TestId");
     var user = new User();
     user.setUserId("TestId");
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
-    when(userService.getUserInfo(anyString())).thenReturn(userRepresentation);
+    when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
     when(organisationRepo.save(any())).thenThrow(new HibernateException("HBE"));
     assertThrows(CrudException.class, () ->
-        organisationService.promoteUserToOrgManager("testUser", 1L));
+        organisationService.promoteUserToOrgManager("testUser", 1L, principal));
   }
 }

@@ -26,5 +26,9 @@ public class User {
   private List<OrganisationUser> organisation;
   @ManyToMany(cascade = CascadeType.ALL)
   private List<Venue> venues = new LinkedList<>();
+  @ManyToMany
+  private List<Team> teams;
+  @ManyToMany
+  private List<Event> events;
 
 }

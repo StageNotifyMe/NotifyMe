@@ -3,11 +3,14 @@ package be.xplore.notifyme.domain;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +29,13 @@ public class Event {
   private String description;
   private String artist;
   private LocalDateTime dateTime;
+
   @ManyToOne
   private Venue venue;
+  @OneToMany
+  private List<Line> lines;
+  @ManyToMany
+  private List<User> lineManagers;
 
   /**
    * Constructor for API POST methods. Converts a dateTime from ISO to LocalDateTime.

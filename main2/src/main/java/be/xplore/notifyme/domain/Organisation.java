@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,9 +32,24 @@ public class Organisation {
   @OneToMany(mappedBy = "organisation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
   private List<OrganisationUser> users;
+  @ManyToMany
+  private List<Team> teams;
 
   public Organisation(String name) {
     this.name = name;
     this.users = new ArrayList<>();
+  }
+
+  /**
+   * Compatibility contructor, might be removed later.
+   *
+   * @param id                of the user, same as in keycloak db.
+   * @param name              of the user.
+   * @param organisationUsers used to map of which organisations the user is a member.
+   */
+  public Organisation(long id, String name, List<OrganisationUser> organisationUsers) {
+    this.id = id;
+    this.name = name;
+    this.users = organisationUsers;
   }
 }
