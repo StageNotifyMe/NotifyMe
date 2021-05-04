@@ -32,8 +32,6 @@ public class Line {
   private Event event;
   @OneToOne(cascade = CascadeType.ALL)
   private Team team;
-  @ManyToMany
-  private List<User> lineManagers;
 
   public Line(String note, int requiredStaff) {
     this.note = note;

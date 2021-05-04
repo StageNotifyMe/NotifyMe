@@ -9,7 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ILineRepo extends JpaRepository<Line, Long> {
-  List<Line> getAllByLineManagersContains(User lineManager);
-
   List<Line> getAllByEvent(Event event);
 }

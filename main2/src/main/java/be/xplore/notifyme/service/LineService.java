@@ -1,5 +1,6 @@
 package be.xplore.notifyme.service;
 
+import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.dto.CreateLineDto;
@@ -28,7 +29,7 @@ public class LineService {
    * @param lineManagerUserId userId of a line manager.
    * @return list of lines.
    */
-  public List<Line> getAllLinesByLineManager(String lineManagerUserId) {
+  /*public List<Line> getAllLinesByLineManager(String lineManagerUserId) {
     try {
       var user = userService.getUser(lineManagerUserId);
       return lineRepo.getAllByLineManagersContains(user);
@@ -36,7 +37,7 @@ public class LineService {
       log.error(e.getMessage());
       throw e;
     }
-  }
+  }*/
 
   /**
    * Gets all lines belonging to an event.
@@ -86,19 +87,14 @@ public class LineService {
       var facility = facilityService.getFacility(createLineDto.getFacilityId());
       line = new Line(line, event, facility, new Team());
       line = lineRepo.save(line);
-      line = this.makeUserLineManager(line, principal);
+
+      event.setLineManagers(new LinkedList<>());
+      eventService.makeUserLineManager(event, principal);
 
       return line;
     } catch (CrudException e) {
       log.error(e.getMessage());
       throw e;
     }
-  }
-
-  private Line makeUserLineManager(Line line, Principal principal) {
-    var user = userService.getUserFromPrincipal(principal);
-    line.setLineManagers(new LinkedList<>());
-    line.getLineManagers().add(user);
-    return lineRepo.save(line);
   }
 }

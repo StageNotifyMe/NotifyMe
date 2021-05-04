@@ -29,6 +29,6 @@ public class User {
   @ManyToMany
   private List<Team> teams;
   @ManyToMany
-  private List<Line> lines;
+  private List<Event> events;
 
 }

@@ -45,7 +45,7 @@ class LineServiceTest {
   private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
   private final Event event =
       new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), new Venue(),
-          new LinkedList<>());
+          new LinkedList<>(),new LinkedList<>());
   private final Facility facility =
       new Facility(1L, "descriptie", "locatie", 1, 20, new Venue(), new LinkedList<>());
   private final User user = new User();

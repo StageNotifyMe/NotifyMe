@@ -4,6 +4,8 @@ import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IEventRepo;
+import java.security.Principal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class EventService {
 
   private final VenueService venueService;
+  private final UserService userService;
   private final IEventRepo eventRepo;
 
   /**
@@ -49,5 +52,21 @@ public class EventService {
       return event.get();
     }
     throw new CrudException("Could not retrieve event for id " + eventId);
+  }
+
+  public List<Event> getAllEventsForLineManager(String userId) {
+    try {
+      var user = userService.getUser(userId);
+      return eventRepo.getAllByLineManagersContains(user);
+    } catch (CrudException e) {
+      log.error(e.getMessage());
+      throw e;
+    }
+  }
+
+  public void makeUserLineManager(Event event, Principal principal) {
+    var user = userService.getUserFromPrincipal(principal);
+    event.getLineManagers().add(user);
+    eventRepo.save(event);
   }
 }
