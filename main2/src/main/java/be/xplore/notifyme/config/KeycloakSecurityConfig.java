@@ -32,6 +32,7 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     http.authorizeRequests().antMatchers("/admin/**").hasRole("admin");
     http.authorizeRequests().antMatchers("/user/**").permitAll();
     http.authorizeRequests().antMatchers("/vmanager/**").hasRole("venue_manager");
+    http.authorizeRequests().antMatchers("/lmanager/**").hasRole("line_manager");
     http.csrf().disable();
     http.cors();
   }
