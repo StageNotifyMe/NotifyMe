@@ -1,13 +1,16 @@
 package be.xplore.notifyme.controller;
 
+import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.dto.CreateLineDto;
+import be.xplore.notifyme.dto.GetLineDto;
 import be.xplore.notifyme.service.EventService;
 import be.xplore.notifyme.service.FacilityService;
 import be.xplore.notifyme.service.LineService;
 import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
+import java.util.LinkedList;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +49,12 @@ public class VenueManagerController {
 
   @GetMapping("/lines")
   public ResponseEntity<Object> getAllLinesForEvent(@RequestParam long eventId) {
-    var result = lineService.getAllLinesByEvent(eventId);
-    return ResponseEntity.ok(result);
+    var lines = lineService.getAllLinesByEvent(eventId);
+    var dtoLines = new LinkedList<GetLineDto>();
+    for (Line line : lines) {
+      dtoLines.add(new GetLineDto(line));
+    }
+    return ResponseEntity.ok(dtoLines);
   }
 
   @GetMapping("/venues")

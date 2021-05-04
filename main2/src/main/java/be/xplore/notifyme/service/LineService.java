@@ -27,15 +27,11 @@ public class LineService {
    * @param eventId id of an event.
    * @return list of lines.
    */
-  public List<GetLineDto> getAllLinesByEvent(long eventId) {
+  public List<Line> getAllLinesByEvent(long eventId) {
     try {
       var event = eventService.getEvent(eventId);
-      var lines = lineRepo.getAllByEvent(event);
-      var dtoLines = new LinkedList<GetLineDto>();
-      for (Line line : lines) {
-        dtoLines.add(new GetLineDto(line));
-      }
-      return dtoLines;
+      return lineRepo.getAllByEvent(event);
+
     } catch (CrudException e) {
       log.error(e.getMessage());
       throw e;

@@ -18,6 +18,8 @@ import be.xplore.notifyme.persistence.ILineRepo;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.mockito.Mockito;
@@ -50,6 +52,7 @@ class LineServiceTest {
   private final Facility facility =
       new Facility(1L, "descriptie", "locatie", 1, 20, new Venue(), new LinkedList<>());
   private final User user = new User();
+  private final Line line = new Line("note", 5);
 
   @Test
   void createLineSuccessful() {
@@ -93,6 +96,41 @@ class LineServiceTest {
 
     assertThrows(CrudException.class, () -> {
       lineService.createLine(createLineDto, principal);
+    });
+  }
+
+  @Test
+  void getAllLinesByEventSuccessful() {
+    List<Line> lineList = new LinkedList<>();
+    lineList.add(line);
+    when(eventService.getEvent(1L)).thenReturn(event);
+    when(lineRepo.getAllByEvent(event)).thenReturn(lineList);
+
+    assertEquals(lineList, lineService.getAllLinesByEvent(1L));
+  }
+
+  @Test
+  void getAllLinesByEventNotFound() {
+    doThrow(CrudException.class).when(eventService).getEvent(1L);
+
+    assertThrows(CrudException.class, () -> {
+      lineService.getAllLinesByEvent(1L);
+    });
+  }
+
+  @Test
+  void getLineSuccessful() {
+    when(lineRepo.findById(anyLong())).thenReturn(Optional.of(line));
+
+    assertEquals(line, lineService.getLine(1L));
+  }
+
+  @Test
+  void getLineNotFound() {
+    when(lineRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+    assertThrows(CrudException.class, () -> {
+      lineService.getLine(1L);
     });
   }
 }
