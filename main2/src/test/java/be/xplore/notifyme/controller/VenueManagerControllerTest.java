@@ -8,11 +8,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.service.EventService;
+import be.xplore.notifyme.service.FacilityService;
 import be.xplore.notifyme.service.LineService;
 import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
@@ -41,12 +43,17 @@ class VenueManagerControllerTest {
   private LineService lineService;
   @MockBean
   private VenueService venueService;
+  @MockBean
+  private FacilityService facilityService;
   private final String body =
       "{\"title\": \"Evenement\",\n\"description\":\"beschrijving\",\n"
           + " \"artist\":\"artiest\",\n\"dateTime\":\"2021-04-30T06:45:30\",\n\"venueId\":1\n}";
   private final String lineBody =
-      "{\"note\": \"Eenlijn\",\n\"requiredStaff\":10,\n"
+      "{\"note\": \"Testline\",\n\"requiredStaff\":10,\n"
           + " \"facilityId\":1,\n\"eventId\":1}";
+  private final String facilityBody =
+      "{\"description\": \"TestFacility\",\n\"location\":\"TestLocation\",\n"
+          + " \"minimalStaff\":10,\n\"maximalStaff\":15,\n\"maximalStaff\":1}";
 
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
@@ -180,5 +187,63 @@ class VenueManagerControllerTest {
         .perform(post("/vmanager/line").contentType(MediaType.APPLICATION_JSON)
             .content(lineBody))
         .andExpect(MockMvcResultMatchers.status().isCreated());
+  }
+
+  @Test
+  @WithMockUser(username = "vmanager", roles = {"venue_manager"})
+  void postLineUnsuccessful() throws Exception {
+    when(lineService.createLine(any(), any()))
+        .thenThrow(new CrudException("Could not create line"));
+
+    mockMvc
+        .perform(post("/vmanager/line").contentType(MediaType.APPLICATION_JSON)
+            .content(lineBody))
+        .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+  }
+
+  @Test
+  @WithMockUser(username = "vmanager", roles = {"venue_manager"})
+  void postFacilitySuccessful() throws Exception {
+    when(facilityService.createFacility(any()))
+        .thenReturn(new Facility());
+
+    mockMvc
+        .perform(post("/vmanager/facility").contentType(MediaType.APPLICATION_JSON)
+            .content(facilityBody))
+        .andExpect(MockMvcResultMatchers.status().isCreated());
+  }
+
+  @Test
+  @WithMockUser(username = "vmanager", roles = {"venue_manager"})
+  void postFacilityUnuccessful() throws Exception {
+    when(facilityService.createFacility(any()))
+        .thenThrow(new CrudException("Could not create facility."));
+
+    mockMvc
+        .perform(post("/vmanager/facility").contentType(MediaType.APPLICATION_JSON)
+            .content(facilityBody))
+        .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+  }
+
+  @Test
+  @WithMockUser(username = "vmanager", roles = {"venue_manager"})
+  void getFacilitiesSuccessful() throws Exception {
+    when(facilityService.getAllFacilitesForVenue(anyLong()))
+        .thenReturn(new ArrayList<>());
+
+    mockMvc
+        .perform(get("/vmanager/facilities?venueId=1"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "vmanager", roles = {"venue_manager"})
+  void getFacilitiesUnuccessful() throws Exception {
+    when(facilityService.getAllFacilitesForVenue(anyLong()))
+        .thenThrow(new CrudException("Could not get facilities for venue."));
+
+    mockMvc
+        .perform(get("/vmanager/facilities?venueId=1"))
+        .andExpect(MockMvcResultMatchers.status().is4xxClientError());
   }
 }
