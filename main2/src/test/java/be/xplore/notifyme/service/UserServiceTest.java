@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import be.xplore.notifyme.dto.AdminTokenResponseDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
-import be.xplore.notifyme.persistence.IUserRepo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
@@ -34,13 +33,17 @@ class UserServiceTest {
   private Gson gson;
   @Autowired
   private UserService userService;
+  @Autowired
+  private TokenService tokenService;
+  @Autowired
+  private KeycloakCommunicationService keycloakCommunicationService;
 
   @Test
   void loginSuccess() {
     String infoString = "userinfo";
     when(restTemplate.postForEntity(anyString(), any(), any()))
         .thenReturn(ResponseEntity.ok(infoString));
-    assertEquals(infoString, userService.login("user", "User123!").getBody());
+    assertEquals(infoString, keycloakCommunicationService.login("user", "User123!").getBody());
   }
 
   @Test
@@ -48,7 +51,9 @@ class UserServiceTest {
     int statusCode = 401;
     when(restTemplate.postForEntity(anyString(), any(), any()))
         .thenReturn(ResponseEntity.status(statusCode).build());
-    assertEquals(statusCode, userService.login("user", "User123!").getStatusCode().value());
+    assertEquals(statusCode,
+        keycloakCommunicationService.login("user", "User123!")
+            .getStatusCode().value());
   }
 
   private ArrayList<UserRepresentation> getTestUserRepresentation(String id) {

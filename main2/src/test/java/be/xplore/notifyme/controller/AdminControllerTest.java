@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.TokenService;
 import be.xplore.notifyme.service.UserService;
@@ -36,6 +37,8 @@ class AdminControllerTest {
   private OrganisationService organisationService;
   @MockBean
   private TokenService tokenService;
+  @MockBean
+  private KeycloakCommunicationService keycloakCommunicationService;
   @MockBean
   private UserService userService;
 
@@ -110,8 +113,8 @@ class AdminControllerTest {
     String token = "{ \n\"access_token\"=\"token\","
         + "\n\"expires_in\"=200,\n\"refresh_expires_in\"=100,\n\"token_type\"=\"token\","
         + "\n\"not-before-policy\"=50,\n\"scope\"=\"roles, users\" }";
-    when(tokenService.getAdminAccesstoken())
-        .thenReturn(ResponseEntity.ok(token));
+    when(keycloakCommunicationService.getAdminAccesstoken())
+        .thenReturn(token);
     when(userService.getAllUserInfo(anyString())).thenReturn(List.of(new UserRepresentation()));
 
     mockMvc.perform(get("/admin/users"))

@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import be.xplore.notifyme.dto.UserRegistrationDto;
+import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,13 @@ class UserControllerTest {
   private MockMvc mockMvc;
   @MockBean
   private UserService userService;
+  @MockBean
+  private KeycloakCommunicationService keycloakCommunicationService;
 
   @Test
   void getAccessTokenForUserValid() throws Exception {
-    when(userService.login(anyString(), anyString())).thenReturn(ResponseEntity.ok("userinfo"));
+    when(keycloakCommunicationService.login(anyString(), anyString()))
+        .thenReturn(ResponseEntity.ok("userinfo"));
     mockMvc.perform(get("/user/token?username=test&password=test"))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().string("userinfo"));
@@ -37,7 +41,7 @@ class UserControllerTest {
 
   @Test
   void getAccessTokenForUserInvalid() throws Exception {
-    when(userService.login(anyString(), anyString()))
+    when(keycloakCommunicationService.login(anyString(), anyString()))
         .thenReturn(ResponseEntity.status(401).build());
     mockMvc.perform(get("/user/token?username=test&password=test"))
         .andExpect(MockMvcResultMatchers.status().isUnauthorized());

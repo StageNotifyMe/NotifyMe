@@ -1,6 +1,8 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.dto.UserRegistrationDto;
+import be.xplore.notifyme.service.KeycloakCommunicationService;
+import be.xplore.notifyme.service.TokenService;
 import be.xplore.notifyme.service.UserService;
 import java.security.Principal;
 import javax.validation.constraints.NotBlank;
@@ -22,10 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
+  private final KeycloakCommunicationService keycloakCommunicationService;
 
   @GetMapping(value = "/token")
   public ResponseEntity<String> getAccessTokenForUser(String username, String password) {
-    return userService.login(username, password);
+    return keycloakCommunicationService.login(username, password);
   }
 
   /**
