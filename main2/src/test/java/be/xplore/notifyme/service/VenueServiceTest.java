@@ -43,7 +43,7 @@ class VenueServiceTest {
   void createVenueSuccessful() {
     Principal mockPrincipal = Mockito.mock(Principal.class);
     IDToken mockIdToken = getMockIdToken();
-    when(tokenService.decodeToken(mockPrincipal)).thenReturn(mockIdToken);
+    when(tokenService.getIDToken(mockPrincipal)).thenReturn(mockIdToken);
 
     User user = getTestUser();
     when(userService.getUser("abcd")).thenReturn(user);
@@ -56,7 +56,7 @@ class VenueServiceTest {
   void createVenueUserNotFound() {
     Principal mockPrincipal = Mockito.mock(Principal.class);
     IDToken mockIdToken = getMockIdToken();
-    when(tokenService.decodeToken(mockPrincipal)).thenReturn(mockIdToken);
+    when(tokenService.getIDToken(mockPrincipal)).thenReturn(mockIdToken);
     CreateVenueDto cvdto = getTestCreateVenueDto();
 
     doThrow(new CrudException(
@@ -73,7 +73,7 @@ class VenueServiceTest {
     CreateVenueDto cvdto = getTestCreateVenueDto();
 
     doThrow(new TokenHandlerException(String.format("Could not convert %s object to IDToken object",
-        mockPrincipal.getClass().getName()))).when(tokenService).decodeToken(mockPrincipal);
+        mockPrincipal.getClass().getName()))).when(tokenService).getIDToken(mockPrincipal);
 
     assertThrows(TokenHandlerException.class, () ->
         venueService.createVenue(cvdto, mockPrincipal));

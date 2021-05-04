@@ -1,5 +1,6 @@
 package be.xplore.notifyme.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -11,6 +12,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.TokenService;
 import be.xplore.notifyme.service.UserService;
+import java.security.Principal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
@@ -119,7 +121,7 @@ class AdminControllerTest {
   @Test
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void promoteUserToOrgMgr() throws Exception {
-    when(organisationService.promoteUserToOrgManager(anyString(), anyLong()))
+    when(organisationService.promoteUserToOrgManager(anyString(), anyLong(), any(Principal.class)))
         .thenReturn(new Organisation());
 
     mockMvc.perform(post("/admin/promoteUserToOrgMgr").content("{"

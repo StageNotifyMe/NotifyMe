@@ -2,6 +2,7 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.service.UserService;
+import java.security.Principal;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class UserController {
   }
 
   @GetMapping(value = "/userInfo")
-  public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username) {
-    return ResponseEntity.ok(userService.getUserInfo(username));
+  public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username, Principal principal) {
+    return ResponseEntity.ok(userService.getUserInfo(username, principal));
   }
 }
