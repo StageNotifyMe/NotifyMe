@@ -18,6 +18,7 @@ import be.xplore.notifyme.persistence.IEventRepo;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -113,6 +114,38 @@ class EventServiceTest {
       eventService.getEventAndVerifyLineManagerPermission(1L, principal);
     });
 
+  }
+
+  @Test
+  void getEventAndVerifyLineManagerPermissionNotfound() {
+    final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
+    final IDToken token = Mockito.mock(IDToken.class);
+    when(eventRepo.findById(1L)).thenReturn(Optional.empty());
+
+    assertThrows(CrudException.class, () -> {
+      eventService.getEventAndVerifyLineManagerPermission(1L, principal);
+    });
+
+  }
+
+  @Test
+  void getAllEventsForLineManagerSuccessful() {
+    List<Event> eventList = new LinkedList<>();
+    eventList.add(testEvent);
+    when(userService.getUser("testUser")).thenReturn(testUser);
+    when(testUser.getUserId()).thenReturn("testUser");
+    when(eventRepo.getAllByLineManagersContains(testUser)).thenReturn(eventList);
+
+    assertEquals(eventList, eventService.getAllEventsForLineManager("testUser"));
+  }
+
+  @Test
+  void getAllEventsForLineManagerNotFound() {
+    doThrow(CrudException.class).when(userService).getUser("testUser");
+
+    assertThrows(CrudException.class, () -> {
+      eventService.getAllEventsForLineManager("testUser");
+    });
   }
 
 
