@@ -38,7 +38,8 @@ class LineManagerControllerTest {
   @Test
   @WithMockUser(username = "lmanager", roles = {"user", "line_manager"})
   void getAllEventsForLineManagerFail() throws Exception {
-    when(eventService.getAllEventsForLineManager(anyString())).thenThrow(new CrudException("Could not get events for line manager."));
+    when(eventService.getAllEventsForLineManager(anyString()))
+        .thenThrow(new CrudException("Could not get events for line manager."));
 
     mockMvc
         .perform(get("/lmanager/events?userId=testUser"))
