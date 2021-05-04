@@ -1,6 +1,5 @@
 package be.xplore.notifyme.service;
 
-import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.dto.CreateLineDto;
@@ -20,24 +19,7 @@ import org.springframework.stereotype.Service;
 public class LineService {
   private final EventService eventService;
   private final FacilityService facilityService;
-  private final UserService userService;
   private final ILineRepo lineRepo;
-
-  /**
-   * Gets all lines belonging to a line manager.
-   *
-   * @param lineManagerUserId userId of a line manager.
-   * @return list of lines.
-   */
-  /*public List<Line> getAllLinesByLineManager(String lineManagerUserId) {
-    try {
-      var user = userService.getUser(lineManagerUserId);
-      return lineRepo.getAllByLineManagersContains(user);
-    } catch (CrudException e) {
-      log.error(e.getMessage());
-      throw e;
-    }
-  }*/
 
   /**
    * Gets all lines belonging to an event.
@@ -83,13 +65,11 @@ public class LineService {
   public Line createLine(CreateLineDto createLineDto, Principal principal) {
     try {
       var line = new Line(createLineDto.getNote(), createLineDto.getRequiredStaff());
-      var event = eventService.getEvent(createLineDto.getEventId());
+      var event = eventService
+          .getEventAndVerifyLineManagerPermission(createLineDto.getEventId(), principal);
       var facility = facilityService.getFacility(createLineDto.getFacilityId());
       line = new Line(line, event, facility, new Team());
       line = lineRepo.save(line);
-
-      event.setLineManagers(new LinkedList<>());
-      eventService.makeUserLineManager(event, principal);
 
       return line;
     } catch (CrudException e) {

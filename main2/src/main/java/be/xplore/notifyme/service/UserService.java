@@ -214,9 +214,10 @@ public class UserService {
    * @return Keycloak UserRepresentation object.
    */
   public UserRepresentation getUserInfo(String username, Principal principal) {
-    var token = tokenService.getIDToken(principal);
+    var token = tokenService.getIdToken(principal);
     var securityContext = tokenService.getSecurityContext(principal);
-    if (token.getPreferredUsername().equals(username) || securityContext.getAuthorizationContext().hasScopePermission("admin")) {
+    if (token.getPreferredUsername().equals(username)
+        || securityContext.getAuthorizationContext().hasScopePermission("admin")) {
       AdminTokenResponseDto response = gson
           .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
       return getUserInfo(response.getAccessToken(), username);
@@ -233,7 +234,7 @@ public class UserService {
    */
   public User getUserFromPrincipal(Principal principal) {
     try {
-      var decodedToken = tokenService.getIDToken(principal);
+      var decodedToken = tokenService.getIdToken(principal);
       return this.getUser(decodedToken.getSubject());
     } catch (Exception e) {
       log.error(e.getMessage());
