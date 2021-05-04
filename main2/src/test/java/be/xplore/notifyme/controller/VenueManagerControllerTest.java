@@ -95,8 +95,7 @@ class VenueManagerControllerTest {
         .thenReturn(new Event());
 
     mockMvc
-        .perform(post("/vmanager/event").header("Content-Type", "application/json")
-            .content(body))
+        .perform(get("/vmanager/event?eventId=1"))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
 
@@ -106,7 +105,7 @@ class VenueManagerControllerTest {
     when(eventService.getEvent(anyLong())).thenThrow(new CrudException("Could not retrieve event"));
 
     mockMvc
-        .perform(get("/vmanager/event"))
+        .perform(get("/vmanager/event?eventId=1"))
         .andExpect(MockMvcResultMatchers.status().is4xxClientError());
   }
 
