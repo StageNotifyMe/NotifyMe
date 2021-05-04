@@ -6,6 +6,7 @@ import be.xplore.notifyme.dto.CredentialRepresentationDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -212,10 +213,16 @@ public class UserService {
    * @param username of the user to get info from.
    * @return Keycloak UserRepresentation object.
    */
-  public UserRepresentation getUserInfo(String username) {
-    AdminTokenResponseDto response = gson
-        .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
-    return getUserInfo(response.getAccessToken(), username);
+  public UserRepresentation getUserInfo(String username, Principal principal) {
+    var token = tokenService.getIDToken(principal);
+    var securityContext = tokenService.getSecurityContext(principal);
+    if (token.getPreferredUsername().equals(username) || securityContext.getAuthorizationContext().hasScopePermission("admin")) {
+      AdminTokenResponseDto response = gson
+          .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
+      return getUserInfo(response.getAccessToken(), username);
+    } else {
+      throw new UnauthorizedException("User can only get info about themself");
+    }
   }
 
   /**
@@ -226,7 +233,7 @@ public class UserService {
    */
   public User getUserFromPrincipal(Principal principal) {
     try {
-      var decodedToken = tokenService.decodeToken(principal);
+      var decodedToken = tokenService.getIDToken(principal);
       return this.getUser(decodedToken.getSubject());
     } catch (Exception e) {
       log.error(e.getMessage());

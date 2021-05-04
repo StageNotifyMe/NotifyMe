@@ -103,10 +103,10 @@ public class AdminController {
    */
   @PostMapping("/promoteUserToOrgMgr")
   public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(@RequestBody @NotNull
-      UserOrgPromotionDto userOrgPromotionDto) {
+      UserOrgPromotionDto userOrgPromotionDto, Principal principal) {
     return ResponseEntity.ok(new OrganisationDto(
         organisationService.promoteUserToOrgManager(userOrgPromotionDto.getUsername(),
-            userOrgPromotionDto.getOrganisationId())));
+            userOrgPromotionDto.getOrganisationId(), principal)));
   }
 
   /**

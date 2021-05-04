@@ -4,6 +4,7 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUser;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
+import java.security.Principal;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,9 +78,9 @@ public class OrganisationService {
    * @param username the username of the user to be promoted.
    * @param orgId    the id of the organisation to promote the user in.
    */
-  public Organisation promoteUserToOrgManager(String username, Long orgId) {
+  public Organisation promoteUserToOrgManager(String username, Long orgId, Principal principal) {
     try {
-      var user = userService.getUser(userService.getUserInfo(username).getId());
+      var user = userService.getUser(userService.getUserInfo(username, principal).getId());
       var organisation = getOrganisation(orgId);
       organisation.getUsers()
           .add(new OrganisationUser(organisation, user, true));

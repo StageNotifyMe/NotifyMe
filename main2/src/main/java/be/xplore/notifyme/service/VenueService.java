@@ -40,7 +40,7 @@ public class VenueService {
    */
   public ResponseEntity<Object> createVenue(CreateVenueDto createVenueDto, Principal principal) {
     try {
-      var accessToken = tokenService.decodeToken(principal);
+      var accessToken = tokenService.getIDToken(principal);
       var user = userService.getUser(accessToken.getSubject());
       var address =
           new Address(createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
