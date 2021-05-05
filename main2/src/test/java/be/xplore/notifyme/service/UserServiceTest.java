@@ -34,8 +34,6 @@ class UserServiceTest {
   @Autowired
   private UserService userService;
   @Autowired
-  private TokenService tokenService;
-  @Autowired
   private KeycloakCommunicationService keycloakCommunicationService;
 
   @Test
