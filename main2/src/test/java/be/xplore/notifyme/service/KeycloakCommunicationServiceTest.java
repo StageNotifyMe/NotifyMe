@@ -132,27 +132,31 @@ class KeycloakCommunicationServiceTest {
   }
 
   @Test
-  void registerFailNoUserFoundInDB() {
-    final UserRegistrationDto userRegistrationDto =
-        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
+  void sendEmailVerificationRequestSuccessful() {
+    AdminTokenResponseDto tokenResponse = mock(AdminTokenResponseDto.class);
+    ResponseEntity restResponse = mock(ResponseEntity.class);
+    doNothing().when(restTemplate).put(anyString(), any());
+    when(restTemplate.postForEntity(anyString(), any(), eq(String.class))).thenReturn(restResponse);
+    when(restResponse.getBody()).thenReturn("body");
+    when(gson.fromJson(anyString(), eq(AdminTokenResponseDto.class))).thenReturn(tokenResponse);
+    when(tokenResponse.getAccessToken()).thenReturn("token");
+    assertDoesNotThrow(() -> {
+      keycloakCommunicationService.sendEmailVerificationRequest("user");
+    });
+  }
 
-    when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
-        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
-    when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
-        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("someResponseToken"));
-    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
-        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("[]"));
-
-    when(gson.fromJson(anyString(), eq(AdminTokenResponseDto.class)))
-        .thenReturn(new AdminTokenResponseDto("a", 10, 10, "Access", 5, "scopes"));
-    when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
-
-    Type listType = new TypeToken<List<UserRepresentation>>() {
-    }.getType();
-    when(gson.fromJson("[]", listType)).thenReturn(null);
+  @Test
+  void sendEmailVerificationRequestPutFails() {
+    AdminTokenResponseDto tokenResponse = mock(AdminTokenResponseDto.class);
+    ResponseEntity restResponse = mock(ResponseEntity.class);
+    when(restTemplate.postForEntity(anyString(), any(), eq(String.class))).thenReturn(restResponse);
+    when(restResponse.getBody()).thenReturn("body");
+    when(gson.fromJson(anyString(), eq(AdminTokenResponseDto.class))).thenReturn(tokenResponse);
+    when(tokenResponse.getAccessToken()).thenReturn("token");
+    doThrow(RuntimeException.class).when(restTemplate).put(anyString(), any());
 
     assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.register(userRegistrationDto);
+      keycloakCommunicationService.sendEmailVerificationRequest("user");
     });
   }
 

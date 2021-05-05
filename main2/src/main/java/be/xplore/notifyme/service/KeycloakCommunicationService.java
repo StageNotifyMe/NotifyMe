@@ -100,13 +100,14 @@ public class KeycloakCommunicationService {
    * @param userId the id of the new user.
    */
   public void sendEmailVerificationRequest(String userId) {
-    var headers = new HttpHeaders();
-    headers.setBearerAuth(getAdminAccesstoken());
-
-    var uri = String.format("%s/%s/send-verify-email", registerUri, userId);
-
-    HttpEntity<String> request = new HttpEntity<>(headers);
-    restTemplate.put(uri, request);
+    try {
+      var request = createJsonHttpEntity(getAdminAccesstoken());
+      var uri = String.format("%s/%s/send-verify-email", registerUri, userId);
+      restTemplate.put(uri, request);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw new CrudException("Could not send verification email: " + e.getMessage());
+    }
   }
 
   /**
