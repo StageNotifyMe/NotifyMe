@@ -8,10 +8,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
-import be.xplore.notifyme.service.TokenService;
 import be.xplore.notifyme.service.UserService;
+import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -35,9 +38,11 @@ class AdminControllerTest {
   @MockBean
   private OrganisationService organisationService;
   @MockBean
-  private TokenService tokenService;
+  private KeycloakCommunicationService keycloakCommunicationService;
   @MockBean
   private UserService userService;
+  @MockBean
+  private VenueService venueService;
 
   @Test
   @WithMockUser
@@ -110,8 +115,8 @@ class AdminControllerTest {
     String token = "{ \n\"access_token\"=\"token\","
         + "\n\"expires_in\"=200,\n\"refresh_expires_in\"=100,\n\"token_type\"=\"token\","
         + "\n\"not-before-policy\"=50,\n\"scope\"=\"roles, users\" }";
-    when(tokenService.getAdminAccesstoken())
-        .thenReturn(ResponseEntity.ok(token));
+    when(keycloakCommunicationService.getAdminAccesstoken())
+        .thenReturn(token);
     when(userService.getAllUserInfo(anyString())).thenReturn(List.of(new UserRepresentation()));
 
     mockMvc.perform(get("/admin/users"))
@@ -128,5 +133,23 @@ class AdminControllerTest {
         + "\n\"username\"" + ": \"testuser\","
         + "\n\"organisationId\"" + ": 1" + "\n}").contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "adminUser", roles = {"user", "admin"})
+  void createVenue() throws Exception {
+    when(venueService.createVenue(any(), any()))
+        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).body(new Venue()));
+
+    mockMvc.perform(post("/admin/venue").content("{"
+        + "\n\"name\"" + ": \"testname\","
+        + "\n\"description\"" + ": \"testdescription\","
+        + "\n\"streetAndNumber\"" + ": \"Teststraat 100\","
+        + "\n\"postalCode\"" + ": \"2000\","
+        + "\n\"village\"" + ": \"testVillage\","
+        + "\n\"country\"" + ": \"Belgium\""
+        + "\n}")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.status().isCreated());
   }
 }

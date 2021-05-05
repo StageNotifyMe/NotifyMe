@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Validated
 public class VenueManagerController {
+
   private final EventService eventService;
   private final VenueService venueService;
   private final FacilityService facilityService;
@@ -37,7 +38,7 @@ public class VenueManagerController {
 
   @PostMapping("/event")
   public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto,
-                                            Principal principal) {
+      Principal principal) {
     return eventService.createEvent(createEventDto, principal);
   }
 
@@ -48,10 +49,10 @@ public class VenueManagerController {
   }
 
   /**
-   * Gets all lines belonging to an event in an easily JSONable format.
+   * Gets all of the lines for a certain event.
    *
-   * @param eventId id of the event.
-   * @return list of GetLineDto.
+   * @param eventId the unique id of the event.
+   * @return the lines related to this event.
    */
   @GetMapping("/lines")
   public ResponseEntity<Object> getAllLinesForEvent(@RequestParam long eventId) {
@@ -76,7 +77,7 @@ public class VenueManagerController {
 
   @PostMapping("/line")
   public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto,
-                                           Principal principal) {
+      Principal principal) {
     var line = lineService.createLine(createLineDto, principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(line);
   }

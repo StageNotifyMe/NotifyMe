@@ -1,7 +1,6 @@
 package be.xplore.notifyme.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.Entity;

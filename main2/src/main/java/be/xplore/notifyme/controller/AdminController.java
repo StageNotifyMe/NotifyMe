@@ -6,8 +6,8 @@ import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgPromotionDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
+import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
-import be.xplore.notifyme.service.TokenService;
 import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
 import com.google.gson.Gson;
@@ -41,7 +41,7 @@ public class AdminController {
   private final OrganisationService organisationService;
   private final VenueService venueService;
   private final UserService userService;
-  private final TokenService tokenService;
+  private final KeycloakCommunicationService keycloakCommunicationService;
   private final Gson gson;
 
 
@@ -118,7 +118,7 @@ public class AdminController {
   public ResponseEntity<List<UserRepresentationDto>> getUsers() {
     var userRepListDto = new ArrayList<UserRepresentationDto>();
     AdminTokenResponseDto response = gson
-        .fromJson(tokenService.getAdminAccesstoken().getBody(), AdminTokenResponseDto.class);
+        .fromJson(keycloakCommunicationService.getAdminAccesstoken(), AdminTokenResponseDto.class);
     var userRepresentations = userService
         .getAllUserInfo(response.getAccessToken());
     for (var userRep : userRepresentations) {
