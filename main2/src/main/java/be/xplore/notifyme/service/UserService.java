@@ -38,25 +38,11 @@ public class UserService {
    */
   public List<UserRepresentation> getAllUserInfo(
       String adminAccesstoken) {
-    var userinfoReturn = keycloakCommunicationService.getAllUserInfoRest(adminAccesstoken);
-    if (userinfoReturn.getStatusCode() == HttpStatus.OK) {
-      var listType = new TypeToken<List<UserRepresentation>>() {
-      }.getType();
-      try {
-        ArrayList<UserRepresentation> result =
-            gson.fromJson(userinfoReturn.getBody(), listType);
-        if (result == null) {
-          throw new RestClientException("Result from GET on userinfo was null");
-        }
-        return result;
-      } catch (Exception e) {
-        throw new RestClientException(String
-            .format("Could not retrieve users from keycloak: %s", e.getMessage()));
-      }
-    } else {
-      throw new RestClientException(String
-          .format("Something went wrong retrieving users, statuscode: [%s]",
-              userinfoReturn.getStatusCodeValue()));
+    try {
+      return keycloakCommunicationService.getAllUserInfoRest(adminAccesstoken);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw e;
     }
   }
 
@@ -110,14 +96,15 @@ public class UserService {
 
   /**
    * Gets a user's ID based on their username and sends them an email to verify their email. *
-   * @param username    username of the user that needs to receive the email.
+   *
+   * @param username username of the user that needs to receive the email.
    */
   private void getUserInfoAndSendVerificationEmail(String username) {
     try {
       var userInfo = keycloakCommunicationService.getUserInfo(username);
       keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
       createUserInDatabase(userInfo.getId());
-    } catch (Exception e) {
+    } catch (CrudException e) {
       log.error(e.getMessage());
       throw e;
     }
@@ -128,13 +115,14 @@ public class UserService {
    */
   public void register(UserRegistrationDto userRegistrationDto) {
     //if creation was unsuccessful, don't get user info and send verification email
-      try {
-        keycloakCommunicationService.register(userRegistrationDto);
-        getUserInfoAndSendVerificationEmail(userRegistrationDto.getUsername());
-      } catch (Exception e) {
-        log.error(e.getMessage());
-        throw new CrudException("Could not register new user in system: "+userRegistrationDto.getUsername());
-      }
+    try {
+      keycloakCommunicationService.register(userRegistrationDto);
+      getUserInfoAndSendVerificationEmail(userRegistrationDto.getUsername());
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw new CrudException(
+          "Could not register new user in system: " + userRegistrationDto.getUsername());
+    }
   }
 
   private void createUserInDatabase(String id) {
