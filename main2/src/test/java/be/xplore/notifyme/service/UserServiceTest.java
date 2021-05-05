@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
@@ -41,42 +43,17 @@ class UserServiceTest {
 
   @Test
   void getAllUserInfo() {
-    var decodedReturn = new ArrayList<>();
+    final var decodedReturn = new ArrayList<UserRepresentation>();
     when(keycloakCommunicationService.getAllUserInfoRest(anyString()))
-        .thenReturn(ResponseEntity.ok(""));
-    when(gson.fromJson(anyString(), any(Type.class))).thenReturn(decodedReturn);
-
+        .thenReturn(decodedReturn);
     assertEquals(decodedReturn, userService.getAllUserInfo("specialToken"));
   }
 
   @Test
-  void getAllUserInfoNullReturn() {
-    when(keycloakCommunicationService.getAllUserInfoRest(anyString()))
-        .thenReturn(ResponseEntity.ok(""));
-    when(gson.fromJson(anyString(), any(Type.class))).thenReturn(null);
+  void getAllUserInfoCommunicationFail() {
+    doThrow(CrudException.class).when(keycloakCommunicationService).getAllUserInfoRest(anyString());
 
-    assertThrows(RestClientException.class, () -> {
-      userService.getAllUserInfo("specialToken");
-    });
-  }
-
-  @Test
-  void getAllUserInfoBadRequest() {
-    when(keycloakCommunicationService.getAllUserInfoRest(anyString()))
-        .thenReturn(ResponseEntity.badRequest().build());
-
-    assertThrows(RestClientException.class, () -> {
-      userService.getAllUserInfo("specialToken");
-    });
-  }
-
-  @Test
-  void getAllUserInfoGsonParseError() {
-    when(keycloakCommunicationService.getAllUserInfoRest(anyString()))
-        .thenReturn(ResponseEntity.badRequest().build());
-    when(gson.fromJson(anyString(), any(Type.class)))
-        .thenThrow(new JsonParseException("Could not parse"));
-    assertThrows(RestClientException.class, () -> {
+    assertThrows(CrudException.class, () -> {
       userService.getAllUserInfo("specialToken");
     });
   }
