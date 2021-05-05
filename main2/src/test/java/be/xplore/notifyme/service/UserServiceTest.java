@@ -4,20 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Optional;
-import javax.swing.text.html.Option;
-import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.Test;
 import org.keycloak.AuthorizationContext;
 import org.keycloak.KeycloakSecurityContext;
@@ -27,9 +25,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.client.RestClientException;
 
 @SpringBootTest
 class UserServiceTest {
@@ -41,49 +37,22 @@ class UserServiceTest {
   @MockBean
   private TokenService tokenService;
   @MockBean
-  private Gson gson;
-  @MockBean
   private IUserRepo userRepo;
 
 
   @Test
   void getAllUserInfo() {
-    var decodedReturn = new ArrayList<>();
+    final var decodedReturn = new ArrayList<UserRepresentation>();
     when(keycloakCommunicationService.getAllUserInfoRest(anyString()))
-        .thenReturn(ResponseEntity.ok(""));
-    when(gson.fromJson(anyString(), any(Type.class))).thenReturn(decodedReturn);
-
+        .thenReturn(decodedReturn);
     assertEquals(decodedReturn, userService.getAllUserInfo("specialToken"));
   }
 
   @Test
-  void getAllUserInfoNullReturn() {
-    when(keycloakCommunicationService.getAllUserInfoRest(anyString()))
-        .thenReturn(ResponseEntity.ok(""));
-    when(gson.fromJson(anyString(), any(Type.class))).thenReturn(null);
+  void getAllUserInfoCommunicationFail() {
+    doThrow(CrudException.class).when(keycloakCommunicationService).getAllUserInfoRest(anyString());
 
-    assertThrows(RestClientException.class, () -> {
-      userService.getAllUserInfo("specialToken");
-    });
-  }
-
-  @Test
-  void getAllUserInfoBadRequest() {
-    when(keycloakCommunicationService.getAllUserInfoRest(anyString()))
-        .thenReturn(ResponseEntity.badRequest().build());
-
-    assertThrows(RestClientException.class, () -> {
-      userService.getAllUserInfo("specialToken");
-    });
-  }
-
-  @Test
-  void getAllUserInfoGsonParseError() {
-    when(keycloakCommunicationService.getAllUserInfoRest(anyString()))
-        .thenReturn(ResponseEntity.badRequest().build());
-    when(gson.fromJson(anyString(), any(Type.class)))
-        .thenThrow(new JsonParseException("Could not parse"));
-    assertThrows(RestClientException.class, () -> {
+    assertThrows(CrudException.class, () -> {
       userService.getAllUserInfo("specialToken");
     });
   }
