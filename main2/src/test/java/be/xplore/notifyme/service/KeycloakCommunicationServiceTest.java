@@ -1,10 +1,16 @@
 package be.xplore.notifyme.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.dto.AdminTokenResponseDto;
@@ -18,9 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -97,28 +106,28 @@ class KeycloakCommunicationServiceTest {
   }
 
   @Test
-  void registerFailOnRetrieveUserInfo() {
-    var arrayList = getTestUserRepresentation("test-id");
+  void getUserInfoRestSuccessful() {
     final UserRegistrationDto userRegistrationDto =
         new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
+        eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).build());
+    assertDoesNotThrow(() -> {
+      keycloakCommunicationService.getUserInfoRest("token", "user.user");
 
-    when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
-        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
-    when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
-        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("someResponseToken"));
-    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
-        .thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(""));
+    });
+  }
 
-    when(gson.fromJson(anyString(), eq(AdminTokenResponseDto.class)))
-        .thenReturn(new AdminTokenResponseDto("a", 10, 10, "Access", 5, "scopes"));
-    when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
+  @Test
+  void getUserInfoRestFail() {
+    final UserRegistrationDto userRegistrationDto =
+        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
+        eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
 
-    Type listType = new TypeToken<List<UserRepresentation>>() {
-    }.getType();
-    when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
-
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.register(userRegistrationDto);
+    assertThrows(Exception.class, () -> {
+      keycloakCommunicationService.getUserInfoRest("token", userRegistrationDto.getUsername());
     });
   }
 

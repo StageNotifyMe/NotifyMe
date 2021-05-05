@@ -118,7 +118,7 @@ public class UserService {
       var userInfo = keycloakCommunicationService.getUserInfo(username);
       keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
       createUserInDatabase(userInfo.getId());
-    } catch (Exception e) {
+    } catch (CrudException e) {
       log.error(e.getMessage());
       throw e;
     }

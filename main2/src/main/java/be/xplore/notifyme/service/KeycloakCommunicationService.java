@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,11 +24,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class KeycloakCommunicationService {
 
   @Value("${keycloak.resource}")
@@ -115,25 +116,19 @@ public class KeycloakCommunicationService {
    * @return Keycloak Userrepresentation.
    */
   public UserRepresentation getUserInfo(String username) {
-    var userinfoReturn = getUserInfoRest(getAdminAccesstoken(), username);
-    if (userinfoReturn.getStatusCode() == HttpStatus.OK) {
+    try {
+      var userinfoReturn = getUserInfoRest(getAdminAccesstoken(), username);
       var listType = new TypeToken<List<UserRepresentation>>() {
       }.getType();
-      try {
-        ArrayList<UserRepresentation> result =
-            gson.fromJson(userinfoReturn.getBody(), listType);
-        if (result == null) {
-          throw new RestClientException("Result from GET on userinfo was null");
-        }
-        return result.get(0);
-      } catch (Exception e) {
-        throw new RestClientException(String
-            .format("Could not retrieve user [%s] from database: %s", username, e.getMessage()));
+      ArrayList<UserRepresentation> result = gson.fromJson(userinfoReturn, listType);
+      if (result == null) {
+        throw new CrudException("Result from GET on userinfo was null");
       }
-    } else {
-      throw new RestClientException(String
-          .format("Something went wrong retrieving user [%s], statuscode: [%s]", username,
-              userinfoReturn.getStatusCodeValue()));
+      return result.get(0);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw new CrudException(String
+          .format("Could not retrieve user [%s] from database: %s", username, e.getMessage()));
     }
   }
 
@@ -176,13 +171,35 @@ public class KeycloakCommunicationService {
    * @param username    to get the info from.
    * @return response entity containing the user info as a json string.
    */
-  public ResponseEntity<String> getUserInfoRest(String accessToken, String username) {
-    var headers = new HttpHeaders();
-    headers.setBearerAuth(accessToken);
-    HttpEntity<String> request = new HttpEntity<>(headers);
-    var uri = String.format("%s?username=%s", registerUri, username);
-    return restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+  public String getUserInfoRest(String accessToken, String username) {
+    try {
+      HttpEntity<String> request = createJsonHttpEntity(accessToken);
+      var uri = String.format("%s?username=%s", registerUri, username);
+      var restReturn = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+      if (restReturn.getStatusCode() != HttpStatus.OK) {
+        throw new CrudException("Could not retrieve user for username " + username);
+      }
+      return restReturn.getBody();
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw e;
+    }
   }
+
+  /**
+   * Creates an instance of HttpEntity<String> with content-type = application/json
+   * and a bearerAuth with given accessToken.
+   *
+   * @param accessToken bearer access token.
+   * @return HttpEntity<String>.
+   */
+  public HttpEntity<String> createJsonHttpEntity(String accessToken) {
+    var headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(accessToken);
+    return new HttpEntity<>(headers);
+  }
+
 
   /**
    * Gets all of the user info from keycloak.
