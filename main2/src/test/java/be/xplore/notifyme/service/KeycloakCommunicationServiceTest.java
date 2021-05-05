@@ -225,7 +225,7 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(mockResponseEntity);
     when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
-    when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(mockList);
+    when(gson.fromJson("LIST", listType)).thenReturn(mockList);
 
     assertThrows(CrudException.class, () -> {
       keycloakCommunicationService.getAllUserInfoRest("token");
