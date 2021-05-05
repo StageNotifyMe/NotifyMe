@@ -6,13 +6,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.UnauthorizedException;
+import be.xplore.notifyme.persistence.IUserRepo;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Optional;
+import javax.swing.text.html.Option;
+import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.Test;
 import org.keycloak.AuthorizationContext;
 import org.keycloak.KeycloakSecurityContext;
@@ -37,6 +42,8 @@ class UserServiceTest {
   private TokenService tokenService;
   @MockBean
   private Gson gson;
+  @MockBean
+  private IUserRepo userRepo;
 
 
   @Test
@@ -152,6 +159,22 @@ class UserServiceTest {
 
   private KeycloakAuthenticationToken getKeycloakPrincipal() {
     return (KeycloakAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+  }
+
+  @Test
+  @WithMockKeycloakAuth(authorities = "user",
+      oidc = @OidcStandardClaims(
+          email = "test@test.com",
+          emailVerified = true,
+          nickName = "ElTestor",
+          preferredUsername = "Test"))
+  void getUserFromPrincipal() {
+    KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
+    User foundUser=new User();
+    when(tokenService.getIdToken(any()))
+        .thenReturn(keycloakPrincipal.getAccount().getKeycloakSecurityContext().getIdToken());
+    when(userRepo.findById("Test")).thenReturn(Optional.of(foundUser));
+    assertEquals(foundUser,userService.getUserFromPrincipal(keycloakPrincipal));
   }
 
 
