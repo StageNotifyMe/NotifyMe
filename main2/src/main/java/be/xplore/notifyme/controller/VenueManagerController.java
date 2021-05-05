@@ -48,7 +48,7 @@ public class VenueManagerController {
     return ResponseEntity.ok(result);
   }
 
-  /**
+   /**
    * Gets all of the lines for a certain event.
    *
    * @param eventId the unique id of the event.
