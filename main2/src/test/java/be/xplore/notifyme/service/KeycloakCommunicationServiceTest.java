@@ -240,7 +240,7 @@ class KeycloakCommunicationServiceTest {
     }.getType();
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
         .thenReturn(mockResponseEntity);
-    when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
+    when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
     when(gson.fromJson(eq("LIST"),eq(listType))).thenReturn(null);
 
