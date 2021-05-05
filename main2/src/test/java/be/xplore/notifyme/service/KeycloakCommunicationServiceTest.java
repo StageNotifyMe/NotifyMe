@@ -209,14 +209,14 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(mockResponseEntity);
     when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
-    when(gson.fromJson(eq("LIST"),eq(listType))).thenReturn(mockList);
+    when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(mockList);
 
 
     assertEquals(mockList, keycloakCommunicationService.getAllUserInfoRest("token"));
   }
 
   @Test
-  void getAllUserInfoRestStatusNotOK(){
+  void getAllUserInfoRestStatusNotOK() {
     final ResponseEntity<String> mockResponseEntity = mock(ResponseEntity.class);
     final ArrayList<UserRepresentation> mockList = mock(ArrayList.class);
     var listType = new TypeToken<List<UserRepresentation>>() {
@@ -225,15 +225,15 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(mockResponseEntity);
     when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
-    when(gson.fromJson(eq("LIST"),eq(listType))).thenReturn(mockList);
+    when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(mockList);
 
-    assertThrows(CrudException.class, ()->{
+    assertThrows(CrudException.class, () -> {
       keycloakCommunicationService.getAllUserInfoRest("token");
     });
   }
 
   @Test
-  void getAllUserInfoRestNullFail(){
+  void getAllUserInfoRestNullFail() {
     final ResponseEntity<String> mockResponseEntity = mock(ResponseEntity.class);
     final ArrayList<UserRepresentation> mockList = mock(ArrayList.class);
     var listType = new TypeToken<List<UserRepresentation>>() {
@@ -242,9 +242,9 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(mockResponseEntity);
     when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
-    when(gson.fromJson(eq("LIST"),eq(listType))).thenReturn(null);
+    when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(null);
 
-    assertThrows(CrudException.class, ()->{
+    assertThrows(CrudException.class, () -> {
       keycloakCommunicationService.getAllUserInfoRest("token");
     });
   }

@@ -42,7 +42,7 @@ public class UserService {
       return keycloakCommunicationService.getAllUserInfoRest(adminAccesstoken);
     } catch (Exception e) {
       log.error(e.getMessage());
-      throw new CrudException("Could not get users from keycloak server: "+e.getMessage());
+      throw new CrudException("Could not get users from keycloak server: " + e.getMessage());
     }
   }
 

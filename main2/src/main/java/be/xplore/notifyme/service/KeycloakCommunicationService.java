@@ -189,11 +189,11 @@ public class KeycloakCommunicationService {
   }
 
   /**
-   * Creates an instance of HttpEntity<String> with content-type = application/json
+   * Creates an instance of HttpEntity(String) with content-type = application/json
    * and a bearerAuth with given accessToken.
    *
    * @param accessToken bearer access token.
-   * @return HttpEntity<String>.
+   * @return HttpEntity(String).
    */
   public HttpEntity<String> createJsonHttpEntity(String accessToken) {
     var headers = new HttpHeaders();
