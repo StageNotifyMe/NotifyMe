@@ -182,14 +182,13 @@ class UserServiceTest {
 
   @Test
   void registerFail() {
-    var registerDto = new UserRegistrationDto();
     doNothing().when(keycloakCommunicationService).register(any());
     getUserInfoAndSendVerification();
     when(userRepo.save(any()))
         .thenThrow(new CrudException("User could not be saved to repository"));
-    assertThrows(CrudException.class, () -> {
-      userService.register(registerDto);
-    });
+    var registerDto = new UserRegistrationDto();
+    assertThrows(CrudException.class, () ->
+        userService.register(registerDto));
   }
 
   @Test
@@ -202,7 +201,7 @@ class UserServiceTest {
   @Test
   void getUsersNotWorking() {
     when(userService.getUsers()).thenThrow(new RuntimeException("Could not get users"));
-    assertThrows(CrudException.class,()->userService.getUsers());
+    assertThrows(CrudException.class, () -> userService.getUsers());
   }
 
 }
