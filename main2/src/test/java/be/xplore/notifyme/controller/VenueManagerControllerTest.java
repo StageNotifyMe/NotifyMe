@@ -140,7 +140,8 @@ class VenueManagerControllerTest {
         .perform(get("/vmanager/lines?eventId=1"))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().json(
-            "[{note:\"note\", requiredStaff:5, facilityId:1, facilityDescription:\"description\"}]"));
+            "[{note:\"note\", requiredStaff:5, facilityId:1,"
+                + " facilityDescription:\"description\"}]"));
   }
 
   @Test

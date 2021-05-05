@@ -160,14 +160,22 @@ class UserServiceTest {
 
   @Test
   void getUserNotFound() {
-    when(userRepo.findById(anyString())).thenThrow(new CrudException("Could not get user"));
+    when(userRepo.findById(anyString())).thenReturn(Optional.empty());
     assertThrows(CrudException.class, () -> userService.getUser("testId"));
   }
+
 
   private void getUserInfoAndSendVerification() {
     var userRep = new UserRepresentation();
     when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
     doNothing().when(keycloakCommunicationService).sendEmailVerificationRequest(anyString());
+  }
+
+  private void getUserInfoAndSendVerificationFail() {
+    var userRep = new UserRepresentation();
+    when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
+    doThrow(new CrudException("Could not send request to keycloak"))
+        .when(keycloakCommunicationService).sendEmailVerificationRequest(anyString());
   }
 
   @Test
@@ -186,6 +194,16 @@ class UserServiceTest {
     getUserInfoAndSendVerification();
     when(userRepo.save(any()))
         .thenThrow(new CrudException("User could not be saved to repository"));
+    var registerDto = new UserRegistrationDto();
+    assertThrows(CrudException.class, () ->
+        userService.register(registerDto));
+  }
+
+  @Test
+  void registerFailVerificationMail() {
+    doNothing().when(keycloakCommunicationService).register(any());
+    getUserInfoAndSendVerificationFail();
+    when(userRepo.save(any())).thenReturn(new User());
     var registerDto = new UserRegistrationDto();
     assertThrows(CrudException.class, () ->
         userService.register(registerDto));
