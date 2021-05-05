@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @RequiredArgsConstructor
@@ -208,10 +209,28 @@ public class KeycloakCommunicationService {
    * @param accessToken admin access token
    * @return response entity containing all the user info as a json string.
    */
-  public ResponseEntity<String> getAllUserInfoRest(String accessToken) {
-    var headers = new HttpHeaders();
-    headers.setBearerAuth(accessToken);
-    HttpEntity<String> request = new HttpEntity<>(headers);
-    return restTemplate.exchange(registerUri, HttpMethod.GET, request, String.class);
+  public List<UserRepresentation> getAllUserInfoRest(String accessToken) {
+    try {
+      var request = createJsonHttpEntity(accessToken);
+      var userinfoReturn =
+          restTemplate.exchange(registerUri, HttpMethod.GET, request, String.class);
+      if (userinfoReturn.getStatusCode() != HttpStatus.OK) {
+        throw new CrudException("");
+      }
+      List<UserRepresentation> result = parseUserInfo(userinfoReturn.getBody());
+      if (result == null) {
+        throw new RestClientException("Result from GET on userinfo was null");
+      }
+      return result;
+    } catch (Exception e) {
+      throw new CrudException(
+          "Something went wrong trying to GET from keycloakServer: " + e.getMessage());
+    }
+  }
+
+  private List<UserRepresentation> parseUserInfo(String bodyToParse) {
+    var listType = new TypeToken<List<UserRepresentation>>() {
+    }.getType();
+    return gson.fromJson(bodyToParse, listType);
   }
 }
