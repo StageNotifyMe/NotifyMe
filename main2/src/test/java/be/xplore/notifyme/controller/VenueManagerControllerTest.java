@@ -3,6 +3,7 @@ package be.xplore.notifyme.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,6 +20,7 @@ import be.xplore.notifyme.service.LineService;
 import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -119,6 +121,26 @@ class VenueManagerControllerTest {
     mockMvc
         .perform(get("/vmanager/lines?eventId=1"))
         .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "vmanager", roles = {"venue_manager"})
+  void getLinesParsingSuccessful() throws Exception {
+    final Facility mockFacility = mock(Facility.class);
+    final Line testLine = new Line("note", 5);
+    testLine.setFacility(mockFacility);
+    final List<Line> lineList = new ArrayList<>();
+    lineList.add(testLine);
+
+    when(lineService.getAllLinesByEvent(1L)).thenReturn(lineList);
+    when(mockFacility.getId()).thenReturn(1L);
+    when(mockFacility.getDescription()).thenReturn("description");
+
+    mockMvc
+        .perform(get("/vmanager/lines?eventId=1"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().json(
+            "[{note:\"note\", requiredStaff:5, facilityId:1, facilityDescription:\"description\"}]"));
   }
 
   @Test
