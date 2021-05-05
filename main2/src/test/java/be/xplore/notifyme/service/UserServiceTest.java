@@ -13,7 +13,6 @@ import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
-import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -139,12 +138,41 @@ class UserServiceTest {
           preferredUsername = "Test"))
   void getUserFromPrincipal() {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
-    User foundUser=new User();
+    User foundUser = new User();
     when(tokenService.getIdToken(any()))
         .thenReturn(keycloakPrincipal.getAccount().getKeycloakSecurityContext().getIdToken());
-    when(userRepo.findById("Test")).thenReturn(Optional.of(foundUser));
-    assertEquals(foundUser,userService.getUserFromPrincipal(keycloakPrincipal));
+    when(userRepo.findById(anyString())).thenReturn(Optional.of(foundUser));
+    assertEquals(foundUser, userService.getUserFromPrincipal(keycloakPrincipal));
   }
 
+  @Test
+  @WithMockKeycloakAuth(authorities = "user",
+      oidc = @OidcStandardClaims(
+          email = "test@test.com",
+          emailVerified = true,
+          nickName = "ElTestor",
+          preferredUsername = "Test"))
+  void getNonexistingUserFromPrincipal() {
+    KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
+    when(tokenService.getIdToken(any()))
+        .thenThrow(new RuntimeException("Could not get id token from principal."));
+    assertThrows(RuntimeException.class, () -> {
+      userService.getUserFromPrincipal(keycloakPrincipal);
+    });
+  }
 
+  @Test
+  void getUser() {
+    var returnUser = new User();
+    when(userRepo.findById(anyString())).thenReturn(Optional.of(returnUser));
+    assertEquals(returnUser, userService.getUser("testId"));
+  }
+
+  @Test
+  void getUserNotFound() {
+    when(userRepo.findById(anyString())).thenThrow(new CrudException("Could not get user"));
+    assertThrows(CrudException.class,()->userService.getUser("testId"));
+  }
+
+  void getUserInfoAndSendVerification
 }
