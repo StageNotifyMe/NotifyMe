@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.User;
@@ -101,7 +102,7 @@ class UserServiceTest {
   }
 
   private void mockKeycloakSecurityContext(UserRepresentation userRep,
-      Boolean hasRequiredPermission) {
+                                           Boolean hasRequiredPermission) {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
 
     KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);
@@ -208,6 +209,22 @@ class UserServiceTest {
     var registerDto = new UserRegistrationDto();
     assertThrows(CrudException.class, () ->
         userService.register(registerDto));
+  }
+
+  @Test
+  void getUserInfoAndSendVerificationEmailFailEmail() {
+    final UserRepresentation userRepresentation = mock(UserRepresentation.class);
+    final UserRegistrationDto userRegistrationDto =
+        new UserRegistrationDto("firstname", "lastname", "email@mail.com", "username", "password");
+    when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRepresentation);
+    when(userRepresentation.getId()).thenReturn("id");
+    doThrow(CrudException.class).when(keycloakCommunicationService)
+        .sendEmailVerificationRequest("id");
+    doNothing().when(keycloakCommunicationService).register(any(UserRegistrationDto.class));
+
+    assertThrows(CrudException.class, () -> {
+      userService.register(userRegistrationDto);
+    });
   }
 
   @Test
