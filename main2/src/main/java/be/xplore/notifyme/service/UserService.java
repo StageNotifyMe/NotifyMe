@@ -6,16 +6,12 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.account.UserRepresentation;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 
 /**
  * Service for communication with the keycloak server related to user accounts.
@@ -42,7 +38,7 @@ public class UserService {
       return keycloakCommunicationService.getAllUserInfoRest(adminAccesstoken);
     } catch (Exception e) {
       log.error(e.getMessage());
-      throw new CrudException("Could not get users from keycloak server: "+e.getMessage());
+      throw new CrudException("Could not get users from keycloak server: " + e.getMessage());
     }
   }
 

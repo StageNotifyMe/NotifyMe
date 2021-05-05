@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
@@ -64,18 +66,9 @@ class UserServiceTest {
       preferredUsername = "admin"))
   void getUserInfoAsAdmin() {
     var userRep = new UserRepresentation();
-    KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
-    KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);
-    when(tokenService.getIdToken(any()))
-        .thenReturn(keycloakPrincipal.getAccount().getKeycloakSecurityContext().getIdToken());
-    when(tokenService.getSecurityContext(any()))
-        .thenReturn(keycloakSecurityContext);
-    when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
-    AuthorizationContext mockAuthContext = Mockito.mock(AuthorizationContext.class);
-    when((keycloakSecurityContext.getAuthorizationContext())).thenReturn(mockAuthContext);
-    when(mockAuthContext.hasScopePermission("admin")).thenReturn(true);
+    mockKeycloakSecurityContext(userRep, true);
 
-    assertEquals(userRep, userService.getUserInfo("Testuser", keycloakPrincipal));
+    assertEquals(userRep, userService.getUserInfo("Testuser", getKeycloakPrincipal()));
   }
 
   @Test
@@ -86,18 +79,9 @@ class UserServiceTest {
       preferredUsername = "Test"))
   void getUserInfoOfOwn() {
     var userRep = new UserRepresentation();
-    KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
-    KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);
-    when(tokenService.getIdToken(any()))
-        .thenReturn(keycloakPrincipal.getAccount().getKeycloakSecurityContext().getIdToken());
-    when(tokenService.getSecurityContext(any()))
-        .thenReturn(keycloakSecurityContext);
-    when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
-    AuthorizationContext mockAuthContext = Mockito.mock(AuthorizationContext.class);
-    when((keycloakSecurityContext.getAuthorizationContext())).thenReturn(mockAuthContext);
-    when(mockAuthContext.hasScopePermission("admin")).thenReturn(true);
+    mockKeycloakSecurityContext(userRep, true);
 
-    assertEquals(userRep, userService.getUserInfo("Test", keycloakPrincipal));
+    assertEquals(userRep, userService.getUserInfo("Test", getKeycloakPrincipal()));
   }
 
   @Test
@@ -109,7 +93,17 @@ class UserServiceTest {
           preferredUsername = "Test"))
   void getUserInfoOfOther() {
     var userRep = new UserRepresentation();
+    mockKeycloakSecurityContext(userRep, false);
+
+    assertThrows(UnauthorizedException.class, () -> {
+      userService.getUserInfo("OtherUser", getKeycloakPrincipal());
+    });
+  }
+
+  private void mockKeycloakSecurityContext(UserRepresentation userRep,
+      Boolean hasRequiredPermission) {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
+
     KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);
     when(tokenService.getIdToken(any()))
         .thenReturn(keycloakPrincipal.getAccount().getKeycloakSecurityContext().getIdToken());
@@ -118,11 +112,7 @@ class UserServiceTest {
     when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
     AuthorizationContext mockAuthContext = Mockito.mock(AuthorizationContext.class);
     when((keycloakSecurityContext.getAuthorizationContext())).thenReturn(mockAuthContext);
-    when(mockAuthContext.hasScopePermission("admin")).thenReturn(false);
-
-    assertThrows(UnauthorizedException.class, () -> {
-      userService.getUserInfo("OtherUser", keycloakPrincipal);
-    });
+    when(mockAuthContext.hasScopePermission("admin")).thenReturn(hasRequiredPermission);
   }
 
   private KeycloakAuthenticationToken getKeycloakPrincipal() {
@@ -171,8 +161,48 @@ class UserServiceTest {
   @Test
   void getUserNotFound() {
     when(userRepo.findById(anyString())).thenThrow(new CrudException("Could not get user"));
-    assertThrows(CrudException.class,()->userService.getUser("testId"));
+    assertThrows(CrudException.class, () -> userService.getUser("testId"));
   }
 
-  void getUserInfoAndSendVerification
+  private void getUserInfoAndSendVerification() {
+    var userRep = new UserRepresentation();
+    when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
+    doNothing().when(keycloakCommunicationService).sendEmailVerificationRequest(anyString());
+  }
+
+  @Test
+  void register() {
+    var registerDto = new UserRegistrationDto();
+    registerDto.setUsername("TestUsername");
+    doNothing().when(keycloakCommunicationService).register(any());
+    getUserInfoAndSendVerification();
+    when(userRepo.save(any())).thenReturn(new User());
+    userService.register(registerDto);
+  }
+
+  @Test
+  void registerFail() {
+    var registerDto = new UserRegistrationDto();
+    doNothing().when(keycloakCommunicationService).register(any());
+    getUserInfoAndSendVerification();
+    when(userRepo.save(any()))
+        .thenThrow(new CrudException("User could not be saved to repository"));
+    assertThrows(CrudException.class, () -> {
+      userService.register(registerDto);
+    });
+  }
+
+  @Test
+  void getUsers() {
+    var users = new ArrayList<User>();
+    when(userService.getUsers()).thenReturn(users);
+    assertEquals(users, userService.getUsers());
+  }
+
+  @Test
+  void getUsersNotWorking() {
+    when(userService.getUsers()).thenThrow(new RuntimeException("Could not get users"));
+    assertThrows(CrudException.class,()->userService.getUsers());
+  }
+
 }
