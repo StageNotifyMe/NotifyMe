@@ -8,7 +8,6 @@ import be.xplore.notifyme.dto.UserOrgPromotionDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
-import be.xplore.notifyme.service.TokenService;
 import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
 import com.google.gson.Gson;
