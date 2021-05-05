@@ -173,6 +173,7 @@ class UserServiceTest {
 
   private void getUserInfoAndSendVerificationFail() {
     var userRep = new UserRepresentation();
+    userRep.setId("testUser");
     when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
     doThrow(new CrudException("Could not send request to keycloak"))
         .when(keycloakCommunicationService).sendEmailVerificationRequest(anyString());
