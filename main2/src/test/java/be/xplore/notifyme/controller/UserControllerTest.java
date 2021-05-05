@@ -2,6 +2,7 @@ package be.xplore.notifyme.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -49,9 +50,7 @@ class UserControllerTest {
 
   @Test
   void registerNewUser() throws Exception {
-    when(userService.register(any(UserRegistrationDto.class)))
-        .thenReturn(ResponseEntity.ok(null));
-
+    doNothing().when(userService).register(any(UserRegistrationDto.class));
     mockMvc.perform(post("/user/register").content("{\"firstname\":\"Arthur\",\n"
         + "    \"lastname\":\"De Craemer\",\n"
         + "    \"email\":\"adc@adc.be\",\n"

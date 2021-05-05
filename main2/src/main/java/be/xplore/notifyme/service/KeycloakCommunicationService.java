@@ -4,6 +4,7 @@ import be.xplore.notifyme.dto.AdminTokenResponseDto;
 import be.xplore.notifyme.dto.CredentialRepresentationDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
+import be.xplore.notifyme.exception.CrudException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
@@ -67,11 +68,14 @@ public class KeycloakCommunicationService {
   /**
    * Registers a new user by sending a service request to the keycloak server.
    */
-  public ResponseEntity<Void> register(UserRegistrationDto userRegistrationDto) {
+  public void register(UserRegistrationDto userRegistrationDto) {
     var request =
         createHttpEntityForUserRegistry(getAdminAccesstoken(), userRegistrationDto);
 
-    return restTemplate.postForEntity(registerUri, request, Void.class);
+    var restResponse = restTemplate.postForEntity(registerUri, request, Void.class);
+    if (restResponse.getStatusCode() != HttpStatus.CREATED) {
+      throw new CrudException("Could not create new user in database");
+    }
   }
 
   private HttpEntity<String> createHttpEntityForUserRegistry(

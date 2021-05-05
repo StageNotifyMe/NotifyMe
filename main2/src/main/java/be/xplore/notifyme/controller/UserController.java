@@ -2,11 +2,11 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
-import be.xplore.notifyme.service.TokenService;
 import be.xplore.notifyme.service.UserService;
 import java.security.Principal;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,13 +37,13 @@ public class UserController {
   @PostMapping(value = "/register")
   public ResponseEntity<Void> registerNewUser(
       @RequestBody UserRegistrationDto registrationDto) {
-    return userService
-        .register(registrationDto);
+    userService.register(registrationDto);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @GetMapping(value = "/userInfo")
   public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username,
-                                            Principal principal) {
+      Principal principal) {
     return ResponseEntity.ok(userService.getUserInfo(username, principal));
   }
 }

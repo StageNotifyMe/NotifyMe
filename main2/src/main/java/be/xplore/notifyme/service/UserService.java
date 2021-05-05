@@ -127,18 +127,15 @@ public class UserService {
   /**
    * Registers a new user by sending a service request to the keycloak server.
    */
-  public ResponseEntity register(UserRegistrationDto userRegistrationDto) {
-    var registerReturn = keycloakCommunicationService.register(userRegistrationDto);
+  public void register(UserRegistrationDto userRegistrationDto) {
     //if creation was unsuccessful, don't get user info and send verification email
-    if (registerReturn.getStatusCode() == HttpStatus.CREATED) {
       try {
+        keycloakCommunicationService.register(userRegistrationDto);
         getUserInfoAndSendVerificationEmail(userRegistrationDto.getUsername());
       } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body("{errorMessage:\"" + e.getMessage() + "\"}");
+        log.error(e.getMessage());
+        throw new CrudException("Could not register new user in system: "+userRegistrationDto.getUsername());
       }
-    }
-    return registerReturn;
   }
 
   private void createUserInDatabase(String id) {
