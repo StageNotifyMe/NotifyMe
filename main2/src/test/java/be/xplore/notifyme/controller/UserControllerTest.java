@@ -56,6 +56,6 @@ class UserControllerTest {
         + "    \"email\":\"adc@adc.be\",\n"
         + "    \"username\":\"arthur.decraemer\",\n"
         + "    \"password\":\"arthur123!\"}").contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.status().isOk());
+        .andExpect(MockMvcResultMatchers.status().isCreated());
   }
 }
