@@ -82,9 +82,9 @@ class UserControllerTest {
         .perform(get("/user/userInfo?username=Test"))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().json(
-            "{\"id\":\"id\",\"username\":\"test.tester\",\"firstName\":\"test\"," +
-                "\"lastName\":\"tester\",\"email\":\"test@test.com\"," +
-                "\"emailVerified\":false,\"attributes\":{}}"));
+            "{\"id\":\"id\",\"username\":\"test.tester\",\"firstName\":\"test\","
+                + "\"lastName\":\"tester\",\"email\":\"test@test.com\","
+                + "\"emailVerified\":false,\"attributes\":{}}"));
   }
 
 }
