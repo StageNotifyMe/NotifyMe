@@ -109,6 +109,13 @@ public class AdminController {
             userOrgPromotionDto.getOrganisationId(), principal)));
   }
 
+  @PostMapping("/promoteUserToVmanager")
+  public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
+                                                          long venueId) {
+    venueService.makeUserVenueManager(userId, venueId);
+    return ResponseEntity.noContent().build();
+  }
+
   /**
    * Gets a list of all keycloak users.
    *

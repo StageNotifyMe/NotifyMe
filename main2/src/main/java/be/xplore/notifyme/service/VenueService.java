@@ -5,6 +5,7 @@ import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.GetVenueDto;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
@@ -88,6 +89,27 @@ public class VenueService {
     } catch (CrudException e) {
       log.error(e.getMessage());
       throw e;
+    }
+  }
+
+  /**
+   * Makes a user venue manager over a certain venue,
+   * also adds grants them venue_manager permissions.
+   *
+   * @param userId  id of user to grant permission.
+   * @param venueId id of venue over which the user gets perimissions.
+   */
+  public void makeUserVenueManager(String userId, Long venueId) {
+    try {
+      var user = userService.getUser(userId);
+      var venue = this.getVenue(venueId);
+      venue.getManagers().add(user);
+      venueRepo.save(venue);
+      //na merge met Arthur's branch moet hier check komen of user al permission heeft
+      userService.grantUserRole(userId, "venue_manager");
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw new SaveToDatabaseException("Could not make user venue manager: " + e.getMessage());
     }
   }
 }
