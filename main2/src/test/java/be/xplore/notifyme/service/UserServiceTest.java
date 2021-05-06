@@ -1,15 +1,18 @@
 package be.xplore.notifyme.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.dto.RelevantClientInfoDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.UnauthorizedException;
@@ -23,6 +26,7 @@ import org.keycloak.AuthorizationContext;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.account.UserRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -187,7 +191,9 @@ class UserServiceTest {
     doNothing().when(keycloakCommunicationService).register(any());
     getUserInfoAndSendVerification();
     when(userRepo.save(any())).thenReturn(new User());
-    userService.register(registerDto);
+    assertDoesNotThrow(() -> {
+      userService.register(registerDto);
+    });
   }
 
   @Test
@@ -238,6 +244,60 @@ class UserServiceTest {
   void getUsersNotWorking() {
     when(userService.getUsers()).thenThrow(new RuntimeException("Could not get users"));
     assertThrows(CrudException.class, () -> userService.getUsers());
+  }
+
+  @Test
+  void grantUserRoleSuccessful() {
+    final RelevantClientInfoDto relevantClientInfoDto = new RelevantClientInfoDto("id", "clientid");
+    final RoleRepresentation roleRepresentation = new RoleRepresentation();
+
+    when(keycloakCommunicationService.getClient(anyString())).thenReturn(relevantClientInfoDto);
+    when(keycloakCommunicationService.getClientRole(anyString(), anyString()))
+        .thenReturn(roleRepresentation);
+    doNothing().when(keycloakCommunicationService)
+        .giveUserRole(anyString(), eq(roleRepresentation), anyString());
+
+    assertDoesNotThrow(() -> {
+      userService.grantUserRole("userid", "rolename");
+    });
+  }
+
+  @Test
+  void grantUserRoleFailA() {
+    doThrow(CrudException.class).when(keycloakCommunicationService).getClient(anyString());
+
+    assertThrows(CrudException.class, () -> {
+      userService.grantUserRole("userid", "rolename");
+    });
+  }
+
+  @Test
+  void grantUserRoleFailB() {
+    final RelevantClientInfoDto relevantClientInfoDto = new RelevantClientInfoDto("id", "clientid");
+
+    when(keycloakCommunicationService.getClient(anyString())).thenReturn(relevantClientInfoDto);
+    doThrow(CrudException.class).when(keycloakCommunicationService)
+        .getClientRole(anyString(), anyString());
+
+    assertThrows(CrudException.class, () -> {
+      userService.grantUserRole("userid", "rolename");
+    });
+  }
+
+  @Test
+  void grantUserRoleFailC() {
+    final RelevantClientInfoDto relevantClientInfoDto = new RelevantClientInfoDto("id", "clientid");
+    final RoleRepresentation roleRepresentation = new RoleRepresentation();
+
+    when(keycloakCommunicationService.getClient(anyString())).thenReturn(relevantClientInfoDto);
+    when(keycloakCommunicationService.getClientRole(anyString(), anyString()))
+        .thenReturn(roleRepresentation);
+    doThrow(CrudException.class).when(keycloakCommunicationService)
+        .giveUserRole(anyString(), any(RoleRepresentation.class), anyString());
+
+    assertThrows(CrudException.class, () -> {
+      userService.grantUserRole("userid", "rolename");
+    });
   }
 
 }

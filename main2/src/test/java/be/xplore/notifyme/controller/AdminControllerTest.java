@@ -3,6 +3,7 @@ package be.xplore.notifyme.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -56,7 +57,7 @@ class AdminControllerTest {
   void adminInfoTestIsAdmin() throws Exception {
     mockMvc.perform(get("/admin/adminTest"))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().string("Hello Admin."));
+        .andExpect(MockMvcResultMatchers.content().string("Well hello there, admin!"));
   }
 
   @Test
@@ -151,5 +152,14 @@ class AdminControllerTest {
         + "\n}")
         .contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isCreated());
+  }
+
+  @Test
+  @WithMockUser(username = "adminUser", roles = {"user", "admin"})
+  void promoteUserToVmanagerSuccessful() throws Exception {
+    doNothing().when(venueService).makeUserVenueManager(anyString(), anyLong());
+
+    mockMvc.perform(post("/admin/promoteUserToVmanager?userId=id&venueId=1"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 }
