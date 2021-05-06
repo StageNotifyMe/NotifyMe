@@ -259,7 +259,7 @@ public class KeycloakCommunicationService {
    * @param idOfClient id of the client where the role is defined.
    */
   public void giveUserRole(String userId, RoleRepresentation roleToGive, String idOfClient) {
-    var uri = String.format("%s/%s/role-mappings/clients/%s", registerUri, userId, idOfClient);
+    var uri = registerUri + String.format("/%s/role-mappings/clients/%s", userId, idOfClient);
     var role = new GiveClientRoleDto(roleToGive.getId(), roleToGive.getName(), true);
     var body = new GiveClientRoleDto[] {role};
     var entity = createJsonHttpEntity(getAdminAccesstoken(), body);
