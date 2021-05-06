@@ -261,23 +261,12 @@ public class KeycloakCommunicationService {
   public void giveUserRole(String userId, RoleRepresentation roleToGive, String idOfClient) {
     var uri = registerUri + String.format("/%s/role-mappings/clients/%s", userId, idOfClient);
     var role = new GiveClientRoleDto(roleToGive.getId(), roleToGive.getName(), true);
-    if (!uri.startsWith(registerUri)){
-      throw new CrudException("Uri to post resource to was not valid: "+registerUri);
-    }
     var body = new GiveClientRoleDto[] {role};
     var entity = createJsonHttpEntity(getAdminAccesstoken(), body);
     var restResult = restTemplate.postForEntity(uri, entity, String.class);
     if (restResult.getStatusCode() != HttpStatus.NO_CONTENT) {
       throw new CrudException("Could not give role to user. Response: " + restResult.getBody());
     }
-  }
-
-  private boolean checkUriSafety(String uri, String correctUri){
-    if (!uri.startsWith(correctUri)){
-      return false;
-    }
-
-    return true;
   }
 
   /**

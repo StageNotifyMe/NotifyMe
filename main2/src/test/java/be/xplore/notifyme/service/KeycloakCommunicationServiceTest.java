@@ -46,6 +46,10 @@ class KeycloakCommunicationServiceTest {
   @MockBean
   private Gson gson;
 
+  final UserRegistrationDto userRegistrationDto =
+      new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
+
+
   @Test
   void loginSuccess() {
     String infoString = "userinfo";
@@ -68,8 +72,6 @@ class KeycloakCommunicationServiceTest {
     var arrayList = getTestUserRepresentation("test-id");
     final Type listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
-    final UserRegistrationDto userRegistrationDto =
-        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
 
     when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
