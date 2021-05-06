@@ -84,7 +84,9 @@ class KeycloakCommunicationServiceTest {
 
     when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
 
-    keycloakCommunicationService.register(userRegistrationDto);
+    assertDoesNotThrow(() -> {
+      keycloakCommunicationService.register(userRegistrationDto);
+    });
   }
 
   @Test

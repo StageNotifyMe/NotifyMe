@@ -1,5 +1,6 @@
 package be.xplore.notifyme.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -187,7 +188,9 @@ class UserServiceTest {
     doNothing().when(keycloakCommunicationService).register(any());
     getUserInfoAndSendVerification();
     when(userRepo.save(any())).thenReturn(new User());
-    userService.register(registerDto);
+    assertDoesNotThrow(() -> {
+      userService.register(registerDto);
+    });
   }
 
   @Test
