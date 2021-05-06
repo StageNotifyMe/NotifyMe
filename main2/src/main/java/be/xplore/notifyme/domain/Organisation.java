@@ -32,6 +32,9 @@ public class Organisation {
   @OneToMany(mappedBy = "organisation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
   private List<OrganisationUser> users;
+  @OneToMany(mappedBy = "appliedOrganisation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonManagedReference
+  private List<UserOrgApplication> appliedUsers;
   @ManyToMany
   private List<Team> teams;
 

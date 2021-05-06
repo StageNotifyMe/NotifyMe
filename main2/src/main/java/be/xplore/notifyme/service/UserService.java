@@ -50,9 +50,8 @@ public class UserService {
    */
   public UserRepresentation getUserInfo(String username, Principal principal) {
     var token = tokenService.getIdToken(principal);
-    var securityContext = tokenService.getSecurityContext(principal);
     if (token.getPreferredUsername().equals(username)
-        || securityContext.getAuthorizationContext().hasScopePermission("admin")) {
+        || tokenService.hasRole(principal,"admin")) {
       return keycloakCommunicationService.getUserInfo(username);
     } else {
       throw new UnauthorizedException("User can only get info about themself");

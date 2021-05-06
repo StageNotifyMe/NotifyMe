@@ -24,6 +24,9 @@ public class User {
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
   private List<OrganisationUser> organisation;
+  @OneToMany(mappedBy = "appliedUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonManagedReference
+  private List<UserOrgApplication> appliedOrganisations;
   @ManyToMany(cascade = CascadeType.ALL)
   private List<Venue> venues = new LinkedList<>();
   @ManyToMany

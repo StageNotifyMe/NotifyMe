@@ -1,7 +1,6 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.dto.AdminTokenResponseDto;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgPromotionDto;
@@ -117,10 +116,8 @@ public class AdminController {
   @GetMapping("/users")
   public ResponseEntity<List<UserRepresentationDto>> getUsers() {
     var userRepListDto = new ArrayList<UserRepresentationDto>();
-    AdminTokenResponseDto response = gson
-        .fromJson(keycloakCommunicationService.getAdminAccesstoken(), AdminTokenResponseDto.class);
     var userRepresentations = userService
-        .getAllUserInfo(response.getAccessToken());
+        .getAllUserInfo(keycloakCommunicationService.getAdminAccesstoken());
     for (var userRep : userRepresentations) {
       userRepListDto.add(new UserRepresentationDto(userRep));
     }

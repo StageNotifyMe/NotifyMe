@@ -29,10 +29,11 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     super.configure(http);
-    http.authorizeRequests().antMatchers("/admin/**").hasRole("admin");
-    http.authorizeRequests().antMatchers("/user/**").permitAll();
-    http.authorizeRequests().antMatchers("/vmanager/**").hasRole("venue_manager");
-    http.authorizeRequests().antMatchers("/lmanager/**").hasRole("line_manager");
+    http.authorizeRequests().antMatchers("/admin/**").hasRole("admin")
+        .antMatchers("/user/**").permitAll()
+        .antMatchers("/vmanager/**").hasRole("venue_manager")
+        .antMatchers("/lmanager/**").hasRole("line_manager")
+        .anyRequest().permitAll();
     http.csrf().disable();
     http.cors();
   }
@@ -48,6 +49,7 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
     auth.authenticationProvider(keycloakAuthenticationProvider);
   }
+
 
   @Bean
   @Override
