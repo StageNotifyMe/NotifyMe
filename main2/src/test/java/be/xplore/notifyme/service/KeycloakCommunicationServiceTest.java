@@ -16,6 +16,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.dto.AdminTokenResponseDto;
+import be.xplore.notifyme.dto.RelevantClientInfoDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.exception.CrudException;
@@ -279,39 +280,95 @@ class KeycloakCommunicationServiceTest {
 
   @Test
   void getClientRolesSuccessful() {
+    this.mockGetClientRoles(true);
+
+    var result = keycloakCommunicationService.getClientRoles("clientid");
+    assertTrue(result.stream().anyMatch(role -> role.getId().equals("roleid")));
+  }
+
+  private void mockGetClientRoles(boolean isSuccesful) {
     final ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
     mockGetAdminAccesstoken();
     when(restTemplate
         .exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(mockResponse);
     when(mockResponse.getBody()).thenReturn("RoleArray");
-    when(mockResponse.getStatusCode()).thenReturn(HttpStatus.OK);
+    if (isSuccesful) {
+      when(mockResponse.getStatusCode()).thenReturn(HttpStatus.OK);
+    } else {
+      when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     when(gson.fromJson(eq("RoleArray"), eq(RoleRepresentation[].class)))
         .thenReturn(new RoleRepresentation[] {getTestRoleRepresentation()});
-
-    var result = keycloakCommunicationService.getClientRoles("clientid");
-    assertTrue(result.stream().anyMatch(role -> role.getId().equals("id")));
   }
 
   @Test
-  void getClientRolesGetFails(){
-    final ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
-    mockGetAdminAccesstoken();
-    when(restTemplate
-        .exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
-        .thenReturn(mockResponse);
-    when(mockResponse.getBody()).thenReturn("");
-    when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
+  void getClientRolesGetFails() {
+    mockGetClientRoles(false);
 
-    assertThrows(CrudException.class,()->{
+    assertThrows(CrudException.class, () -> {
       keycloakCommunicationService.getClientRoles("clientid");
     });
   }
 
+  @Test
+  void getClientRoleSuccesful() {
+    this.mockGetClientRoles(true);
+
+    var result = keycloakCommunicationService.getClientRole("rolename", "clientid");
+    assertEquals("roleid", result.getId());
+  }
+
+  @Test
+  void getClientRoleRoleNotFound() {
+    this.mockGetClientRoles(true);
+
+    assertThrows(CrudException.class, () -> {
+      keycloakCommunicationService.getClientRole("invalidRoleName", "clientid");
+    });
+  }
+
+  @Test
+  void getAllClientsSuccessful() {
+    mockGetAllClients(true);
+
+    var result = keycloakCommunicationService.getAllClients();
+    assertTrue(result.stream().anyMatch(ci -> ci.getId().equals("id")));
+  }
+
+  @Test
+  void getAllClientsErrorOnGet() {
+    mockGetAllClients(false);
+
+    assertThrows(CrudException.class, () -> {
+      keycloakCommunicationService.getAllClients();
+    });
+  }
+
+  private void mockGetAllClients(boolean isSuccessful) {
+    final ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
+    this.mockGetAdminAccesstoken();
+    when(restTemplate
+        .exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+        .thenReturn(mockResponse);
+    when(mockResponse.getBody()).thenReturn("clientArray");
+    if (isSuccessful) {
+      when(mockResponse.getStatusCode()).thenReturn(HttpStatus.OK);
+    } else {
+      when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    when(gson.fromJson(eq("clientArray"), eq(RelevantClientInfoDto[].class)))
+        .thenReturn(new RelevantClientInfoDto[] {getTestRelevantClientInfo()});
+  }
+
+  private RelevantClientInfoDto getTestRelevantClientInfo() {
+    return new RelevantClientInfoDto("id", "clientid");
+  }
+
   private RoleRepresentation getTestRoleRepresentation() {
     RoleRepresentation roleRepresentation = new RoleRepresentation();
-    roleRepresentation.setName("role");
-    roleRepresentation.setId("id");
+    roleRepresentation.setName("rolename");
+    roleRepresentation.setId("roleid");
     return roleRepresentation;
   }
 
