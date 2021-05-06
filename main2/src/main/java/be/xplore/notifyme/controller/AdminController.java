@@ -3,7 +3,7 @@ package be.xplore.notifyme.controller;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
-import be.xplore.notifyme.dto.UserOrgPromotionDto;
+import be.xplore.notifyme.dto.UserOrgRequestDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
@@ -97,15 +97,15 @@ public class AdminController {
   /**
    * Promotes a user to manager of a certain organisation.
    *
-   * @param userOrgPromotionDto which contains the username and org id.
+   * @param userOrgRequestDto which contains the username and org id.
    * @return the organisation object containing the newly added manager.
    */
   @PostMapping("/promoteUserToOrgMgr")
   public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(@RequestBody @NotNull
-      UserOrgPromotionDto userOrgPromotionDto, Principal principal) {
+      UserOrgRequestDto userOrgRequestDto, Principal principal) {
     return ResponseEntity.ok(new OrganisationDto(
-        organisationService.promoteUserToOrgManager(userOrgPromotionDto.getUsername(),
-            userOrgPromotionDto.getOrganisationId(), principal)));
+        organisationService.promoteUserToOrgManager(userOrgRequestDto.getUsername(),
+            userOrgRequestDto.getOrganisationId(), principal)));
   }
 
   /**

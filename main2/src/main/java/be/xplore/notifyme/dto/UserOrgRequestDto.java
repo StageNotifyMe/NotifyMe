@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserOrgPromotionDto {
+public class UserOrgRequestDto {
 
   private String username;
   private Long organisationId;
+
 }

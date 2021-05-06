@@ -80,7 +80,7 @@ class UserServiceTest {
       preferredUsername = "Test"))
   void getUserInfoOfOwn() {
     var userRep = new UserRepresentation();
-    mockKeycloakSecurityContext(userRep, true);
+    mockKeycloakSecurityContext(userRep, false);
 
     assertEquals(userRep, userService.getUserInfo("Test", getKeycloakPrincipal()));
   }
@@ -95,14 +95,13 @@ class UserServiceTest {
   void getUserInfoOfOther() {
     var userRep = new UserRepresentation();
     mockKeycloakSecurityContext(userRep, false);
-
     assertThrows(UnauthorizedException.class, () -> {
       userService.getUserInfo("OtherUser", getKeycloakPrincipal());
     });
   }
 
   private void mockKeycloakSecurityContext(UserRepresentation userRep,
-                                           Boolean hasRequiredPermission) {
+      Boolean hasRequiredPermission) {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
 
     KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);
@@ -113,7 +112,8 @@ class UserServiceTest {
     when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
     AuthorizationContext mockAuthContext = Mockito.mock(AuthorizationContext.class);
     when((keycloakSecurityContext.getAuthorizationContext())).thenReturn(mockAuthContext);
-    when(mockAuthContext.hasScopePermission("admin")).thenReturn(hasRequiredPermission);
+    when(tokenService.hasRole(any(), anyString())).thenReturn(hasRequiredPermission);
+
   }
 
   private KeycloakAuthenticationToken getKeycloakPrincipal() {

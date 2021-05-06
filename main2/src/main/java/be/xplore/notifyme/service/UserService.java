@@ -51,7 +51,7 @@ public class UserService {
   public UserRepresentation getUserInfo(String username, Principal principal) {
     var token = tokenService.getIdToken(principal);
     if (token.getPreferredUsername().equals(username)
-        || tokenService.hasRole(principal,"admin")) {
+        || tokenService.hasRole(principal, "admin")) {
       return keycloakCommunicationService.getUserInfo(username);
     } else {
       throw new UnauthorizedException("User can only get info about themself");
@@ -137,6 +137,15 @@ public class UserService {
     } catch (RuntimeException ex) {
       log.error(ex.getMessage());
       throw new CrudException("Could not retrieve the list of users.");
+    }
+  }
+  
+  public User updateUser(User user){
+    try {
+      return userRepo.save(user);
+    }catch (RuntimeException ex) {
+      log.error(ex.getMessage());
+      throw new CrudException("Could not update the user data.");
     }
   }
 }
