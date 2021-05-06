@@ -46,8 +46,8 @@ public class AdminController {
 
 
   @GetMapping("/adminTest")
-  public ResponseEntity<String> adminInfoTest() {
-    return ResponseEntity.ok("Hello Admin.");
+  public ResponseEntity<Object> adminInfoTest() {
+    return ResponseEntity.ok("Well hello there, admin!");
   }
 
   /**
@@ -102,11 +102,18 @@ public class AdminController {
    * @return the organisation object containing the newly added manager.
    */
   @PostMapping("/promoteUserToOrgMgr")
-  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(@RequestBody @NotNull
-      UserOrgPromotionDto userOrgPromotionDto, Principal principal) {
+  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(
+      @RequestBody @NotNull UserOrgPromotionDto userOrgPromotionDto, Principal principal) {
     return ResponseEntity.ok(new OrganisationDto(
         organisationService.promoteUserToOrgManager(userOrgPromotionDto.getUsername(),
             userOrgPromotionDto.getOrganisationId(), principal)));
+  }
+
+  @PostMapping("/promoteUserToVmanager")
+  public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
+                                                          long venueId) {
+    venueService.makeUserVenueManager(userId, venueId);
+    return ResponseEntity.noContent().build();
   }
 
   /**

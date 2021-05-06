@@ -1,9 +1,13 @@
 package be.xplore.notifyme.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -13,11 +17,13 @@ import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.GetVenueDto;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.IDToken;
 import org.mockito.Mockito;
@@ -80,7 +86,7 @@ class VenueServiceTest {
 
   @Test
   void getVenueSuccessful() {
-    when(venueRepo.getOne(anyLong())).thenReturn(getTestVenue());
+    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(getTestVenue()));
     assertNotNull(venueService.getVenue(1L));
   }
 
@@ -120,6 +126,60 @@ class VenueServiceTest {
 
     var result = venueService.getVenuesForUser("abcd");
     assertEquals(0, result.size());
+  }
+
+  @Test
+  void makeUserVenueManagerSuccessful() {
+    when(userService.getUser(anyString())).thenReturn(getTestUser());
+    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(getTestVenue()));
+    when(venueRepo.save(any(Venue.class))).thenReturn(getTestVenue());
+    doNothing().when(userService).grantUserRole(anyString(), anyString());
+
+    assertDoesNotThrow(() -> {
+      venueService.makeUserVenueManager("userid", 1L);
+    });
+  }
+
+  @Test
+  void makeUserVenueManagerFailA() {
+    doThrow(CrudException.class).when(userService).getUser(anyString());
+
+    assertThrows(SaveToDatabaseException.class, () -> {
+      venueService.makeUserVenueManager("userid", 1L);
+    });
+  }
+
+  @Test
+  void makeUserVenueManagerFailB() {
+    when(userService.getUser(anyString())).thenReturn(getTestUser());
+    doThrow(CrudException.class).when(venueRepo).findById(anyLong());
+
+    assertThrows(SaveToDatabaseException.class, () -> {
+      venueService.makeUserVenueManager("userid", 1L);
+    });
+  }
+
+  @Test
+  void makeUserVenueManagerFailC() {
+    when(userService.getUser(anyString())).thenReturn(getTestUser());
+    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(getTestVenue()));
+    doThrow(CrudException.class).when(venueRepo).save(any(Venue.class));
+
+    assertThrows(SaveToDatabaseException.class, () -> {
+      venueService.makeUserVenueManager("userid", 1L);
+    });
+  }
+
+  @Test
+  void makeUserVenueManagerFailD() {
+    when(userService.getUser(anyString())).thenReturn(getTestUser());
+    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(getTestVenue()));
+    when(venueRepo.save(any(Venue.class))).thenReturn(getTestVenue());
+    doThrow(CrudException.class).when(userService).grantUserRole(anyString(), anyString());
+
+    assertThrows(SaveToDatabaseException.class, () -> {
+      venueService.makeUserVenueManager("userid", 1L);
+    });
   }
 
   private List<GetVenueDto> getTestGetVenues() {
