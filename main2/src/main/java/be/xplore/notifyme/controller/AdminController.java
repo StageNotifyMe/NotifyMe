@@ -48,15 +48,7 @@ public class AdminController {
 
   @GetMapping("/adminTest")
   public ResponseEntity<Object> adminInfoTest() {
-    try {
-      var client = keycloakCommunicationService.getClient("notifyme");
-      var role = keycloakCommunicationService.getClientRole("venue_manager", client.getId());
-      keycloakCommunicationService
-          .giveUserRole("0e82604b-32b3-48b7-99e4-1f548ef6c5b3", role, client.getId());
-      return ResponseEntity.ok(role);
-    } catch (Exception e){
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-    }
+    return ResponseEntity.ok("Well hello there, admin!");
   }
 
   /**
@@ -135,6 +127,13 @@ public class AdminController {
       userRepListDto.add(new UserRepresentationDto(userRep));
     }
     return ResponseEntity.ok(userRepListDto);
+  }
+
+  @PostMapping("/role")
+  public ResponseEntity<Object> grantUserRole(@RequestParam String userId,
+                                              @RequestParam String roleName) {
+    userService.grantUserRole(userId, roleName);
+    return ResponseEntity.noContent().build();
   }
 
 }

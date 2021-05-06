@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.account.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,6 +26,8 @@ public class UserService {
   private final IUserRepo userRepo;
   private final TokenService tokenService;
   private final KeycloakCommunicationService keycloakCommunicationService;
+  @Value("${keycloak.resource}")
+  private final String clientName;
 
   /**
    * Gets Keycloak Userrepresentation with info from all of the users.
@@ -138,6 +141,23 @@ public class UserService {
     } catch (RuntimeException ex) {
       log.error(ex.getMessage());
       throw new CrudException("Could not retrieve the list of users.");
+    }
+  }
+
+  /**
+   * Grants a any user any notifyme client role.
+   *
+   * @param userId   user who gets granted the role.
+   * @param roleName role to grant.
+   */
+  public void grantUserRole(String userId, String roleName) {
+    try {
+      var client = keycloakCommunicationService.getClient(this.clientName);
+      var role = keycloakCommunicationService.getClientRole(roleName, client.getId());
+      keycloakCommunicationService.giveUserRole(userId, role, client.getId());
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw e;
     }
   }
 }
