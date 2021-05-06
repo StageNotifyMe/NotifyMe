@@ -16,6 +16,11 @@ public class ApplicationOrgNameDto {
   private OrgApplicationStatus applicationStatus;
   private String orgName;
 
+  /**
+   * Constructs the application for an organisation dto with only relevant data for user.
+   *
+   * @param userOrgApplication to convert.
+   */
   public ApplicationOrgNameDto(UserOrgApplication userOrgApplication) {
     this.organisationUserKey = userOrgApplication.getOrganisationUserKey();
     this.applicationStatus = userOrgApplication.getApplicationStatus();

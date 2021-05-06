@@ -57,6 +57,13 @@ public class TokenService {
     }
   }
 
+  /**
+   * Checks if a principal contains a certain role.
+   *
+   * @param principal gotten from the request context.
+   * @param rolename  the name of the role to check.
+   * @return if the principal contains the role.
+   */
   public boolean hasRole(Principal principal, String rolename) {
     try {
       var keycloakAuthenticationToken =

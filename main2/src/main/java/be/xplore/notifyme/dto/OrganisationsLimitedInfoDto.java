@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Dto for list of organisations containing limited data of organisation
+ * Dto for list of organisations containing limited data of organisation.
  */
 @NoArgsConstructor
 @Getter
@@ -17,6 +17,11 @@ public class OrganisationsLimitedInfoDto {
 
   private List<OrganisationLimitedInfoDto> organisations;
 
+  /**
+   * Constructs a list of organisations with limited info.
+   *
+   * @param organisations to be converted to the dto list.
+   */
   public OrganisationsLimitedInfoDto(List<Organisation> organisations) {
     this.organisations = new ArrayList<>();
     for (var organisation : organisations) {

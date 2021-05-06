@@ -142,6 +142,12 @@ public class UserService {
     }
   }
 
+  /**
+   * Updates a user in the database.
+   *
+   * @param user to update.
+   * @return an updated user.
+   */
   public User updateUser(User user) {
     try {
       return userRepo.save(user);

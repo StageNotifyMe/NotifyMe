@@ -68,6 +68,12 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
+  /**
+   * Gets a list of organisationApplications for the calling user.
+   *
+   * @param principal injected by securitycontext.
+   * @return Response entity containing the list of applications with relevant data.
+   */
   @GetMapping(value = "orgApplications")
   public ResponseEntity<List<ApplicationOrgNameDto>> getUser(Principal principal) {
     var applicationsDto = new ArrayList<ApplicationOrgNameDto>();

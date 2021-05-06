@@ -17,6 +17,12 @@ public class UserOrgApplicationService {
   private final UserService userService;
   private final OrganisationService organisationService;
 
+  /**
+   * Creates a user application for a certain organisation.
+   *
+   * @param organisationId the unique organisation id.
+   * @param principal      from the request context.
+   */
   public void applyToOrganisation(Long organisationId, Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     var organisation = organisationService.getOrganisation(organisationId);

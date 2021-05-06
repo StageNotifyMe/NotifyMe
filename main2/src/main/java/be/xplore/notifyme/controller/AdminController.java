@@ -9,7 +9,6 @@ import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
-import com.google.gson.Gson;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,12 +40,11 @@ public class AdminController {
   private final VenueService venueService;
   private final UserService userService;
   private final KeycloakCommunicationService keycloakCommunicationService;
-  private final Gson gson;
 
 
   @GetMapping("/adminTest")
   public ResponseEntity<String> adminInfoTest() {
-    return ResponseEntity.ok("Hello Admin.");
+    return ResponseEntity.ok("Well hello there, admin!");
   }
 
   /**
@@ -71,6 +69,13 @@ public class AdminController {
   public ResponseEntity<Organisation> getOrganisation(
       @RequestParam("id") Long id) {
     return ResponseEntity.ok(organisationService.getOrganisation(id));
+  }
+
+  @PostMapping("/promoteUserToVmanager")
+  public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
+      long venueId) {
+    venueService.makeUserVenueManager(userId, venueId);
+    return ResponseEntity.noContent().build();
   }
 
   /**
