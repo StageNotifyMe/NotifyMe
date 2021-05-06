@@ -333,7 +333,8 @@ class KeycloakCommunicationServiceTest {
     mockGetAllClients(true);
 
     var result = keycloakCommunicationService.getAllClients();
-    assertTrue(result.stream().anyMatch(ci -> ci.getId().equals("id")));
+    assertTrue(
+        result.stream().anyMatch(ci -> ci.getId().equals(getTestRelevantClientInfo().getId())));
   }
 
   @Test
@@ -342,6 +343,23 @@ class KeycloakCommunicationServiceTest {
 
     assertThrows(CrudException.class, () -> {
       keycloakCommunicationService.getAllClients();
+    });
+  }
+
+  @Test
+  void getClientSuccessful() {
+    mockGetAllClients(true);
+
+    var result = keycloakCommunicationService.getClient(getTestRelevantClientInfo().getClientId());
+    assertEquals(getTestRelevantClientInfo().getId(), result.getId());
+  }
+
+  @Test
+  void getClientNotFound() {
+    mockGetAllClients(true);
+
+    assertThrows(CrudException.class, () -> {
+      keycloakCommunicationService.getClient("invalidId");
     });
   }
 
