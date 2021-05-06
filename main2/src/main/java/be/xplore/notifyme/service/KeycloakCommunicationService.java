@@ -2,16 +2,21 @@ package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.dto.AdminTokenResponseDto;
 import be.xplore.notifyme.dto.CredentialRepresentationDto;
+import be.xplore.notifyme.dto.GiveClientRoleDto;
+import be.xplore.notifyme.dto.RelevantClientInfoDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.exception.CrudException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.representations.account.ClientRepresentation;
 import org.keycloak.representations.account.UserRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +45,8 @@ public class KeycloakCommunicationService {
   String tokenUri;
   @Value("${userservice.register.url}")
   private String registerUri;
+  @Value("${keycloakcommunicationservice.getallclients.url}")
+  private String clientUri;
   final RestTemplate restTemplate;
   @Qualifier("xformRequest")
   @Autowired
@@ -202,6 +209,22 @@ public class KeycloakCommunicationService {
     return new HttpEntity<>(headers);
   }
 
+  /**
+   * Creates an instance of HttpEntity(String) with content-type = application/json
+   * and a bearerAuth with given accestoken.
+   * Includes an object as body.
+   *
+   * @param accessToken bearer access token.
+   * @param body        object to include as body.
+   * @return HttpEntity(String).
+   */
+  public HttpEntity<String> createJsonHttpEntity(String accessToken, Object body) {
+    var headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(accessToken);
+    return new HttpEntity<>(gson.toJson(body), headers);
+  }
+
 
   /**
    * Gets all of the user info from keycloak.
@@ -227,6 +250,59 @@ public class KeycloakCommunicationService {
           "Something went wrong trying to GET from keycloakServer: " + e.getMessage());
     }
   }
+
+  public void giveUserRole(String userId, RoleRepresentation roleToGive, String idOfClient) {
+    var uri = String.format("%s/%s/role-mappings/clients/%s", registerUri, userId, idOfClient);
+    var role = new GiveClientRoleDto(roleToGive.getId(), roleToGive.getName(), true);
+    var body = new GiveClientRoleDto[] {role};
+    var entity = createJsonHttpEntity(getAdminAccesstoken(), body);
+    var restResult = restTemplate.postForEntity(uri, entity, String.class);
+    if (restResult.getStatusCode() != HttpStatus.NO_CONTENT) {
+      throw new CrudException("Could not give role to user. Response: " + restResult.getBody());
+    }
+  }
+
+  public List<RoleRepresentation> getClientRoles(String idOfClient) {
+    var entity = createJsonHttpEntity(getAdminAccesstoken());
+    var uri = String.format("%s/%s/roles", clientUri, idOfClient);
+    var roles = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+    return Arrays.asList(parseClientRoles(roles.getBody()));
+  }
+
+  public RoleRepresentation getClientRole(String roleName, String idOfClient) {
+    var roles = getClientRoles(idOfClient);
+    var role = roles.stream().filter(r -> r.getName().equals(roleName)).findFirst();
+    if (role.isPresent()) {
+      return role.get();
+    } else {
+      throw new CrudException("Could not find role for roleName " + roleName);
+    }
+  }
+
+  private RoleRepresentation[] parseClientRoles(String jsonString) {
+    return gson.fromJson(jsonString, RoleRepresentation[].class);
+  }
+
+  public RelevantClientInfoDto getClient(String clientId) {
+    var clients = getAllClients();
+    var client = clients.stream().filter(c -> c.getClientId().equals(clientId)).findFirst();
+    if (client.isPresent()) {
+      return client.get();
+    } else {
+      throw new CrudException("Could not find client for id " + clientId);
+    }
+  }
+
+  public List<RelevantClientInfoDto> getAllClients() {
+    var entity = createJsonHttpEntity(getAdminAccesstoken());
+    var clients = restTemplate.exchange(clientUri, HttpMethod.GET, entity, String.class);
+    return Arrays.asList(parseClients(clients.getBody()));
+  }
+
+  private RelevantClientInfoDto[] parseClients(String jsonString) {
+    return gson.fromJson(jsonString, RelevantClientInfoDto[].class);
+  }
+
 
   private List<UserRepresentation> parseUserInfo(String bodyToParse) {
     var listType = new TypeToken<List<UserRepresentation>>() {

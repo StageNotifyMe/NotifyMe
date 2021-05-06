@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,8 +47,16 @@ public class AdminController {
 
 
   @GetMapping("/adminTest")
-  public ResponseEntity<String> adminInfoTest() {
-    return ResponseEntity.ok("Hello Admin.");
+  public ResponseEntity<Object> adminInfoTest() {
+    try {
+      var client = keycloakCommunicationService.getClient("notifyme");
+      var role = keycloakCommunicationService.getClientRole("venue_manager", client.getId());
+      keycloakCommunicationService
+          .giveUserRole("0e82604b-32b3-48b7-99e4-1f548ef6c5b3", role, client.getId());
+      return ResponseEntity.ok(role);
+    } catch (Exception e){
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
   }
 
   /**
@@ -103,7 +112,8 @@ public class AdminController {
    */
   @PostMapping("/promoteUserToOrgMgr")
   public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(@RequestBody @NotNull
-      UserOrgPromotionDto userOrgPromotionDto, Principal principal) {
+                                                                 UserOrgPromotionDto userOrgPromotionDto,
+                                                             Principal principal) {
     return ResponseEntity.ok(new OrganisationDto(
         organisationService.promoteUserToOrgManager(userOrgPromotionDto.getUsername(),
             userOrgPromotionDto.getOrganisationId(), principal)));
