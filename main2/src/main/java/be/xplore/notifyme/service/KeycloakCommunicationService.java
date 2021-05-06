@@ -279,6 +279,9 @@ public class KeycloakCommunicationService {
     var entity = createJsonHttpEntity(getAdminAccesstoken());
     var uri = clientUri + String.format("/%s/roles", idOfClient);
     var roles = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+    if (roles.getStatusCode() != HttpStatus.OK){
+      throw new CrudException("Could not retrieve roles: "+roles.getBody());
+    }
     return Arrays.asList(parseClientRoles(roles.getBody()));
   }
 
