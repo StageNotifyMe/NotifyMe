@@ -63,11 +63,12 @@ public class VenueService {
    * @return the venue matching the ID or thorws error if no matches found.
    */
   public Venue getVenue(long id) {
-    var venue = venueRepo.getOne(id);
-    if (venue.getId() != id) {
+    var venue = venueRepo.findById(id);
+    if (venue.isPresent()) {
+      return venue.get();
+    } else {
       throw new CrudException("Could not retrieve venue for id " + id);
     }
-    return venue;
   }
 
   /**
