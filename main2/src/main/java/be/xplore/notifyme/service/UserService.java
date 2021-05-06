@@ -5,7 +5,6 @@ import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
-import com.google.gson.Gson;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +21,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
 
-  private final Gson gson;
   private final IUserRepo userRepo;
   private final TokenService tokenService;
   private final KeycloakCommunicationService keycloakCommunicationService;
   @Value("${keycloak.resource}")
-  private final String clientName;
+  private String clientName;
 
   /**
    * Gets Keycloak Userrepresentation with info from all of the users.

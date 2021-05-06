@@ -45,7 +45,7 @@ public class KeycloakCommunicationService {
   String tokenUri;
   @Value("${userservice.register.url}")
   private String registerUri;
-  @Value("${keycloakcommunicationservice.getallclients.url}")
+  @Value("${userservice.clients.url}")
   private String clientUri;
   final RestTemplate restTemplate;
   @Qualifier("xformRequest")
@@ -251,6 +251,13 @@ public class KeycloakCommunicationService {
     }
   }
 
+  /**
+   * Gives a given user a given Notifyme-Realm client-role of a given client.
+   *
+   * @param userId     of the user to be given a role.
+   * @param roleToGive role to give to given user.
+   * @param idOfClient id of the client where the role is defined.
+   */
   public void giveUserRole(String userId, RoleRepresentation roleToGive, String idOfClient) {
     var uri = String.format("%s/%s/role-mappings/clients/%s", registerUri, userId, idOfClient);
     var role = new GiveClientRoleDto(roleToGive.getId(), roleToGive.getName(), true);
@@ -262,13 +269,26 @@ public class KeycloakCommunicationService {
     }
   }
 
+  /**
+   * Gets all client-roles of a Notifyme-Realm client.
+   *
+   * @param idOfClient id of a client of the Notifyme-Realm.
+   * @return list of keycloak RoleRepresentations.
+   */
   public List<RoleRepresentation> getClientRoles(String idOfClient) {
     var entity = createJsonHttpEntity(getAdminAccesstoken());
-    var uri = String.format("%s/%s/roles", clientUri, idOfClient);
+    var uri = clientUri + String.format("/%s/roles", idOfClient);
     var roles = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
     return Arrays.asList(parseClientRoles(roles.getBody()));
   }
 
+  /**
+   * Gets a defined client-role of a Notifyme-Realm client.
+   *
+   * @param roleName   name of the role to get.
+   * @param idOfClient id of a client of the Notifyme-Realm.
+   * @return a keycloak RoleRepresentation.
+   */
   public RoleRepresentation getClientRole(String roleName, String idOfClient) {
     var roles = getClientRoles(idOfClient);
     var role = roles.stream().filter(r -> r.getName().equals(roleName)).findFirst();
@@ -283,6 +303,12 @@ public class KeycloakCommunicationService {
     return gson.fromJson(jsonString, RoleRepresentation[].class);
   }
 
+  /**
+   * Gets client's relevant information.
+   *
+   * @param clientId id of a client of the Notifyme-Realm.
+   * @return RelevantClientInfoDto.
+   */
   public RelevantClientInfoDto getClient(String clientId) {
     var clients = getAllClients();
     var client = clients.stream().filter(c -> c.getClientId().equals(clientId)).findFirst();
@@ -293,6 +319,11 @@ public class KeycloakCommunicationService {
     }
   }
 
+  /**
+   * Gets all clients' relevant information from the Notifyme-Realm.
+   *
+   * @return list of RelevantClientInfoDto.
+   */
   public List<RelevantClientInfoDto> getAllClients() {
     var entity = createJsonHttpEntity(getAdminAccesstoken());
     var clients = restTemplate.exchange(clientUri, HttpMethod.GET, entity, String.class);

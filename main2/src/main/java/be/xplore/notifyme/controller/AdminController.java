@@ -19,7 +19,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -103,9 +102,8 @@ public class AdminController {
    * @return the organisation object containing the newly added manager.
    */
   @PostMapping("/promoteUserToOrgMgr")
-  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(@RequestBody @NotNull
-                                                                 UserOrgPromotionDto userOrgPromotionDto,
-                                                             Principal principal) {
+  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(
+      @RequestBody @NotNull UserOrgPromotionDto userOrgPromotionDto, Principal principal) {
     return ResponseEntity.ok(new OrganisationDto(
         organisationService.promoteUserToOrgManager(userOrgPromotionDto.getUsername(),
             userOrgPromotionDto.getOrganisationId(), principal)));

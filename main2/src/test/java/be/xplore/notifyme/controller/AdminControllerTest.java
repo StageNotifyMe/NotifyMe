@@ -56,7 +56,7 @@ class AdminControllerTest {
   void adminInfoTestIsAdmin() throws Exception {
     mockMvc.perform(get("/admin/adminTest"))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().string("Hello Admin."));
+        .andExpect(MockMvcResultMatchers.content().string("Well hello there, admin!"));
   }
 
   @Test
