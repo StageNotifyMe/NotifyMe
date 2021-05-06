@@ -127,11 +127,4 @@ public class AdminController {
     return ResponseEntity.ok(userRepListDto);
   }
 
-  @PostMapping("/role")
-  public ResponseEntity<Object> grantUserRole(@RequestParam String userId,
-                                              @RequestParam String roleName) {
-    userService.grantUserRole(userId, roleName);
-    return ResponseEntity.noContent().build();
-  }
-
 }
