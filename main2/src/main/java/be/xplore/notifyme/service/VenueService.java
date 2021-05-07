@@ -117,20 +117,4 @@ public class VenueService {
       throw new SaveToDatabaseException("Could not make user venue manager: " + e.getMessage());
     }
   }
-
-  /**
-   * Gets all venue managers based on venue id.
-   *
-   * @param venueId id of the venue to get all managers from.
-   * @return list of users.
-   */
-  public List<User> getVenueManagers(long venueId) {
-    try {
-      var venue = this.getVenue(venueId);
-      return userService.getAllVenueManagers(venue);
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      throw e;
-    }
-  }
 }

@@ -1,6 +1,7 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Line;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.dto.CreateLineDto;
@@ -11,6 +12,7 @@ import be.xplore.notifyme.service.LineService;
 import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
 import java.util.LinkedList;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,12 @@ public class VenueManagerController {
   private final VenueService venueService;
   private final FacilityService facilityService;
   private final LineService lineService;
+
+  @GetMapping("/test")
+  public ResponseEntity<Object> test() {
+    var result = eventService.getEvent(1L);
+    return ResponseEntity.ok(result.getLineManagers());
+  }
 
 
   @PostMapping("/event")
@@ -100,5 +108,11 @@ public class VenueManagerController {
                                                          @RequestParam long eventId) {
     eventService.promoteToLineManager(userId, eventId);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/lineManagers")
+  public ResponseEntity<Object> getLineManagersForEvent(@RequestParam long eventId) {
+    var result = eventService.getEvent(eventId).getLineManagers();
+    return ResponseEntity.ok(result);
   }
 }

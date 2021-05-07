@@ -94,7 +94,7 @@ class EventServiceTest {
     final IDToken token = Mockito.mock(IDToken.class);
     when(eventRepo.findById(1L)).thenReturn(Optional.of(getTestEventWithLineManager()));
     when(tokenService.getIdToken(any(Principal.class))).thenReturn(token);
-    when(token.getPreferredUsername()).thenReturn("testUser");
+    when(token.getSubject()).thenReturn("testUser");
     when(userService.getUser("testUser")).thenReturn(testUser);
     when(testUser.getUserId()).thenReturn("testUser");
 

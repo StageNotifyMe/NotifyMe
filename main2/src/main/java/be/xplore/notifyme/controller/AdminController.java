@@ -134,8 +134,8 @@ public class AdminController {
    * @return list of users.
    */
   @GetMapping("/venueManagers")
-  public ResponseEntity<List<User>> getAllVenueManagers(@RequestParam long venueId) {
-    var managers = venueService.getVenueManagers(venueId);
+  public ResponseEntity<Object> getAllVenueManagers(@RequestParam long venueId) {
+    var managers = venueService.getVenue(venueId).getManagers();
     return ResponseEntity.ok(managers);
   }
 

@@ -1,5 +1,6 @@
 package be.xplore.notifyme.service;
 
+import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.UserRegistrationDto;
@@ -173,15 +174,5 @@ public class UserService {
       log.error(e.getMessage());
       throw e;
     }
-  }
-
-  /**
-   * Gets all users that are venue manager of a given venue.
-   *
-   * @param venue to get managers from.
-   * @return list of users.
-   */
-  public List<User> getAllVenueManagers(Venue venue) {
-    return userRepo.getAllByVenuesContains(venue);
   }
 }

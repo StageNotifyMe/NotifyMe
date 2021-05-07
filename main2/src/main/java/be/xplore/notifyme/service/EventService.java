@@ -1,6 +1,7 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
@@ -71,7 +72,7 @@ public class EventService {
     if (event.isPresent()) {
       var eventObject = event.get();
       var token = tokenService.getIdToken(principal);
-      var user = userService.getUser(token.getPreferredUsername());
+      var user = userService.getUser(token.getSubject());
       if (eventObject.getLineManagers().contains(user)) {
         return eventObject;
       } else {

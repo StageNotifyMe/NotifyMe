@@ -199,29 +199,6 @@ class VenueServiceTest {
     });
   }
 
-  @Test
-  void getVenueManagersSuccessful() {
-    final List<User> userList = new LinkedList<>();
-    userList.add(getTestUser());
-    final var venue = getTestVenue();
-    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(venue));
-    when(userService.getAllVenueManagers(venue)).thenReturn(userList);
-
-    var result = venueService.getVenueManagers(1L);
-    assertTrue(result.stream().anyMatch(u -> {
-      return u.getUserId().equals(getTestUser().getUserId());
-    }));
-  }
-
-  @Test
-  void getVenueManagersVenueNotFound() {
-    when(venueRepo.findById(anyLong())).thenReturn(Optional.empty());
-
-    assertThrows(CrudException.class, () -> {
-      venueService.getVenueManagers(1L);
-    });
-  }
-
   private List<GetVenueDto> getTestGetVenues() {
     LinkedList<GetVenueDto> venues = new LinkedList<>();
     venues.add(new GetVenueDto(getTestVenue().getId(), getTestVenue().getName(),

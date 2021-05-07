@@ -318,14 +318,4 @@ class UserServiceTest {
         userService.updateUser(new User()));
   }
 
-  @Test
-  void getAllVenueManagersSuccessful() {
-    final Venue venue = new Venue();
-    when(userRepo.getAllByVenuesContains(venue)).thenReturn(new LinkedList<>());
-
-    assertDoesNotThrow(() -> {
-      userService.getAllVenueManagers(venue);
-    });
-  }
-
 }

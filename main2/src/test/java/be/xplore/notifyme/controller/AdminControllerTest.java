@@ -17,6 +17,7 @@ import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -172,9 +173,10 @@ class AdminControllerTest {
   void getAllVenueManagersSuccessful() throws Exception {
     final User testUser = new User();
     testUser.setUserId("userid");
-    final List<User> userList = new LinkedList<>();
-    userList.add(testUser);
-    when(venueService.getVenueManagers(anyLong())).thenReturn(userList);
+    final Venue venue = new Venue();
+    venue.setManagers(new ArrayList<>());
+    venue.getManagers().add(testUser);
+    when(venueService.getVenue(anyLong())).thenReturn(venue);
 
     mockMvc.perform(get("/admin/venueManagers?venueId=1"))
         .andExpect(MockMvcResultMatchers.status().isOk())
