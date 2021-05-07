@@ -68,9 +68,7 @@ public class TokenService {
     try {
       var keycloakAuthenticationToken =
           (KeycloakAuthenticationToken) principal;
-      var roles = keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext().getToken()
-          .getResourceAccess(clientId)
-          .getRoles();
+      var roles = keycloakAuthenticationToken.getAccount().getRoles();
       return roles.contains(rolename);
     } catch (Exception e) {
       throw new TokenHandlerException(
