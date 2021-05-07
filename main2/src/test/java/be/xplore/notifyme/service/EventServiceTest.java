@@ -1,9 +1,13 @@
 package be.xplore.notifyme.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -13,10 +17,12 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IEventRepo;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -148,6 +154,49 @@ class EventServiceTest {
     });
   }
 
+  @Test
+  void promoteToLineManagerSuccessful() {
+    when(userService.getUser(anyString())).thenReturn(testUser);
+    when(eventRepo.findById(anyLong())).thenReturn(Optional.of(testEvent));
+    when(eventRepo.save(any(Event.class))).thenReturn(testEvent);
+    doNothing().when(userService).grantUserRole(anyString(), anyString());
+
+    assertDoesNotThrow(() -> {
+      eventService.promoteToLineManager("userid", 1L);
+    });
+  }
+
+  @Test
+  void promoteToLineManagerAlreadyLineManager() {
+    var testEventB = testEvent;
+    testEventB.getLineManagers().add(testUser);
+    when(userService.getUser(anyString())).thenReturn(testUser);
+    when(eventRepo.findById(anyLong())).thenReturn(Optional.of(testEventB));
+
+    assertThrows(SaveToDatabaseException.class, () -> {
+      eventService.promoteToLineManager("userid", 1L);
+    });
+  }
+
+  @Test
+  void promoteToLineManagerUserNotFound() {
+    doThrow(CrudException.class).when(userService).getUser(anyString());
+
+    assertThrows(SaveToDatabaseException.class, () -> {
+      eventService.promoteToLineManager("userid", 1L);
+    });
+  }
+
+  @Test
+  void promoteToLineManagerEventNotFound() {
+    when(userService.getUser(anyString())).thenReturn(testUser);
+    when(eventRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+    assertThrows(SaveToDatabaseException.class, () -> {
+      eventService.promoteToLineManager("userid", 1L);
+    });
+  }
+
 
   private CreateEventDto getTestCreateEventDto() {
     return new CreateEventDto("Evenement", "een evenement", "een artiest",
@@ -162,7 +211,8 @@ class EventServiceTest {
   private User testUser = Mockito.mock(User.class);
 
   private final Event testEvent =
-      new Event("Evenement", "een evenement", "een artiest", "2021-04-30 06:45", getTestVenue());
+      new Event(1, "Evenement", "een evenement", "een artiest",
+          LocalDateTime.now(), getTestVenue(), new LinkedList<>(), new LinkedList<>());
 
   private Event getTestEventWithLineManager() {
     var testEvent =
