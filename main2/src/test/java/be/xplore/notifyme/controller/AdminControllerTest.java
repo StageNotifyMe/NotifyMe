@@ -157,7 +157,8 @@ class AdminControllerTest {
   @Test
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void promoteUserToVmanagerSuccessful() throws Exception {
-    doNothing().when(venueService).makeUserVenueManager(anyString(), anyLong());
+    doNothing().when(venueService).makeUserVenueManager(anyString(),
+        anyLong(), any(Principal.class));
 
     mockMvc.perform(post("/admin/promoteUserToVmanager?userId=id&venueId=1"))
         .andExpect(MockMvcResultMatchers.status().isNoContent());

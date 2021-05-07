@@ -7,8 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Address;
@@ -25,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,55 +133,65 @@ class VenueServiceTest {
 
   @Test
   void makeUserVenueManagerSuccessful() {
+    final KeycloakAuthenticationToken kct = mock(KeycloakAuthenticationToken.class);
+    when(tokenService.hasRole(eq(kct), eq("venue_manager"))).thenReturn(false);
     when(userService.getUser(anyString())).thenReturn(getTestUser());
     when(venueRepo.findById(anyLong())).thenReturn(Optional.of(getTestVenue()));
     when(venueRepo.save(any(Venue.class))).thenReturn(getTestVenue());
     doNothing().when(userService).grantUserRole(anyString(), anyString());
 
     assertDoesNotThrow(() -> {
-      venueService.makeUserVenueManager("userid", 1L);
+      venueService.makeUserVenueManager("userid", 1L, kct);
     });
   }
 
   @Test
   void makeUserVenueManagerFailA() {
+    final KeycloakAuthenticationToken kct = mock(KeycloakAuthenticationToken.class);
+    when(tokenService.hasRole(eq(kct), eq("venue_manager"))).thenReturn(false);
     doThrow(CrudException.class).when(userService).getUser(anyString());
 
     assertThrows(SaveToDatabaseException.class, () -> {
-      venueService.makeUserVenueManager("userid", 1L);
+      venueService.makeUserVenueManager("userid", 1L, kct);
     });
   }
 
   @Test
   void makeUserVenueManagerFailB() {
+    final KeycloakAuthenticationToken kct = mock(KeycloakAuthenticationToken.class);
+    when(tokenService.hasRole(eq(kct), eq("venue_manager"))).thenReturn(false);
     when(userService.getUser(anyString())).thenReturn(getTestUser());
     doThrow(CrudException.class).when(venueRepo).findById(anyLong());
 
     assertThrows(SaveToDatabaseException.class, () -> {
-      venueService.makeUserVenueManager("userid", 1L);
+      venueService.makeUserVenueManager("userid", 1L, kct);
     });
   }
 
   @Test
   void makeUserVenueManagerFailC() {
+    final KeycloakAuthenticationToken kct = mock(KeycloakAuthenticationToken.class);
+    when(tokenService.hasRole(eq(kct), eq("venue_manager"))).thenReturn(false);
     when(userService.getUser(anyString())).thenReturn(getTestUser());
     when(venueRepo.findById(anyLong())).thenReturn(Optional.of(getTestVenue()));
     doThrow(CrudException.class).when(venueRepo).save(any(Venue.class));
 
     assertThrows(SaveToDatabaseException.class, () -> {
-      venueService.makeUserVenueManager("userid", 1L);
+      venueService.makeUserVenueManager("userid", 1L, kct);
     });
   }
 
   @Test
   void makeUserVenueManagerFailD() {
+    final KeycloakAuthenticationToken kct = mock(KeycloakAuthenticationToken.class);
+    when(tokenService.hasRole(eq(kct), eq("venue_manager"))).thenReturn(false);
     when(userService.getUser(anyString())).thenReturn(getTestUser());
     when(venueRepo.findById(anyLong())).thenReturn(Optional.of(getTestVenue()));
     when(venueRepo.save(any(Venue.class))).thenReturn(getTestVenue());
     doThrow(CrudException.class).when(userService).grantUserRole(anyString(), anyString());
 
     assertThrows(SaveToDatabaseException.class, () -> {
-      venueService.makeUserVenueManager("userid", 1L);
+      venueService.makeUserVenueManager("userid", 1L, kct);
     });
   }
 

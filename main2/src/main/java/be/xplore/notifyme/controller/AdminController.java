@@ -73,8 +73,8 @@ public class AdminController {
 
   @PostMapping("/promoteUserToVmanager")
   public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
-      long venueId) {
-    venueService.makeUserVenueManager(userId, venueId);
+                                                          long venueId, Principal principal) {
+    venueService.makeUserVenueManager(userId, venueId, principal);
     return ResponseEntity.noContent().build();
   }
 
@@ -106,8 +106,8 @@ public class AdminController {
    * @return the organisation object containing the newly added manager.
    */
   @PostMapping("/promoteUserToOrgMgr")
-  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(@RequestBody @NotNull
-      UserOrgRequestDto userOrgRequestDto, Principal principal) {
+  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(
+      @RequestBody @NotNull UserOrgRequestDto userOrgRequestDto, Principal principal) {
     return ResponseEntity.ok(new OrganisationDto(
         organisationService.promoteUserToOrgManager(userOrgRequestDto.getUsername(),
             userOrgRequestDto.getOrganisationId(), principal)));

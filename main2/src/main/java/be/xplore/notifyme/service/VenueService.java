@@ -100,14 +100,15 @@ public class VenueService {
    * @param userId  id of user to grant permission.
    * @param venueId id of venue over which the user gets perimissions.
    */
-  public void makeUserVenueManager(String userId, Long venueId) {
+  public void makeUserVenueManager(String userId, Long venueId, Principal principal) {
     try {
       var user = userService.getUser(userId);
       var venue = this.getVenue(venueId);
       venue.getManagers().add(user);
       venueRepo.save(venue);
-      //na merge met Arthur's branch moet hier check komen of user al permission heeft
-      userService.grantUserRole(userId, "venue_manager");
+      if (!tokenService.hasRole(principal, "venue_manager")) {
+        userService.grantUserRole(userId, "venue_manager");
+      }
     } catch (Exception e) {
       log.error(e.getMessage());
       throw new SaveToDatabaseException("Could not make user venue manager: " + e.getMessage());
