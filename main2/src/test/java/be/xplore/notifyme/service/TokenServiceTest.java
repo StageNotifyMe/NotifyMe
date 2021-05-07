@@ -29,7 +29,6 @@ class TokenServiceTest {
           preferredUsername = "Test"))
   void getIdTokenSuccessful() {
 
-
     var result = tokenService.getIdToken(getKeycloakPrincipal());
     assertEquals("Test", result.getPreferredUsername());
     assertEquals("ElTestor", result.getNickName());
@@ -63,6 +62,30 @@ class TokenServiceTest {
     assertThrows(TokenHandlerException.class, () -> {
       tokenService.getSecurityContext(getKeycloakPrincipal());
     });
+  }
+
+  @Test
+  @WithMockKeycloakAuth(authorities = {"admin", "user"},
+      isInteractive = true,
+      oidc = @OidcStandardClaims(
+          email = "test@test.com",
+          emailVerified = true,
+          nickName = "ElTestor",
+          preferredUsername = "Test"))
+  void checkAdminRoleIsTrue() {
+    assertTrue(tokenService.hasRole(getKeycloakPrincipal(), "admin"));
+  }
+
+  @Test
+  @WithMockKeycloakAuth(authorities = {"user"},
+      isInteractive = true,
+      oidc = @OidcStandardClaims(
+          email = "test@test.com",
+          emailVerified = true,
+          nickName = "ElTestor",
+          preferredUsername = "Test"))
+  void checkAdminRoleIsFalse() {
+    assertFalse(tokenService.hasRole(getKeycloakPrincipal(), "admin"));
   }
 
 

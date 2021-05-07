@@ -1,6 +1,7 @@
 package be.xplore.notifyme.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -10,11 +11,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
+import be.xplore.notifyme.service.OrganisationService;
+import be.xplore.notifyme.service.UserOrgApplicationService;
 import be.xplore.notifyme.service.UserService;
-import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
-import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -37,6 +37,10 @@ class UserControllerTest {
   private UserService userService;
   @MockBean
   private KeycloakCommunicationService keycloakCommunicationService;
+  @MockBean
+  private OrganisationService organisationService;
+  @MockBean
+  private UserOrgApplicationService userOrgApplicationService;
 
   @Test
   void getAccessTokenForUserValid() throws Exception {
@@ -85,6 +89,36 @@ class UserControllerTest {
             "{\"id\":\"id\",\"username\":\"test.tester\",\"firstName\":\"test\","
                 + "\"lastName\":\"tester\",\"email\":\"test@test.com\","
                 + "\"emailVerified\":false,\"attributes\":{}}"));
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getOrganisations() throws Exception {
+    when(organisationService.getOrganisations()).thenReturn(new ArrayList<>());
+
+    mockMvc
+        .perform(get("/user/organisations"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void applyToOrganisation() throws Exception {
+    doNothing().when(userOrgApplicationService).applyToOrganisation(anyLong(), any());
+
+    mockMvc
+        .perform(post("/user/orgApplication?organisationId=1"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getOrgApplications() throws Exception {
+    when(userOrgApplicationService.getUserOrgApplications(any())).thenReturn(new ArrayList<>());
+
+    mockMvc
+        .perform(get("/user/orgApplications"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
   }
 
 }

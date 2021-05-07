@@ -300,4 +300,20 @@ class UserServiceTest {
     });
   }
 
+  @Test
+  void updateUser() {
+    var user = new User();
+    when(userRepo.save(any())).thenReturn(user);
+
+    assertEquals(user, userService.updateUser(user));
+  }
+
+  @Test
+  void updateUserFail() {
+    when(userRepo.save(any())).thenThrow(new CrudException("Could not update user."));
+
+    assertThrows(CrudException.class, () ->
+        userService.updateUser(new User()));
+  }
+
 }
