@@ -27,6 +27,7 @@ public class UserService {
   @Value("${keycloak.resource}")
   private String clientName;
 
+
   /**
    * Gets Keycloak Userrepresentation with info from all of the users.
    *
@@ -51,9 +52,8 @@ public class UserService {
    */
   public UserRepresentation getUserInfo(String username, Principal principal) {
     var token = tokenService.getIdToken(principal);
-    var securityContext = tokenService.getSecurityContext(principal);
     if (token.getPreferredUsername().equals(username)
-        || securityContext.getAuthorizationContext().hasScopePermission("admin")) {
+        || tokenService.hasRole(principal, "admin")) {
       return keycloakCommunicationService.getUserInfo(username);
     } else {
       throw new UnauthorizedException("User can only get info about themself");
@@ -139,6 +139,21 @@ public class UserService {
     } catch (RuntimeException ex) {
       log.error(ex.getMessage());
       throw new CrudException("Could not retrieve the list of users.");
+    }
+  }
+
+  /**
+   * Updates a user in the database.
+   *
+   * @param user to update.
+   * @return an updated user.
+   */
+  public User updateUser(User user) {
+    try {
+      return userRepo.save(user);
+    } catch (RuntimeException ex) {
+      log.error(ex.getMessage());
+      throw new CrudException("Could not update the user data.");
     }
   }
 

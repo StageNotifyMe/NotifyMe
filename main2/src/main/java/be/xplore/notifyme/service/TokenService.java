@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class TokenService {
+
+  @Value("${keycloak.resource}")
+  String clientId;
 
   /**
    * Uses a principal object to create an IDToken.
@@ -51,5 +55,27 @@ public class TokenService {
       throw new TokenHandlerException(
           String.format("Could not extract IDToken from principal object: %s", e.getMessage()));
     }
+  }
+
+  /**
+   * Checks if a principal contains a certain role.
+   *
+   * @param principal gotten from the request context.
+   * @param rolename  the name of the role to check.
+   * @return if the principal contains the role.
+   */
+  public boolean hasRole(Principal principal, String rolename) {
+    try {
+      var keycloakAuthenticationToken =
+          (KeycloakAuthenticationToken) principal;
+      var roles = keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext().getToken()
+          .getResourceAccess(clientId)
+          .getRoles();
+      return roles.contains(rolename);
+    } catch (Exception e) {
+      throw new TokenHandlerException(
+          String.format("Could not extract IDToken from principal object: %s", e.getMessage()));
+    }
+
   }
 }

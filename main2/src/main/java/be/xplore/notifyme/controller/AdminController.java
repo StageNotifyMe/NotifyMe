@@ -1,16 +1,14 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.dto.AdminTokenResponseDto;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
-import be.xplore.notifyme.dto.UserOrgPromotionDto;
+import be.xplore.notifyme.dto.UserOrgRequestDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
-import com.google.gson.Gson;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +40,10 @@ public class AdminController {
   private final VenueService venueService;
   private final UserService userService;
   private final KeycloakCommunicationService keycloakCommunicationService;
-  private final Gson gson;
 
 
   @GetMapping("/adminTest")
-  public ResponseEntity<Object> adminInfoTest() {
+  public ResponseEntity<String> adminInfoTest() {
     return ResponseEntity.ok("Well hello there, admin!");
   }
 
@@ -74,6 +71,13 @@ public class AdminController {
     return ResponseEntity.ok(organisationService.getOrganisation(id));
   }
 
+  @PostMapping("/promoteUserToVmanager")
+  public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
+      long venueId) {
+    venueService.makeUserVenueManager(userId, venueId);
+    return ResponseEntity.noContent().build();
+  }
+
   /**
    * Gets a list of all the organisations in the system.
    *
@@ -98,22 +102,15 @@ public class AdminController {
   /**
    * Promotes a user to manager of a certain organisation.
    *
-   * @param userOrgPromotionDto which contains the username and org id.
+   * @param userOrgRequestDto which contains the username and org id.
    * @return the organisation object containing the newly added manager.
    */
   @PostMapping("/promoteUserToOrgMgr")
-  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(
-      @RequestBody @NotNull UserOrgPromotionDto userOrgPromotionDto, Principal principal) {
+  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(@RequestBody @NotNull
+      UserOrgRequestDto userOrgRequestDto, Principal principal) {
     return ResponseEntity.ok(new OrganisationDto(
-        organisationService.promoteUserToOrgManager(userOrgPromotionDto.getUsername(),
-            userOrgPromotionDto.getOrganisationId(), principal)));
-  }
-
-  @PostMapping("/promoteUserToVmanager")
-  public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
-                                                          long venueId) {
-    venueService.makeUserVenueManager(userId, venueId);
-    return ResponseEntity.noContent().build();
+        organisationService.promoteUserToOrgManager(userOrgRequestDto.getUsername(),
+            userOrgRequestDto.getOrganisationId(), principal)));
   }
 
   /**
@@ -124,10 +121,8 @@ public class AdminController {
   @GetMapping("/users")
   public ResponseEntity<List<UserRepresentationDto>> getUsers() {
     var userRepListDto = new ArrayList<UserRepresentationDto>();
-    AdminTokenResponseDto response = gson
-        .fromJson(keycloakCommunicationService.getAdminAccesstoken(), AdminTokenResponseDto.class);
     var userRepresentations = userService
-        .getAllUserInfo(response.getAccessToken());
+        .getAllUserInfo(keycloakCommunicationService.getAdminAccesstoken());
     for (var userRep : userRepresentations) {
       userRepListDto.add(new UserRepresentationDto(userRep));
     }
