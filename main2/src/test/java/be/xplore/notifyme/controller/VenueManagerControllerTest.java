@@ -3,6 +3,7 @@ package be.xplore.notifyme.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -267,5 +268,15 @@ class VenueManagerControllerTest {
     mockMvc
         .perform(get("/vmanager/facilities?venueId=1"))
         .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+  }
+
+  @Test
+  @WithMockUser(username = "vmanager", roles = {"venue_manager"})
+  void promoteUserToLineManagerSuccessful() throws Exception {
+    doNothing().when(eventService).promoteToLineManager(anyString(), anyLong());
+
+    mockMvc
+        .perform(post("/vmanager/promoteToLineManager?userId=userid&eventId=1"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 }

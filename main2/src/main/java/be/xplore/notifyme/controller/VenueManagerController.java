@@ -38,7 +38,7 @@ public class VenueManagerController {
 
   @PostMapping("/event")
   public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto,
-      Principal principal) {
+                                            Principal principal) {
     return eventService.createEvent(createEventDto, principal);
   }
 
@@ -77,7 +77,7 @@ public class VenueManagerController {
 
   @PostMapping("/line")
   public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto,
-      Principal principal) {
+                                           Principal principal) {
     var line = lineService.createLine(createLineDto, principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(line);
   }
@@ -93,5 +93,12 @@ public class VenueManagerController {
   public ResponseEntity<Object> getAllFacilitiesForVenue(@RequestParam long venueId) {
     var facilities = facilityService.getAllFacilitesForVenue(venueId);
     return ResponseEntity.ok(facilities);
+  }
+
+  @PostMapping("/promoteToLineManager")
+  public ResponseEntity<Object> promoteUserToLineManager(@RequestParam String userId,
+                                                         @RequestParam long eventId) {
+    eventService.promoteToLineManager(userId, eventId);
+    return ResponseEntity.noContent().build();
   }
 }
