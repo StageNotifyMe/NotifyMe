@@ -8,11 +8,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.dto.AdminTokenResponseDto;
@@ -28,12 +25,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,7 +67,7 @@ class KeycloakCommunicationServiceTest {
 
   @Test
   void registerSuccess() {
-    var arrayList = getTestUserRepresentation("test-id");
+    var arrayList = getTestUserRepresentation();
     final Type listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
 
@@ -89,9 +84,7 @@ class KeycloakCommunicationServiceTest {
 
     when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
 
-    assertDoesNotThrow(() -> {
-      keycloakCommunicationService.register(userRegistrationDto);
-    });
+    assertDoesNotThrow(() -> keycloakCommunicationService.register(userRegistrationDto));
   }
 
   @Test
@@ -108,15 +101,12 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(new AdminTokenResponseDto("a", 10, 10, "Access", 5, "scopes"));
     when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.register(userRegistrationDto);
-    });
+    assertThrows(CrudException.class,
+        () -> keycloakCommunicationService.register(userRegistrationDto));
   }
 
   @Test
   void getUserInfoRestSuccessful() {
-    final UserRegistrationDto userRegistrationDto =
-        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
         eq(String.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.OK).build());
@@ -134,17 +124,14 @@ class KeycloakCommunicationServiceTest {
         eq(String.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
 
-    assertThrows(Exception.class, () -> {
-      keycloakCommunicationService.getUserInfoRest("token", userRegistrationDto.getUsername());
-    });
+    assertThrows(Exception.class, () -> keycloakCommunicationService
+        .getUserInfoRest("token", userRegistrationDto.getUsername()));
   }
 
   @Test
   void sendEmailVerificationRequestSuccessful() {
     this.mockGetAdminAccesstoken();
-    assertDoesNotThrow(() -> {
-      keycloakCommunicationService.sendEmailVerificationRequest("user");
-    });
+    assertDoesNotThrow(() -> keycloakCommunicationService.sendEmailVerificationRequest("user"));
   }
 
   @Test
@@ -152,9 +139,8 @@ class KeycloakCommunicationServiceTest {
     this.mockGetAdminAccesstoken();
     doThrow(RuntimeException.class).when(restTemplate).put(anyString(), any());
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.sendEmailVerificationRequest("user");
-    });
+    assertThrows(CrudException.class,
+        () -> keycloakCommunicationService.sendEmailVerificationRequest("user"));
   }
 
   @Test
@@ -179,14 +165,10 @@ class KeycloakCommunicationServiceTest {
     this.mockGetUserInfoRest();
     var listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
-    final ArrayList<UserRepresentation> mockList = mock(ArrayList.class);
-    final UserRepresentation mockUserRep = mock(UserRepresentation.class);
 
     when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(null);
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.getUserInfo("user");
-    });
+    assertThrows(CrudException.class, () -> keycloakCommunicationService.getUserInfo("user"));
   }
 
   @Test
@@ -196,14 +178,11 @@ class KeycloakCommunicationServiceTest {
     var listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
     final ArrayList<UserRepresentation> mockList = mock(ArrayList.class);
-    final UserRepresentation mockUserRep = mock(UserRepresentation.class);
 
     when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(mockList);
     doThrow(RuntimeException.class).when(mockList).get(anyInt());
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.getUserInfo("user");
-    });
+    assertThrows(CrudException.class, () -> keycloakCommunicationService.getUserInfo("user"));
   }
 
   @Test
@@ -234,15 +213,13 @@ class KeycloakCommunicationServiceTest {
     when(mockResponseEntity.getBody()).thenReturn("LIST");
     when(gson.fromJson("LIST", listType)).thenReturn(mockList);
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.getAllUserInfoRest("token");
-    });
+    assertThrows(CrudException.class,
+        () -> keycloakCommunicationService.getAllUserInfoRest("token"));
   }
 
   @Test
   void getAllUserInfoRestNullFail() {
     final ResponseEntity<String> mockResponseEntity = mock(ResponseEntity.class);
-    final ArrayList<UserRepresentation> mockList = mock(ArrayList.class);
     var listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
@@ -251,9 +228,8 @@ class KeycloakCommunicationServiceTest {
     when(mockResponseEntity.getBody()).thenReturn("LIST");
     when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(null);
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.getAllUserInfoRest("token");
-    });
+    assertThrows(CrudException.class,
+        () -> keycloakCommunicationService.getAllUserInfoRest("token"));
   }
 
   @Test
@@ -262,9 +238,8 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     mockGetAdminAccesstoken();
 
-    assertDoesNotThrow(() -> {
-      keycloakCommunicationService.giveUserRole("userid", getTestRoleRepresentation(), "clientid");
-    });
+    assertDoesNotThrow(() -> keycloakCommunicationService
+        .giveUserRole("userid", getTestRoleRepresentation(), "clientid"));
   }
 
   @Test
@@ -273,9 +248,8 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     mockGetAdminAccesstoken();
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.giveUserRole("userid", getTestRoleRepresentation(), "clientid");
-    });
+    assertThrows(CrudException.class, () -> keycloakCommunicationService
+        .giveUserRole("userid", getTestRoleRepresentation(), "clientid"));
   }
 
   @Test
@@ -306,9 +280,8 @@ class KeycloakCommunicationServiceTest {
   void getClientRolesGetFails() {
     mockGetClientRoles(false);
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.getClientRoles("clientid");
-    });
+    assertThrows(CrudException.class,
+        () -> keycloakCommunicationService.getClientRoles("clientid"));
   }
 
   @Test
@@ -323,9 +296,8 @@ class KeycloakCommunicationServiceTest {
   void getClientRoleRoleNotFound() {
     this.mockGetClientRoles(true);
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.getClientRole("invalidRoleName", "clientid");
-    });
+    assertThrows(CrudException.class,
+        () -> keycloakCommunicationService.getClientRole("invalidRoleName", "clientid"));
   }
 
   @Test
@@ -341,9 +313,7 @@ class KeycloakCommunicationServiceTest {
   void getAllClientsErrorOnGet() {
     mockGetAllClients(false);
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.getAllClients();
-    });
+    assertThrows(CrudException.class, () -> keycloakCommunicationService.getAllClients());
   }
 
   @Test
@@ -358,9 +328,7 @@ class KeycloakCommunicationServiceTest {
   void getClientNotFound() {
     mockGetAllClients(true);
 
-    assertThrows(CrudException.class, () -> {
-      keycloakCommunicationService.getClient("invalidId");
-    });
+    assertThrows(CrudException.class, () -> keycloakCommunicationService.getClient("invalidId"));
   }
 
   private void mockGetAllClients(boolean isSuccessful) {
@@ -402,8 +370,6 @@ class KeycloakCommunicationServiceTest {
   }
 
   private void mockGetUserInfoRest() {
-    final UserRegistrationDto userRegistrationDto =
-        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
     final ResponseEntity restResponse = mock(ResponseEntity.class);
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
         eq(String.class)))
@@ -412,10 +378,10 @@ class KeycloakCommunicationServiceTest {
     when(restResponse.getBody()).thenReturn("LIST");
   }
 
-  private ArrayList<UserRepresentation> getTestUserRepresentation(String id) {
+  private ArrayList<UserRepresentation> getTestUserRepresentation() {
     ArrayList<UserRepresentation> arrayList = new ArrayList<>();
     UserRepresentation userRepresentation = new UserRepresentation();
-    userRepresentation.setId(id);
+    userRepresentation.setId("test-id");
     arrayList.add(userRepresentation);
     return arrayList;
   }

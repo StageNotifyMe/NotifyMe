@@ -9,7 +9,6 @@ import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.exception.CrudException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

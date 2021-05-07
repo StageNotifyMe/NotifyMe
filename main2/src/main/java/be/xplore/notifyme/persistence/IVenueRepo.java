@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IVenueRepo extends JpaRepository<Venue, Long> {
-  public List<Venue> getAllByManagersIsContaining(User user);
+  List<Venue> getAllByManagersIsContaining(User user);
 
 }

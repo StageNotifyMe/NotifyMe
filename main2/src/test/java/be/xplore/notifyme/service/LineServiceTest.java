@@ -23,7 +23,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -61,7 +60,7 @@ class LineServiceTest {
         .thenReturn(event);
     when(facilityService.getFacility(1L)).thenReturn(facility);
     when(lineRepo.save(any(Line.class))).thenAnswer(
-        (Answer<Object>) invocation -> invocation.getArguments()[0]);
+        invocation -> invocation.getArguments()[0]);
     when(userService.getUserFromPrincipal(principal)).thenReturn(user);
 
     var result = lineService.createLine(createLineDto, principal);
@@ -78,11 +77,9 @@ class LineServiceTest {
         .getEventAndVerifyLineManagerPermission(anyLong(), any(Principal.class));
     when(facilityService.getFacility(1L)).thenReturn(facility);
     when(lineRepo.save(any(Line.class))).thenAnswer(
-        (Answer<Object>) invocation -> invocation.getArguments()[0]);
+        invocation -> invocation.getArguments()[0]);
 
-    assertThrows(CrudException.class, () -> {
-      lineService.createLine(createLineDto, principal);
-    });
+    assertThrows(CrudException.class, () -> lineService.createLine(createLineDto, principal));
   }
 
   @Test
@@ -92,11 +89,9 @@ class LineServiceTest {
     doThrow(new CrudException("Could not find facility for id 1")).when(facilityService)
         .getFacility(1L);
     when(lineRepo.save(any(Line.class))).thenAnswer(
-        (Answer<Object>) invocation -> invocation.getArguments()[0]);
+        invocation -> invocation.getArguments()[0]);
 
-    assertThrows(CrudException.class, () -> {
-      lineService.createLine(createLineDto, principal);
-    });
+    assertThrows(CrudException.class, () -> lineService.createLine(createLineDto, principal));
   }
 
   @Test
@@ -113,9 +108,7 @@ class LineServiceTest {
   void getAllLinesByEventNotFound() {
     doThrow(CrudException.class).when(eventService).getEvent(1L);
 
-    assertThrows(CrudException.class, () -> {
-      lineService.getAllLinesByEvent(1L);
-    });
+    assertThrows(CrudException.class, () -> lineService.getAllLinesByEvent(1L));
   }
 
   @Test
@@ -129,8 +122,6 @@ class LineServiceTest {
   void getLineNotFound() {
     when(lineRepo.findById(anyLong())).thenReturn(Optional.empty());
 
-    assertThrows(CrudException.class, () -> {
-      lineService.getLine(1L);
-    });
+    assertThrows(CrudException.class, () -> lineService.getLine(1L));
   }
 }
