@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
@@ -16,6 +17,7 @@ import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
+import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
@@ -157,9 +159,27 @@ class AdminControllerTest {
   @Test
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void promoteUserToVmanagerSuccessful() throws Exception {
-    doNothing().when(venueService).makeUserVenueManager(anyString(), anyLong());
+    doNothing().when(venueService).makeUserVenueManager(anyString(),
+        anyLong());
 
     mockMvc.perform(post("/admin/promoteUserToVmanager?userId=id&venueId=1"))
         .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+
+  @Test
+  @WithMockUser(username = "adminUser", roles = {"user", "admin"})
+  void getAllVenueManagersSuccessful() throws Exception {
+    final User testUser = new User();
+    testUser.setUserId("userid");
+    final List<User> userList = new LinkedList<>();
+    userList.add(testUser);
+    when(venueService.getVenueManagers(anyLong())).thenReturn(userList);
+
+    mockMvc.perform(get("/admin/venueManagers?venueId=1"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().json(
+            "[{userId:\"userid\"}]"
+        ));
   }
 }

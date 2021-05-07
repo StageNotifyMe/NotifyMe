@@ -1,6 +1,7 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Address;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.GetVenueDto;
@@ -104,13 +105,32 @@ public class VenueService {
     try {
       var user = userService.getUser(userId);
       var venue = this.getVenue(venueId);
-      venue.getManagers().add(user);
-      venueRepo.save(venue);
-      //na merge met Arthur's branch moet hier check komen of user al permission heeft
+      if (!venue.getManagers().contains(user)) {
+        venue.getManagers().add(user);
+        venueRepo.save(venue);
+      } else {
+        throw new SaveToDatabaseException("User already is venue manager of this venue!");
+      }
       userService.grantUserRole(userId, "venue_manager");
     } catch (Exception e) {
       log.error(e.getMessage());
       throw new SaveToDatabaseException("Could not make user venue manager: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Gets all venue managers based on venue id.
+   *
+   * @param venueId id of the venue to get all managers from.
+   * @return list of users.
+   */
+  public List<User> getVenueManagers(long venueId) {
+    try {
+      var venue = this.getVenue(venueId);
+      return userService.getAllVenueManagers(venue);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw e;
     }
   }
 }

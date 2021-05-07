@@ -4,11 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Address;
@@ -25,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,6 +183,42 @@ class VenueServiceTest {
 
     assertThrows(SaveToDatabaseException.class, () -> {
       venueService.makeUserVenueManager("userid", 1L);
+    });
+  }
+
+  @Test
+  void makeUserVenueManagerUserAlreadyVenueManager() {
+    var user = getTestUser();
+    when(userService.getUser(anyString())).thenReturn(user);
+    var venue = getTestVenue();
+    venue.getManagers().add(user);
+    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(venue));
+
+    assertThrows(SaveToDatabaseException.class, () -> {
+      venueService.makeUserVenueManager("userid", 1L);
+    });
+  }
+
+  @Test
+  void getVenueManagersSuccessful() {
+    final List<User> userList = new LinkedList<>();
+    userList.add(getTestUser());
+    final var venue = getTestVenue();
+    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(venue));
+    when(userService.getAllVenueManagers(venue)).thenReturn(userList);
+
+    var result = venueService.getVenueManagers(1L);
+    assertTrue(result.stream().anyMatch(u -> {
+      return u.getUserId().equals(getTestUser().getUserId());
+    }));
+  }
+
+  @Test
+  void getVenueManagersVenueNotFound() {
+    when(venueRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+    assertThrows(CrudException.class, () -> {
+      venueService.getVenueManagers(1L);
     });
   }
 

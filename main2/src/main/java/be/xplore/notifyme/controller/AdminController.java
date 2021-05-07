@@ -1,6 +1,7 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
@@ -17,6 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,7 +75,7 @@ public class AdminController {
 
   @PostMapping("/promoteUserToVmanager")
   public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
-      long venueId) {
+                                                          long venueId, Principal principal) {
     venueService.makeUserVenueManager(userId, venueId);
     return ResponseEntity.noContent().build();
   }
@@ -106,8 +108,8 @@ public class AdminController {
    * @return the organisation object containing the newly added manager.
    */
   @PostMapping("/promoteUserToOrgMgr")
-  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(@RequestBody @NotNull
-      UserOrgRequestDto userOrgRequestDto, Principal principal) {
+  public ResponseEntity<OrganisationDto> promoteUserToOrgMgr(
+      @RequestBody @NotNull UserOrgRequestDto userOrgRequestDto, Principal principal) {
     return ResponseEntity.ok(new OrganisationDto(
         organisationService.promoteUserToOrgManager(userOrgRequestDto.getUsername(),
             userOrgRequestDto.getOrganisationId(), principal)));
@@ -119,14 +121,22 @@ public class AdminController {
    * @return a list of keycloak user representations in dto format.
    */
   @GetMapping("/users")
-  public ResponseEntity<List<UserRepresentationDto>> getUsers() {
-    var userRepListDto = new ArrayList<UserRepresentationDto>();
+  public ResponseEntity<List<UserRepresentation>> getUsers() {
     var userRepresentations = userService
         .getAllUserInfo(keycloakCommunicationService.getAdminAccesstoken());
-    for (var userRep : userRepresentations) {
-      userRepListDto.add(new UserRepresentationDto(userRep));
-    }
-    return ResponseEntity.ok(userRepListDto);
+    return ResponseEntity.ok(userRepresentations);
+  }
+
+  /**
+   * Gets a list of all venue managers of given venue.
+   *
+   * @param venueId id of venue to get managers from.
+   * @return list of users.
+   */
+  @GetMapping("/venueManagers")
+  public ResponseEntity<List<User>> getAllVenueManagers(@RequestParam long venueId) {
+    var managers = venueService.getVenueManagers(venueId);
+    return ResponseEntity.ok(managers);
   }
 
 }
