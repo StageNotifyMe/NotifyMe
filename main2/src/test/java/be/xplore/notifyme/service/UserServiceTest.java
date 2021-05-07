@@ -12,6 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.RelevantClientInfoDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.CrudException;
@@ -20,6 +21,7 @@ import be.xplore.notifyme.persistence.IUserRepo;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.keycloak.AuthorizationContext;
@@ -105,7 +107,7 @@ class UserServiceTest {
   }
 
   private void mockKeycloakSecurityContext(UserRepresentation userRep,
-      Boolean hasRequiredPermission) {
+                                           Boolean hasRequiredPermission) {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
 
     KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);
@@ -314,6 +316,16 @@ class UserServiceTest {
 
     assertThrows(CrudException.class, () ->
         userService.updateUser(new User()));
+  }
+
+  @Test
+  void getAllVenueManagersSuccessful() {
+    final Venue venue = new Venue();
+    when(userRepo.getAllByVenuesContains(venue)).thenReturn(new LinkedList<>());
+
+    assertDoesNotThrow(() -> {
+      userService.getAllVenueManagers(venue);
+    });
   }
 
 }
