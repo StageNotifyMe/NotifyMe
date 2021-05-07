@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
@@ -278,5 +279,24 @@ class VenueManagerControllerTest {
     mockMvc
         .perform(post("/vmanager/promoteToLineManager?userId=userid&eventId=1"))
         .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  @Test
+  @WithMockUser(username = "vmanager", roles = {"venue_manager"})
+  void getLineManagersForEventSuccessful() throws Exception {
+    final User testUser = new User();
+    testUser.setUserId("userid");
+    final List<User> testList = new ArrayList<>();
+    testList.add(testUser);
+    final Event event = new Event();
+    event.setLineManagers(testList);
+
+    when(eventService.getEvent(anyLong())).thenReturn(event);
+
+    mockMvc.perform(get("/vmanager/lineManagers?eventId=1"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().json((
+            "[{userId:\"userid\"}]"
+        )));
   }
 }
