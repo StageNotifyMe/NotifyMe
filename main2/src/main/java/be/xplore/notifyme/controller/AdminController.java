@@ -1,11 +1,9 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
-import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserService;

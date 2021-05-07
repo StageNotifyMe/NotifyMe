@@ -1,7 +1,6 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Event;
-import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;

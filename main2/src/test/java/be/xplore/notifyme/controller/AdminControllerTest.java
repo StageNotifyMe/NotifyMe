@@ -18,7 +18,6 @@ import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;

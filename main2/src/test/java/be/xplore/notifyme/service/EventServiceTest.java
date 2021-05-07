@@ -83,9 +83,7 @@ class EventServiceTest {
   void getEventNotFound() {
     when(eventRepo.findById(1L)).thenReturn(Optional.empty());
 
-    assertThrows(CrudException.class, () -> {
-      eventService.getEvent(1L);
-    });
+    assertThrows(CrudException.class, () -> eventService.getEvent(1L));
   }
 
   @Test
@@ -116,21 +114,18 @@ class EventServiceTest {
     when(userService.getUser("testUser")).thenReturn(testUser);
     when(testUser.getUserId()).thenReturn("testUser");
 
-    assertThrows(UnauthorizedException.class, () -> {
-      eventService.getEventAndVerifyLineManagerPermission(1L, principal);
-    });
+    assertThrows(UnauthorizedException.class,
+        () -> eventService.getEventAndVerifyLineManagerPermission(1L, principal));
 
   }
 
   @Test
   void getEventAndVerifyLineManagerPermissionNotfound() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
-    final IDToken token = Mockito.mock(IDToken.class);
     when(eventRepo.findById(1L)).thenReturn(Optional.empty());
 
-    assertThrows(CrudException.class, () -> {
-      eventService.getEventAndVerifyLineManagerPermission(1L, principal);
-    });
+    assertThrows(CrudException.class,
+        () -> eventService.getEventAndVerifyLineManagerPermission(1L, principal));
 
   }
 
@@ -149,9 +144,7 @@ class EventServiceTest {
   void getAllEventsForLineManagerNotFound() {
     doThrow(CrudException.class).when(userService).getUser("testUser");
 
-    assertThrows(CrudException.class, () -> {
-      eventService.getAllEventsForLineManager("testUser");
-    });
+    assertThrows(CrudException.class, () -> eventService.getAllEventsForLineManager("testUser"));
   }
 
   @Test
@@ -161,9 +154,7 @@ class EventServiceTest {
     when(eventRepo.save(any(Event.class))).thenReturn(testEvent);
     doNothing().when(userService).grantUserRole(anyString(), anyString());
 
-    assertDoesNotThrow(() -> {
-      eventService.promoteToLineManager("userid", 1L);
-    });
+    assertDoesNotThrow(() -> eventService.promoteToLineManager("userid", 1L));
   }
 
   @Test
@@ -173,18 +164,16 @@ class EventServiceTest {
     when(userService.getUser(anyString())).thenReturn(testUser);
     when(eventRepo.findById(anyLong())).thenReturn(Optional.of(testEventB));
 
-    assertThrows(SaveToDatabaseException.class, () -> {
-      eventService.promoteToLineManager("userid", 1L);
-    });
+    assertThrows(SaveToDatabaseException.class,
+        () -> eventService.promoteToLineManager("userid", 1L));
   }
 
   @Test
   void promoteToLineManagerUserNotFound() {
     doThrow(CrudException.class).when(userService).getUser(anyString());
 
-    assertThrows(SaveToDatabaseException.class, () -> {
-      eventService.promoteToLineManager("userid", 1L);
-    });
+    assertThrows(SaveToDatabaseException.class,
+        () -> eventService.promoteToLineManager("userid", 1L));
   }
 
   @Test
@@ -192,9 +181,8 @@ class EventServiceTest {
     when(userService.getUser(anyString())).thenReturn(testUser);
     when(eventRepo.findById(anyLong())).thenReturn(Optional.empty());
 
-    assertThrows(SaveToDatabaseException.class, () -> {
-      eventService.promoteToLineManager("userid", 1L);
-    });
+    assertThrows(SaveToDatabaseException.class,
+        () -> eventService.promoteToLineManager("userid", 1L));
   }
 
 
@@ -208,7 +196,7 @@ class EventServiceTest {
     return new Venue(1, "Zaal", "een zaal", address, new LinkedList<>());
   }
 
-  private User testUser = Mockito.mock(User.class);
+  private final User testUser = Mockito.mock(User.class);
 
   private final Event testEvent =
       new Event(1, "Evenement", "een evenement", "een artiest",

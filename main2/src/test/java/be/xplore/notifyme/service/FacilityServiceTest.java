@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,7 +41,7 @@ class FacilityServiceTest {
   void createFacilitySuccessful() {
     when(venueService.getVenue(1L)).thenReturn(venue);
     when(facilityRepo.save(any(Facility.class))).thenAnswer(
-        (Answer<Object>) invocation -> invocation.getArguments()[0]);
+        invocation -> invocation.getArguments()[0]);
 
     var result = facilityService.createFacility(createFacilityDto);
     assertEquals(createFacilityDto.getDescription(), result.getDescription());
@@ -54,11 +53,9 @@ class FacilityServiceTest {
   void createFacilityVenueNotFound() {
     doThrow(new CrudException("Could not find venue for id 1")).when(venueService).getVenue(1L);
     when(facilityRepo.save(any(Facility.class))).thenAnswer(
-        (Answer<Object>) invocation -> invocation.getArguments()[0]);
+        invocation -> invocation.getArguments()[0]);
 
-    assertThrows(CrudException.class, () -> {
-      facilityService.createFacility(createFacilityDto);
-    });
+    assertThrows(CrudException.class, () -> facilityService.createFacility(createFacilityDto));
   }
 
   @Test
@@ -71,9 +68,7 @@ class FacilityServiceTest {
   @Test
   void getFacilityFail() {
     when(facilityRepo.findById(anyLong())).thenReturn(Optional.empty());
-    assertThrows(CrudException.class, () -> {
-      facilityService.getFacility(1L);
-    });
+    assertThrows(CrudException.class, () -> facilityService.getFacility(1L));
   }
 
   @Test
@@ -87,8 +82,6 @@ class FacilityServiceTest {
   void getAllFacilitiesForVenueFail() {
     when(facilityRepo.getAllByVenue(any()))
         .thenThrow(new CrudException("Could not get list of facilities for venue."));
-    assertThrows(CrudException.class, () -> {
-      facilityService.getAllFacilitesForVenue(1L);
-    });
+    assertThrows(CrudException.class, () -> facilityService.getAllFacilitesForVenue(1L));
   }
 }

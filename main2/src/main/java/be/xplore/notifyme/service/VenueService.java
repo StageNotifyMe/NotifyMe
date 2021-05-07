@@ -1,7 +1,6 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Address;
-import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.GetVenueDto;

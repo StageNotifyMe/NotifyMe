@@ -1,8 +1,6 @@
 package be.xplore.notifyme.service;
 
-import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.UnauthorizedException;
