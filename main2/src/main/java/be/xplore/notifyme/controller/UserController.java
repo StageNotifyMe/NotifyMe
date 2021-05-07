@@ -75,7 +75,7 @@ public class UserController {
    * @return Response entity containing the list of applications with relevant data.
    */
   @GetMapping(value = "orgApplications")
-  public ResponseEntity<List<ApplicationOrgNameDto>> getUser(Principal principal) {
+  public ResponseEntity<List<ApplicationOrgNameDto>> getUserApplications(Principal principal) {
     var applicationsDto = new ArrayList<ApplicationOrgNameDto>();
     for (var application : userOrgApplicationService.getUserOrgApplications(principal)) {
       applicationsDto.add(new ApplicationOrgNameDto(application));

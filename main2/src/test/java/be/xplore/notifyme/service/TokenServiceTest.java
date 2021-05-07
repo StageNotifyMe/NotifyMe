@@ -88,6 +88,18 @@ class TokenServiceTest {
     assertFalse(tokenService.hasRole(getKeycloakPrincipal(), "admin"));
   }
 
+  @Test
+  @WithMockKeycloakAuth(authorities = {"user"},
+      isInteractive = true,
+      oidc = @OidcStandardClaims(
+          email = "test@test.com",
+          emailVerified = true,
+          nickName = "ElTestor",
+          preferredUsername = "Test"))
+  void checkAdminRoleWrongToken() {
+    assertThrows(TokenHandlerException.class, () -> tokenService.hasRole(null, "admin"));
+  }
+
 
   private KeycloakAuthenticationToken getKeycloakPrincipal() {
     return (KeycloakAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();

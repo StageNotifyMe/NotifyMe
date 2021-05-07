@@ -9,12 +9,17 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import be.xplore.notifyme.domain.OrgApplicationStatus;
+import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.domain.OrganisationUserKey;
+import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserOrgApplicationService;
 import be.xplore.notifyme.service.UserService;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +119,11 @@ class UserControllerTest {
   @Test
   @WithMockUser(username = "user", roles = {"user"})
   void getOrgApplications() throws Exception {
-    when(userOrgApplicationService.getUserOrgApplications(any())).thenReturn(new ArrayList<>());
+    var application = new UserOrgApplication();
+    application.setApplicationStatus(OrgApplicationStatus.APPLIED);
+    application.setAppliedOrganisation(new Organisation());
+    application.setOrganisationUserKey(new OrganisationUserKey());
+    when(userOrgApplicationService.getUserOrgApplications(any())).thenReturn(List.of(application));
 
     mockMvc
         .perform(get("/user/orgApplications"))
