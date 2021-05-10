@@ -22,7 +22,9 @@ import be.xplore.notifyme.service.LineService;
 import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -286,10 +288,10 @@ class VenueManagerControllerTest {
   void getLineManagersForEventSuccessful() throws Exception {
     final User testUser = new User();
     testUser.setUserId("userid");
-    final List<User> testList = new ArrayList<>();
-    testList.add(testUser);
+    final Set<User> testSet = new HashSet<>();
+    testSet.add(testUser);
     final Event event = new Event();
-    event.setLineManagers(testList);
+    event.setLineManagers(testSet);
 
     when(eventService.getEvent(anyLong())).thenReturn(event);
 

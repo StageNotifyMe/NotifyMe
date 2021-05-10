@@ -7,6 +7,7 @@ import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IEventRepo;
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -90,7 +91,7 @@ public class EventService {
    */
   private void makeCreatorLineManager(Event event, Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
-    event.setLineManagers(new LinkedList<>());
+    event.setLineManagers(new HashSet<>());
     event.getLineManagers().add(user);
     eventRepo.save(event);
   }

@@ -21,17 +21,4 @@ public class GeneralExceptionHandler {
         re.getClass().getSimpleName(), re.getMessage()));
     return ResponseEntity.badRequest().body(re.getMessage());
   }
-
-  @ExceptionHandler(value = {Exception.class})
-  protected Object handleGeneralException(Exception e){
-    log.error(String.format("And exception of type [%s] was thrown with message: %s",
-        e.getClass().getSimpleName(), e.getMessage()));
-    return null;
-  }
-
-  @ExceptionHandler(value = {Exception.class})
-  protected void handleVoidException(Exception e){
-    log.error(String.format("And exception of type [%s] was thrown with message: %s",
-        e.getClass().getSimpleName(), e.getMessage()));
-  }
 }

@@ -1,6 +1,7 @@
 package be.xplore.notifyme.domain;
 
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,5 +28,5 @@ public class Team {
   @ManyToMany
   private List<Organisation> organisations;
   @ManyToMany
-  private List<User> teamMembers;
+  private Set<User> teamMembers;
 }

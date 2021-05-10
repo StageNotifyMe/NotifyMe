@@ -108,7 +108,7 @@ class EventServiceTest {
   void getEventAndVerifyLineManagerPermissionUnauthorized() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     final IDToken token = Mockito.mock(IDToken.class);
-    testEvent.setLineManagers(new LinkedList<>());
+    testEvent.setLineManagers(new HashSet<>());
     when(eventRepo.findById(1L)).thenReturn(Optional.of(testEvent));
     when(tokenService.getIdToken(any(Principal.class))).thenReturn(token);
     when(token.getPreferredUsername()).thenReturn("testUser");
@@ -201,12 +201,12 @@ class EventServiceTest {
 
   private final Event testEvent =
       new Event(1, "Evenement", "een evenement", "een artiest",
-          LocalDateTime.now(), getTestVenue(), new LinkedList<>(), new LinkedList<>());
+          LocalDateTime.now(), getTestVenue(), new LinkedList<>(), new HashSet<>());
 
   private Event getTestEventWithLineManager() {
     var testEvent =
         new Event("Evenement", "een evenement", "een artiest", "2021-04-30 06:45", getTestVenue());
-    testEvent.setLineManagers(new LinkedList<>());
+    testEvent.setLineManagers(new HashSet<>());
     testEvent.getLineManagers().add(testUser);
     return testEvent;
   }

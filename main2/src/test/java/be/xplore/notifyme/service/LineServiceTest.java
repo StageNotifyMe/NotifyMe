@@ -17,6 +17,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ILineRepo;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +48,7 @@ class LineServiceTest {
   private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
   private final Event event =
       new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), new Venue(),
-          new LinkedList<>(), new LinkedList<>());
+          new LinkedList<>(), new HashSet<>());
   private final Facility facility =
       new Facility(1L, "descriptie", "locatie", 1, 20, new Venue(), new LinkedList<>());
   private final User user = new User();
