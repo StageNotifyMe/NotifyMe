@@ -1,5 +1,6 @@
 package be.xplore.notifyme.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -16,7 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @SpringBootTest
-public class UserOrgApplicationServiceTest {
+class UserOrgApplicationServiceTest {
 
   @Autowired
   private UserOrgApplicationService userOrgApplicationService;
@@ -34,7 +35,9 @@ public class UserOrgApplicationServiceTest {
     when(organisationService.getOrganisation(anyLong())).thenReturn(new Organisation());
     when(userService.updateUser(any())).thenReturn(new User());
 
-    userOrgApplicationService.applyToOrganisation(1L, getKeycloakPrincipal());
+    assertDoesNotThrow(() -> {
+      userOrgApplicationService.applyToOrganisation(1L, getKeycloakPrincipal());
+    });
   }
 
   @Test

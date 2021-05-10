@@ -1,6 +1,5 @@
 package be.xplore.notifyme.dto;
 
-import java.util.LinkedList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

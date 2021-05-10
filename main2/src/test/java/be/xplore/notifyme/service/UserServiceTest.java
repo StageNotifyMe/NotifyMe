@@ -97,9 +97,10 @@ class UserServiceTest {
           preferredUsername = "Test"))
   void getUserInfoOfOther() {
     var userRep = new UserRepresentation();
+    var keycloakPrincipal = getKeycloakPrincipal();
     mockKeycloakSecurityContext(userRep, false);
     assertThrows(UnauthorizedException.class,
-        () -> userService.getUserInfo("OtherUser", getKeycloakPrincipal()));
+        () -> userService.getUserInfo("OtherUser", keycloakPrincipal));
   }
 
   private void mockKeycloakSecurityContext(UserRepresentation userRep,
@@ -294,10 +295,12 @@ class UserServiceTest {
 
   @Test
   void updateUserFail() {
+    var testUser = new User();
+
     when(userRepo.save(any())).thenThrow(new CrudException("Could not update user."));
 
     assertThrows(CrudException.class, () ->
-        userService.updateUser(new User()));
+        userService.updateUser(testUser));
   }
 
 }

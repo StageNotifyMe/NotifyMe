@@ -2,7 +2,6 @@ package be.xplore.notifyme.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Entity;
