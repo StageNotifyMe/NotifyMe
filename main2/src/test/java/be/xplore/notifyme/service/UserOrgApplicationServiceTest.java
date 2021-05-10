@@ -76,17 +76,9 @@ class UserOrgApplicationServiceTest {
 
   @Test
   void respondToApplicationSuccessful() {
+    mockRespondToApplication();
+
     var keycloakPrincipal = getKeycloakPrincipal();
-    var mockOrg = mock(Organisation.class);
-    when(organisationService.getOrganisation(anyLong())).thenReturn(mockOrg);
-    var userOrgApplication = new UserOrgApplication();
-    var user = mock(User.class);
-    when(userService.getUser(anyString())).thenReturn(user);
-    userOrgApplication.setAppliedUser(user);
-    var appliedUserList = new ArrayList<UserOrgApplication>();
-    appliedUserList.add(userOrgApplication);
-    when(user.getUserId()).thenReturn("userid");
-    when(mockOrg.getAppliedUsers()).thenReturn(appliedUserList);
     var orgUserKey = new OrganisationUserKey("userid", 1L);
 
     assertDoesNotThrow(() -> {
@@ -101,7 +93,17 @@ class UserOrgApplicationServiceTest {
 
   @Test
   void respondToApplicationOrgApplicationNotFound() {
+    mockRespondToApplication();
+
     var keycloakPrincipal = getKeycloakPrincipal();
+    var orgUserKey = new OrganisationUserKey("notFoundId", 1L);
+
+    assertThrows(OrgApplicationNotFoundException.class, () -> {
+      userOrgApplicationService.respondToApplication(orgUserKey, true, keycloakPrincipal);
+    });
+  }
+
+  private void mockRespondToApplication() {
     var mockOrg = mock(Organisation.class);
     when(organisationService.getOrganisation(anyLong())).thenReturn(mockOrg);
     var userOrgApplication = new UserOrgApplication();
@@ -112,11 +114,6 @@ class UserOrgApplicationServiceTest {
     appliedUserList.add(userOrgApplication);
     when(user.getUserId()).thenReturn("userid");
     when(mockOrg.getAppliedUsers()).thenReturn(appliedUserList);
-    var orgUserKey = new OrganisationUserKey("notFoundId", 1L);
-
-    assertThrows(OrgApplicationNotFoundException.class, () -> {
-      userOrgApplicationService.respondToApplication(orgUserKey, true, keycloakPrincipal);
-    });
   }
 
   private void mockSecureOrgManagerRequestFromPrincipal() {
