@@ -107,13 +107,12 @@ public class KeycloakCommunicationService {
    * @param userId the id of the new user.
    */
   public void sendEmailVerificationRequest(String userId) {
+    var request = createJsonHttpEntity(getAdminAccesstoken());
+    var uri = String.format("%s/%s/send-verify-email", registerUri, userId);
     try {
-      var request = createJsonHttpEntity(getAdminAccesstoken());
-      var uri = String.format("%s/%s/send-verify-email", registerUri, userId);
       restTemplate.put(uri, request);
     } catch (Exception e) {
-      log.error(e.getMessage());
-      throw new CrudException("Could not send verification email: " + e.getMessage());
+      throw new RestClientException("Could not send verification email: " + e.getMessage());
     }
   }
 
@@ -124,20 +123,14 @@ public class KeycloakCommunicationService {
    * @return Keycloak Userrepresentation.
    */
   public UserRepresentation getUserInfo(String username) {
-    try {
-      var userinfoReturn = getUserInfoRest(getAdminAccesstoken(), username);
-      var listType = new TypeToken<List<UserRepresentation>>() {
-      }.getType();
-      ArrayList<UserRepresentation> result = gson.fromJson(userinfoReturn, listType);
-      if (result == null) {
-        throw new CrudException("Result from GET on userinfo was null");
-      }
-      return result.get(0);
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      throw new CrudException(String
-          .format("Could not retrieve user [%s] from database: %s", username, e.getMessage()));
+    var userinfoReturn = getUserInfoRest(getAdminAccesstoken(), username);
+    var listType = new TypeToken<List<UserRepresentation>>() {
+    }.getType();
+    ArrayList<UserRepresentation> result = gson.fromJson(userinfoReturn, listType);
+    if (result == null) {
+      throw new CrudException("Result from GET on userinfo was null");
     }
+    return result.get(0);
   }
 
   /**
@@ -180,18 +173,13 @@ public class KeycloakCommunicationService {
    * @return response entity containing the user info as a json string.
    */
   public String getUserInfoRest(String accessToken, String username) {
-    try {
-      HttpEntity<String> request = createJsonHttpEntity(accessToken);
-      var uri = String.format("%s?username=%s", registerUri, username);
-      var restReturn = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
-      if (restReturn.getStatusCode() != HttpStatus.OK) {
-        throw new CrudException("Could not retrieve user for username " + username);
-      }
-      return restReturn.getBody();
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      throw e;
+    HttpEntity<String> request = createJsonHttpEntity(accessToken);
+    var uri = String.format("%s?username=%s", registerUri, username);
+    var restReturn = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+    if (restReturn.getStatusCode() != HttpStatus.OK) {
+      throw new CrudException("Could not retrieve user for username " + username);
     }
+    return restReturn.getBody();
   }
 
   /**
@@ -232,22 +220,17 @@ public class KeycloakCommunicationService {
    * @return response entity containing all the user info as a json string.
    */
   public List<UserRepresentation> getAllUserInfoRest(String accessToken) {
-    try {
-      var request = createJsonHttpEntity(accessToken);
-      var userinfoReturn =
-          restTemplate.exchange(registerUri, HttpMethod.GET, request, String.class);
-      if (userinfoReturn.getStatusCode() != HttpStatus.OK) {
-        throw new CrudException("");
-      }
-      List<UserRepresentation> result = parseUserInfo(userinfoReturn.getBody());
-      if (result == null) {
-        throw new RestClientException("Result from GET on userinfo was null");
-      }
-      return result;
-    } catch (Exception e) {
-      throw new CrudException(
-          "Something went wrong trying to GET from keycloakServer: " + e.getMessage());
+    var request = createJsonHttpEntity(accessToken);
+    var userinfoReturn =
+        restTemplate.exchange(registerUri, HttpMethod.GET, request, String.class);
+    if (userinfoReturn.getStatusCode() != HttpStatus.OK) {
+      throw new CrudException("");
     }
+    List<UserRepresentation> result = parseUserInfo(userinfoReturn.getBody());
+    if (result == null) {
+      throw new RestClientException("Result from GET on userinfo was null");
+    }
+    return result;
   }
 
   /**

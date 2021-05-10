@@ -32,17 +32,12 @@ public class EventService {
    * @return HTTP Response
    */
   public ResponseEntity<Object> createEvent(CreateEventDto createEventDto, Principal principal) {
-    try {
-      var venue = venueService.getVenue(createEventDto.getVenueId());
-      var event = new Event(createEventDto.getTitle(), createEventDto.getDescription(),
-          createEventDto.getArtist(), createEventDto.getDateTime(), venue);
-      eventRepo.save(event);
-      makeCreatorLineManager(event, principal);
-      return ResponseEntity.status(HttpStatus.CREATED).build();
-    } catch (CrudException e) {
-      log.error(e.getMessage());
-      throw e;
-    }
+    var venue = venueService.getVenue(createEventDto.getVenueId());
+    var event = new Event(createEventDto.getTitle(), createEventDto.getDescription(),
+        createEventDto.getArtist(), createEventDto.getDateTime(), venue);
+    eventRepo.save(event);
+    makeCreatorLineManager(event, principal);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   /**
@@ -52,11 +47,8 @@ public class EventService {
    * @return event if successful, or CrudException if not found.
    */
   public Event getEvent(long eventId) {
-    var event = eventRepo.findById(eventId);
-    if (event.isPresent()) {
-      return event.get();
-    }
-    throw new CrudException("Could not retrieve event for id " + eventId);
+    return eventRepo.findById(eventId)
+        .orElseThrow(() -> new CrudException("Could not retrieve event for id " + eventId));
   }
 
   /**
@@ -67,19 +59,16 @@ public class EventService {
    * @return event if permission is ok.
    */
   public Event getEventAndVerifyLineManagerPermission(long eventId, Principal principal) {
-    var event = eventRepo.findById(eventId);
-    if (event.isPresent()) {
-      var eventObject = event.get();
-      var token = tokenService.getIdToken(principal);
-      var user = userService.getUser(token.getSubject());
-      if (eventObject.getLineManagers().contains(user)) {
-        return eventObject;
-      } else {
-        throw new UnauthorizedException(String.format("User %s is not a line manager of event %d",
-            token.getSubject(), eventId));
-      }
+    var event = eventRepo.findById(eventId)
+        .orElseThrow(() -> new CrudException("Could not retireve event for id " + eventId));
+    var token = tokenService.getIdToken(principal);
+    var user = userService.getUser(token.getSubject());
+    if (event.getLineManagers().contains(user)) {
+      return event;
+    } else {
+      throw new UnauthorizedException(String.format("User %s is not a line manager of event %d",
+          token.getSubject(), eventId));
     }
-    throw new CrudException("Could not retrieve event for id " + eventId);
   }
 
   /**
@@ -90,13 +79,7 @@ public class EventService {
    * @return list of all events accessible to the line manager.
    */
   public List<Event> getAllEventsForLineManager(String userId) {
-    try {
-      var user = userService.getUser(userId);
-      return eventRepo.getAllByLineManagersContains(user);
-    } catch (CrudException e) {
-      log.error(e.getMessage());
-      throw e;
-    }
+    return userService.getUser(userId).getEvents();
   }
 
   /**
@@ -119,19 +102,14 @@ public class EventService {
    * @param eventId id of the event to add the user to as line manager.
    */
   public void promoteToLineManager(String userId, long eventId) {
-    try {
-      var user = userService.getUser(userId);
-      var event = this.getEvent(eventId);
-      if (!event.getLineManagers().contains(user)) {
-        event.getLineManagers().add(user);
-        eventRepo.save(event);
-      } else {
-        throw new SaveToDatabaseException("User is already line manager of this event!");
-      }
-      userService.grantUserRole(userId, "line_manager");
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      throw new SaveToDatabaseException("Could not add user as line manager: " + e.getMessage());
+    var user = userService.getUser(userId);
+    var event = this.getEvent(eventId);
+    if (!event.getLineManagers().contains(user)) {
+      event.getLineManagers().add(user);
+      eventRepo.save(event);
+    } else {
+      throw new SaveToDatabaseException("User is already line manager of this event!");
     }
+    userService.grantUserRole(userId, "line_manager");
   }
 }

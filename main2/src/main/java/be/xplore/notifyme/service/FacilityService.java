@@ -23,11 +23,8 @@ public class FacilityService {
    * @return a facility object if successful, CrudException if not found.
    */
   public Facility getFacility(long facilityId) {
-    var facility = facilityRepo.findById(facilityId);
-    if (facility.isPresent()) {
-      return facility.get();
-    }
-    throw new CrudException("Could not find facility for id " + facilityId);
+    return facilityRepo.findById(facilityId)
+        .orElseThrow(() -> new CrudException("Could not find facility for id" + facilityId));
   }
 
 
@@ -38,13 +35,7 @@ public class FacilityService {
    * @return a list of facilities.
    */
   public List<Facility> getAllFacilitesForVenue(long venueId) {
-    try {
-      var venue = venueService.getVenue(venueId);
-      return facilityRepo.getAllByVenue(venue);
-    } catch (CrudException e) {
-      log.error(e.getMessage());
-      throw e;
-    }
+    return venueService.getVenue(venueId).getFacilities();
   }
 
   /**
@@ -54,17 +45,12 @@ public class FacilityService {
    * @return the created facility.
    */
   public Facility createFacility(CreateFacilityDto createFacilityDto) {
-    try {
-      var facility =
-          new Facility(createFacilityDto.getDescription(), createFacilityDto.getLocation(),
-              createFacilityDto.getMinimalStaff(), createFacilityDto.getMaximalStaff());
-      var venue = venueService.getVenue(createFacilityDto.getVenueId());
-      facility.setVenue(venue);
-      facility = facilityRepo.save(facility);
-      return facility;
-    } catch (CrudException e) {
-      log.error(e.getMessage());
-      throw e;
-    }
+    var facility =
+        new Facility(createFacilityDto.getDescription(), createFacilityDto.getLocation(),
+            createFacilityDto.getMinimalStaff(), createFacilityDto.getMaximalStaff());
+    var venue = venueService.getVenue(createFacilityDto.getVenueId());
+    facility.setVenue(venue);
+    facility = facilityRepo.save(facility);
+    return facility;
   }
 }

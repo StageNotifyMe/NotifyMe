@@ -40,20 +40,15 @@ public class VenueService {
    * @return 203 if successful, 400 if unsuccessful.
    */
   public ResponseEntity<Object> createVenue(CreateVenueDto createVenueDto, Principal principal) {
-    try {
-      var accessToken = tokenService.getIdToken(principal);
-      var user = userService.getUser(accessToken.getSubject());
-      var address =
-          new Address(createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
-              createVenueDto.getVillage(), createVenueDto.getCountry());
-      var venue =
-          new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address, user);
-      venueRepo.save(venue);
-      return new ResponseEntity<>(HttpStatus.CREATED);
-    } catch (TokenHandlerException | CrudException e) {
-      log.error(e.getMessage());
-      throw e;
-    }
+    var accessToken = tokenService.getIdToken(principal);
+    var user = userService.getUser(accessToken.getSubject());
+    var address =
+        new Address(createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
+            createVenueDto.getVillage(), createVenueDto.getCountry());
+    var venue =
+        new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address, user);
+    venueRepo.save(venue);
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   /**
@@ -78,19 +73,14 @@ public class VenueService {
    * @return list object containing all venues.
    */
   public List<GetVenueDto> getVenuesForUser(String userId) {
-    try {
-      var user = userService.getUser(userId);
-      var venues = venueRepo.getAllByManagersIsContaining(user);
-      List<GetVenueDto> venueDtos = new LinkedList<>();
-      for (Venue venue : venues) {
-        venueDtos.add(new GetVenueDto(venue.getId(), venue.getName(), venue.getDescription(),
-            venue.getAddress()));
-      }
-      return venueDtos;
-    } catch (CrudException e) {
-      log.error(e.getMessage());
-      throw e;
+    var user = userService.getUser(userId);
+    var venues = venueRepo.getAllByManagersIsContaining(user);
+    List<GetVenueDto> venueDtos = new LinkedList<>();
+    for (Venue venue : venues) {
+      venueDtos.add(new GetVenueDto(venue.getId(), venue.getName(), venue.getDescription(),
+          venue.getAddress()));
     }
+    return venueDtos;
   }
 
   /**
@@ -112,7 +102,6 @@ public class VenueService {
       }
       userService.grantUserRole(userId, "venue_manager");
     } catch (Exception e) {
-      log.error(e.getMessage());
       throw new SaveToDatabaseException("Could not make user venue manager: " + e.getMessage());
     }
   }

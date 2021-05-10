@@ -37,17 +37,15 @@ public class Line {
   }
 
   /**
-   * Constructor used to add an event, facility and team to a line with only base properties.
+   * Constructor used to create a new line
    *
-   * @param line     the original line containing base properties.
    * @param event    event to which the line belongs.
    * @param facility for which the line is.
    * @param team     who will man the line.
    */
-  public Line(Line line, Event event, Facility facility, Team team) {
-    this.id = line.id;
-    this.note = line.note;
-    this.requiredStaff = line.requiredStaff;
+  public Line(String note, int requiredStaff, Event event, Facility facility, Team team) {
+    this.note = note;
+    this.requiredStaff = requiredStaff;
     this.event = event;
     this.facility = facility;
     this.team = team;

@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class TokenExceptionHandler {
+public class SaveToDatabaseExceptionHandler {
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler(value = {TokenHandlerException.class})
+  @ExceptionHandler(value = {SaveToDatabaseException.class})
   protected ResponseEntity<Object> handleConversionException(RuntimeException re) {
     log.error(re.getMessage());
     return ResponseEntity.badRequest().body(re.getMessage());
