@@ -58,7 +58,7 @@ class UserServiceTest {
   @Test
   void getAllUserInfoCommunicationFail() {
     doThrow(CrudException.class).when(keycloakCommunicationService).getAllUserInfoRest(anyString());
-
+    when(keycloakCommunicationService.getAdminAccesstoken()).thenReturn("admintoken");
     assertThrows(CrudException.class, () -> {
       userService.getAllUserInfo();
     });
