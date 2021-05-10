@@ -2,13 +2,22 @@ package be.xplore.notifyme.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.domain.UserOrgApplication;
+import be.xplore.notifyme.exception.OrgApplicationNotFoundException;
+import be.xplore.notifyme.service.security.OrganisationSecurityService;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import org.junit.jupiter.api.Test;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +34,8 @@ class UserOrgApplicationServiceTest {
   private UserService userService;
   @MockBean
   private OrganisationService organisationService;
+  @MockBean
+  private OrganisationSecurityService organisationSecurityService;
 
 
   @Test
@@ -48,6 +59,70 @@ class UserOrgApplicationServiceTest {
     when(userService.getUserFromPrincipal(any())).thenReturn(user);
     assertEquals(user.getAppliedOrganisations(),
         userOrgApplicationService.getUserOrgApplications(keycloakPrincipal));
+  }
+
+  @Test
+  void getOrgApplicationsSuccessful() {
+    var mockOrg = mock(Organisation.class);
+    when(organisationService.getOrganisation(anyLong())).thenReturn(mockOrg);
+    var testList = new LinkedList<UserOrgApplication>();
+    when(mockOrg.getAppliedUsers()).thenReturn(testList);
+
+    mockSecureOrgManagerRequestFromPrincipal();
+
+    assertEquals(testList,
+        userOrgApplicationService.getOrgApplications(1L, getKeycloakPrincipal()));
+  }
+
+  @Test
+  void respondToApplicationSuccessful() {
+    var keycloakPrincipal = getKeycloakPrincipal();
+    var mockOrg = mock(Organisation.class);
+    when(organisationService.getOrganisation(anyLong())).thenReturn(mockOrg);
+    var userOrgApplication = new UserOrgApplication();
+    var user = mock(User.class);
+    when(userService.getUser(anyString())).thenReturn(user);
+    userOrgApplication.setAppliedUser(user);
+    var appliedUserList = new ArrayList<UserOrgApplication>();
+    appliedUserList.add(userOrgApplication);
+    when(user.getUserId()).thenReturn("userid");
+    when(mockOrg.getAppliedUsers()).thenReturn(appliedUserList);
+    var orgUserKey = new OrganisationUserKey("userid", 1L);
+
+    assertDoesNotThrow(() -> {
+      userOrgApplicationService.respondToApplication(orgUserKey, true, keycloakPrincipal);
+
+    });
+    assertDoesNotThrow(() -> {
+      userOrgApplicationService.respondToApplication(orgUserKey, false, keycloakPrincipal);
+
+    });
+  }
+
+  @Test
+  void respondToApplicationOrgApplicationNotFound() {
+    var keycloakPrincipal = getKeycloakPrincipal();
+    var mockOrg = mock(Organisation.class);
+    when(organisationService.getOrganisation(anyLong())).thenReturn(mockOrg);
+    var userOrgApplication = new UserOrgApplication();
+    var user = mock(User.class);
+    when(userService.getUser(anyString())).thenReturn(user);
+    userOrgApplication.setAppliedUser(user);
+    var appliedUserList = new ArrayList<UserOrgApplication>();
+    appliedUserList.add(userOrgApplication);
+    when(user.getUserId()).thenReturn("userid");
+    when(mockOrg.getAppliedUsers()).thenReturn(appliedUserList);
+    var orgUserKey = new OrganisationUserKey("notFoundId", 1L);
+
+    assertThrows(OrgApplicationNotFoundException.class, () -> {
+      userOrgApplicationService.respondToApplication(orgUserKey, true, keycloakPrincipal);
+    });
+  }
+
+  private void mockSecureOrgManagerRequestFromPrincipal() {
+    var testUser = new User();
+    when(userService.getUserFromPrincipal(any())).thenReturn(testUser);
+    doNothing().when(organisationSecurityService).checkUserIsOrgManager(any(), any());
   }
 
   private KeycloakAuthenticationToken getKeycloakPrincipal() {

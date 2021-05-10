@@ -64,7 +64,7 @@ public class UserOrgApplicationService {
    * @param principal           representation of the authorized organisation admin.
    */
   public void respondToApplication(OrganisationUserKey organisationUserKey, boolean accept,
-      Principal principal) {
+                                   Principal principal) {
     var organisation = organisationService.getOrganisation(organisationUserKey.getOrganisationId());
     secureOrgManagerRequestFromPrincipal(organisation, principal);
     organisation.getAppliedUsers().stream().filter(
@@ -92,7 +92,7 @@ public class UserOrgApplicationService {
    * @param principal    representation of the authenticated user.
    */
   private void secureOrgManagerRequestFromPrincipal(Organisation organisation,
-      Principal principal) {
+                                                    Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     organisationSecurityService.checkUserIsOrgManager(user, organisation);
   }
