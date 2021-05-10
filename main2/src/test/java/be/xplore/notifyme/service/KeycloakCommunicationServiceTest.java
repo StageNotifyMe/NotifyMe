@@ -153,7 +153,7 @@ class KeycloakCommunicationServiceTest {
     final ArrayList<UserRepresentation> mockList = mock(ArrayList.class);
     final UserRepresentation mockUserRep = mock(UserRepresentation.class);
 
-    when(gson.fromJson("LIST", eq(listType))).thenReturn(mockList);
+    when(gson.fromJson("LIST", listType)).thenReturn(mockList);
     when(mockList.get(anyInt())).thenReturn(mockUserRep);
 
 
@@ -167,7 +167,7 @@ class KeycloakCommunicationServiceTest {
     var listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
 
-    when(gson.fromJson("LIST", eq(listType))).thenReturn(null);
+    when(gson.fromJson("LIST", listType)).thenReturn(null);
 
     assertThrows(CrudException.class, () -> keycloakCommunicationService.getUserInfo("user"));
   }
@@ -180,7 +180,7 @@ class KeycloakCommunicationServiceTest {
     }.getType();
     final ArrayList<UserRepresentation> mockList = mock(ArrayList.class);
 
-    when(gson.fromJson("LIST", eq(listType))).thenReturn(mockList);
+    when(gson.fromJson("LIST", listType)).thenReturn(mockList);
     doThrow(RuntimeException.class).when(mockList).get(anyInt());
 
     assertThrows(RuntimeException.class, () -> keycloakCommunicationService.getUserInfo("user"));
@@ -196,7 +196,7 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(mockResponseEntity);
     when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
-    when(gson.fromJson(eq("LIST"), listType)).thenReturn(mockList);
+    when(gson.fromJson("LIST", listType)).thenReturn(mockList);
 
 
     assertEquals(mockList, keycloakCommunicationService.getAllUserInfoRest("token"));
@@ -227,7 +227,7 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(mockResponseEntity);
     when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
-    when(gson.fromJson("LIST", eq(listType))).thenReturn(null);
+    when(gson.fromJson("LIST", listType)).thenReturn(null);
 
     assertThrows(RestClientException.class,
         () -> keycloakCommunicationService.getAllUserInfoRest("token"));
@@ -274,7 +274,7 @@ class KeycloakCommunicationServiceTest {
     } else {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    when(gson.fromJson("RoleArray", eq(RoleRepresentation[].class)))
+    when(gson.fromJson("RoleArray", RoleRepresentation[].class))
         .thenReturn(new RoleRepresentation[] {getTestRoleRepresentation()});
   }
 
@@ -345,7 +345,7 @@ class KeycloakCommunicationServiceTest {
     } else {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    when(gson.fromJson("clientArray", eq(RelevantClientInfoDto[].class)))
+    when(gson.fromJson("clientArray", RelevantClientInfoDto[].class))
         .thenReturn(new RelevantClientInfoDto[] {getTestRelevantClientInfo()});
   }
 
