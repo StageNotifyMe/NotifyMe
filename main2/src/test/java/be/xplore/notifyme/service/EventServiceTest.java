@@ -135,8 +135,7 @@ class EventServiceTest {
     List<Event> eventList = new LinkedList<>();
     eventList.add(testEvent);
     when(userService.getUser("testUser")).thenReturn(testUser);
-    when(testUser.getUserId()).thenReturn("testUser");
-    when(eventRepo.getAllByLineManagersContains(testUser)).thenReturn(eventList);
+    when(testUser.getEvents()).thenReturn(eventList);
 
     assertEquals(eventList, eventService.getAllEventsForLineManager("testUser"));
   }
@@ -173,7 +172,7 @@ class EventServiceTest {
   void promoteToLineManagerUserNotFound() {
     doThrow(CrudException.class).when(userService).getUser(anyString());
 
-    assertThrows(SaveToDatabaseException.class,
+    assertThrows(CrudException.class,
         () -> eventService.promoteToLineManager("userid", 1L));
   }
 
@@ -182,7 +181,7 @@ class EventServiceTest {
     when(userService.getUser(anyString())).thenReturn(testUser);
     when(eventRepo.findById(anyLong())).thenReturn(Optional.empty());
 
-    assertThrows(SaveToDatabaseException.class,
+    assertThrows(CrudException.class,
         () -> eventService.promoteToLineManager("userid", 1L));
   }
 

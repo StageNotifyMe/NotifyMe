@@ -173,18 +173,6 @@ class VenueServiceTest {
         () -> venueService.makeUserVenueManager("userid", 1L));
   }
 
-  @Test
-  void makeUserVenueManagerUserAlreadyVenueManager() {
-    var user = getTestUser();
-    when(userService.getUser(anyString())).thenReturn(user);
-    var venue = getTestVenue();
-    venue.getManagers().add(user);
-    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(venue));
-
-    assertThrows(SaveToDatabaseException.class,
-        () -> venueService.makeUserVenueManager("userid", 1L));
-  }
-
   private List<GetVenueDto> getTestGetVenues() {
     LinkedList<GetVenueDto> venues = new LinkedList<>();
     venues.add(new GetVenueDto(getTestVenue().getId(), getTestVenue().getName(),

@@ -32,6 +32,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest
@@ -139,7 +140,7 @@ class KeycloakCommunicationServiceTest {
     this.mockGetAdminAccesstoken();
     doThrow(RuntimeException.class).when(restTemplate).put(anyString(), any());
 
-    assertThrows(CrudException.class,
+    assertThrows(RestClientException.class,
         () -> keycloakCommunicationService.sendEmailVerificationRequest("user"));
   }
 
@@ -182,7 +183,7 @@ class KeycloakCommunicationServiceTest {
     when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(mockList);
     doThrow(RuntimeException.class).when(mockList).get(anyInt());
 
-    assertThrows(CrudException.class, () -> keycloakCommunicationService.getUserInfo("user"));
+    assertThrows(RuntimeException.class, () -> keycloakCommunicationService.getUserInfo("user"));
   }
 
   @Test
@@ -228,7 +229,7 @@ class KeycloakCommunicationServiceTest {
     when(mockResponseEntity.getBody()).thenReturn("LIST");
     when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(null);
 
-    assertThrows(CrudException.class,
+    assertThrows(RestClientException.class,
         () -> keycloakCommunicationService.getAllUserInfoRest("token"));
   }
 

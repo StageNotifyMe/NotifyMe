@@ -15,6 +15,7 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.RelevantClientInfoDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
@@ -196,7 +197,7 @@ class UserServiceTest {
     when(userRepo.save(any()))
         .thenThrow(new CrudException("User could not be saved to repository"));
     var registerDto = new UserRegistrationDto();
-    assertThrows(CrudException.class, () ->
+    assertThrows(SaveToDatabaseException.class, () ->
         userService.register(registerDto));
   }
 
@@ -206,7 +207,7 @@ class UserServiceTest {
     getUserInfoAndSendVerificationFail();
     when(userRepo.save(any())).thenReturn(new User());
     var registerDto = new UserRegistrationDto();
-    assertThrows(CrudException.class, () ->
+    assertThrows(SaveToDatabaseException.class, () ->
         userService.register(registerDto));
   }
 
@@ -221,7 +222,7 @@ class UserServiceTest {
         .sendEmailVerificationRequest("id");
     doNothing().when(keycloakCommunicationService).register(any(UserRegistrationDto.class));
 
-    assertThrows(CrudException.class, () -> userService.register(userRegistrationDto));
+    assertThrows(SaveToDatabaseException.class, () -> userService.register(userRegistrationDto));
   }
 
   @Test

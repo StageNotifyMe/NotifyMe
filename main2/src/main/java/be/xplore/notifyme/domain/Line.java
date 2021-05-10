@@ -37,7 +37,7 @@ public class Line {
   }
 
   /**
-   * Constructor used to create a new line
+   * Constructor used to create a new line.
    *
    * @param event    event to which the line belongs.
    * @param facility for which the line is.

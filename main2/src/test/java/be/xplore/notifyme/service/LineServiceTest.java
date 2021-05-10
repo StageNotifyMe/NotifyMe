@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Event;
@@ -97,10 +98,11 @@ class LineServiceTest {
 
   @Test
   void getAllLinesByEventSuccessful() {
+    var mockEvent = mock(Event.class);
     List<Line> lineList = new LinkedList<>();
     lineList.add(line);
-    when(eventService.getEvent(1L)).thenReturn(event);
-    when(lineRepo.getAllByEvent(event)).thenReturn(lineList);
+    when(eventService.getEvent(1L)).thenReturn(mockEvent);
+    when(mockEvent.getLines()).thenReturn(lineList);
 
     assertEquals(lineList, lineService.getAllLinesByEvent(1L));
   }
