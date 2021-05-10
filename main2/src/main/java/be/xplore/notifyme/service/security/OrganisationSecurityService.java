@@ -10,6 +10,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrganisationSecurityService {
 
+  /**
+   * Checks if the user passed is a manager of the organisation. Throws an unauthorized exception if
+   * the user is not a manager.
+   *
+   * @param user         that should be a manager of the organisation.
+   * @param organisation that user should be a manager of.
+   */
   public void checkUserIsOrgManager(User user, Organisation organisation) {
     Optional<OrganisationUser> orgUser = organisation.getUsers().stream()
         .filter(ou -> ou.getUser().getUserId().equals(user.getUserId())).findFirst();

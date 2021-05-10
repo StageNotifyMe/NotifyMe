@@ -33,6 +33,13 @@ public class UserOrgService {
     return organisations;
   }
 
+  /**
+   * Gets an organisation the principal is manager of.
+   *
+   * @param orgId     the unique id of the organisation.
+   * @param principal representation of authorized user.
+   * @return the organisation and its attached info.
+   */
   public Organisation getOrgInfoAsManager(Long orgId, Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     var organisation = organisationService.getOrganisation(orgId);

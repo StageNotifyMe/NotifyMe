@@ -43,12 +43,26 @@ public class UserOrgApplicationService {
     return user.getAppliedOrganisations();
   }
 
+  /**
+   * Get a list of user org applications for an organisation the principal is manager of.
+   *
+   * @param organisationId the unique id of the organisation.
+   * @param principal      representation of authorized user.
+   * @return a list of user organisation applications.
+   */
   public List<UserOrgApplication> getOrgApplications(Long organisationId, Principal principal) {
     var organisation = organisationService.getOrganisation(organisationId);
     secureOrgManagerRequestFromPrincipal(organisation, principal);
     return organisation.getAppliedUsers();
   }
 
+  /**
+   * Accept or deny a users organisation application.
+   *
+   * @param organisationUserKey the applications unique key.
+   * @param accept              if the request should be accepted or denied.
+   * @param principal           representation of the authorized organisation admin.
+   */
   public void respondToApplication(OrganisationUserKey organisationUserKey, boolean accept,
       Principal principal) {
     var organisation = organisationService.getOrganisation(organisationUserKey.getOrganisationId());

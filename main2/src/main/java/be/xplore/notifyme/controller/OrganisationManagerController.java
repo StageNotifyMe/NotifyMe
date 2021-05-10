@@ -53,7 +53,7 @@ public class OrganisationManagerController {
   }
 
   /**
-   * Posts the response to a user application
+   * Posts the response to a user application.
    *
    * @param principal injected from security.
    * @return List of applications including the username.
@@ -66,6 +66,12 @@ public class OrganisationManagerController {
     return ResponseEntity.ok().build();
   }
 
+  /**
+   * Retrieve a list of organisations the user is manager of.
+   *
+   * @param principal representation of authorized user.
+   * @return a list of organisation dto's with relevant info for this request.
+   */
   @GetMapping("organisations")
   public ResponseEntity<List<OrganisationDto>> organisations(Principal principal) {
     var orgDtos = new ArrayList<OrganisationDto>();
