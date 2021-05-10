@@ -1,8 +1,10 @@
 package be.xplore.notifyme.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,7 +38,7 @@ public class Venue {
   @Cascade(CascadeType.ALL)
   private Address address;
   @ManyToMany(cascade = javax.persistence.CascadeType.ALL)
-  private List<User> managers;
+  private Set<User> managers;
   @OneToMany
   private List<Facility> facilities;
 
@@ -52,7 +54,7 @@ public class Venue {
     this.name = name;
     this.description = description;
     this.address = address;
-    this.managers = new LinkedList<>();
+    this.managers = new HashSet<>();
     this.managers.add(user);
   }
 
@@ -65,7 +67,7 @@ public class Venue {
    * @param address     of the venue (street, postalcode, country).
    * @param users       venue managers.
    */
-  public Venue(long id, String name, String description, Address address, List<User> users) {
+  public Venue(long id, String name, String description, Address address, Set<User> users) {
     this.id = id;
     this.name = name;
     this.description = description;

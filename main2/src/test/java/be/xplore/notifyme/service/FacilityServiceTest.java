@@ -15,6 +15,7 @@ import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IFacilityRepo;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class FacilityServiceTest {
   private final CreateFacilityDto createFacilityDto =
       new CreateFacilityDto("descriptie", "locatie", 1, 10, 1L);
   private final Venue venue =
-      new Venue(1L, "venue", "descriptie", new Address(), new LinkedList<>(), new LinkedList<>());
+      new Venue(1L, "venue", "descriptie", new Address(), new HashSet<>(), new LinkedList<>());
   @Autowired
   private FacilityService facilityService;
   @MockBean

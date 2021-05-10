@@ -94,12 +94,8 @@ public class VenueService {
     try {
       var user = userService.getUser(userId);
       var venue = this.getVenue(venueId);
-      if (!venue.getManagers().contains(user)) {
-        venue.getManagers().add(user);
-        venueRepo.save(venue);
-      } else {
-        throw new SaveToDatabaseException("User already is venue manager of this venue!");
-      }
+      venue.getManagers().add(user);
+      venueRepo.save(venue);
       userService.grantUserRole(userId, "venue_manager");
     } catch (Exception e) {
       throw new SaveToDatabaseException("Could not make user venue manager: " + e.getMessage());

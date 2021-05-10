@@ -21,6 +21,7 @@ import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -198,7 +199,7 @@ class VenueServiceTest {
   }
 
   private Venue getTestVenue() {
-    return new Venue(1L, "Venue", "venue", new Address(), new LinkedList<>());
+    return new Venue(1L, "Venue", "venue", new Address(), new HashSet<>());
   }
 
   private IDToken getMockIdToken() {

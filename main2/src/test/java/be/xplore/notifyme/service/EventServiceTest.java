@@ -23,6 +23,7 @@ import be.xplore.notifyme.persistence.IEventRepo;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -193,7 +194,7 @@ class EventServiceTest {
 
   private Venue getTestVenue() {
     Address address = new Address("Teststraat 10", "2000", "Antwerpen", "België");
-    return new Venue(1, "Zaal", "een zaal", address, new LinkedList<>());
+    return new Venue(1, "Zaal", "een zaal", address, new HashSet<>());
   }
 
   private final User testUser = Mockito.mock(User.class);
