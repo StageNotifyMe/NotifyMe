@@ -17,7 +17,7 @@ import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
@@ -173,7 +173,7 @@ class AdminControllerTest {
     final User testUser = new User();
     testUser.setUserId("userid");
     final Venue venue = new Venue();
-    venue.setManagers(new ArrayList<>());
+    venue.setManagers(new HashSet<>());
     venue.getManagers().add(testUser);
     when(venueService.getVenue(anyLong())).thenReturn(venue);
 

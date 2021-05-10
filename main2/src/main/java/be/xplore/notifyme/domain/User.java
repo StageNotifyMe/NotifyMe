@@ -2,6 +2,7 @@ package be.xplore.notifyme.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,7 +30,7 @@ public class User {
   @ManyToMany(cascade = CascadeType.ALL)
   private List<Venue> venues;
   @ManyToMany
-  private List<Team> teams;
+  private Set<Team> teams;
   @ManyToMany
   private List<Event> events;
 

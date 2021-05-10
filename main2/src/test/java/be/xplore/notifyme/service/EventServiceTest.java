@@ -23,6 +23,7 @@ import be.xplore.notifyme.persistence.IEventRepo;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -107,7 +108,7 @@ class EventServiceTest {
   void getEventAndVerifyLineManagerPermissionUnauthorized() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     final IDToken token = Mockito.mock(IDToken.class);
-    testEvent.setLineManagers(new LinkedList<>());
+    testEvent.setLineManagers(new HashSet<>());
     when(eventRepo.findById(1L)).thenReturn(Optional.of(testEvent));
     when(tokenService.getIdToken(any(Principal.class))).thenReturn(token);
     when(token.getPreferredUsername()).thenReturn("testUser");
@@ -134,8 +135,7 @@ class EventServiceTest {
     List<Event> eventList = new LinkedList<>();
     eventList.add(testEvent);
     when(userService.getUser("testUser")).thenReturn(testUser);
-    when(testUser.getUserId()).thenReturn("testUser");
-    when(eventRepo.getAllByLineManagersContains(testUser)).thenReturn(eventList);
+    when(testUser.getEvents()).thenReturn(eventList);
 
     assertEquals(eventList, eventService.getAllEventsForLineManager("testUser"));
   }
@@ -172,7 +172,7 @@ class EventServiceTest {
   void promoteToLineManagerUserNotFound() {
     doThrow(CrudException.class).when(userService).getUser(anyString());
 
-    assertThrows(SaveToDatabaseException.class,
+    assertThrows(CrudException.class,
         () -> eventService.promoteToLineManager("userid", 1L));
   }
 
@@ -181,7 +181,7 @@ class EventServiceTest {
     when(userService.getUser(anyString())).thenReturn(testUser);
     when(eventRepo.findById(anyLong())).thenReturn(Optional.empty());
 
-    assertThrows(SaveToDatabaseException.class,
+    assertThrows(CrudException.class,
         () -> eventService.promoteToLineManager("userid", 1L));
   }
 
@@ -193,19 +193,19 @@ class EventServiceTest {
 
   private Venue getTestVenue() {
     Address address = new Address("Teststraat 10", "2000", "Antwerpen", "België");
-    return new Venue(1, "Zaal", "een zaal", address, new LinkedList<>());
+    return new Venue(1, "Zaal", "een zaal", address, new HashSet<>());
   }
 
   private final User testUser = Mockito.mock(User.class);
 
   private final Event testEvent =
       new Event(1, "Evenement", "een evenement", "een artiest",
-          LocalDateTime.now(), getTestVenue(), new LinkedList<>(), new LinkedList<>());
+          LocalDateTime.now(), getTestVenue(), new LinkedList<>(), new HashSet<>());
 
   private Event getTestEventWithLineManager() {
     var testEvent =
         new Event("Evenement", "een evenement", "een artiest", "2021-04-30 06:45", getTestVenue());
-    testEvent.setLineManagers(new LinkedList<>());
+    testEvent.setLineManagers(new HashSet<>());
     testEvent.getLineManagers().add(testUser);
     return testEvent;
   }

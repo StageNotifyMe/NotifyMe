@@ -49,7 +49,7 @@ class OrganisationServiceTest {
   void createOrganisationDbNotWorking() {
     String orgname = "testOrg";
     when(organisationRepo.save(any())).thenThrow(new HibernateException("HBE"));
-    assertThrows(CrudException.class, () ->
+    assertThrows(HibernateException.class, () ->
         organisationService.createOrganisation(orgname));
   }
 
@@ -65,7 +65,7 @@ class OrganisationServiceTest {
   @Test
   void getOrganisationsDbNotWorking() {
     when(organisationRepo.findAll()).thenThrow(new HibernateException("HBE"));
-    assertThrows(CrudException.class, () ->
+    assertThrows(HibernateException.class, () ->
         organisationService.getOrganisations());
   }
 
@@ -87,7 +87,7 @@ class OrganisationServiceTest {
   @Test
   void getOrganisationDbNotWorking() {
     when(organisationRepo.findById(anyLong())).thenThrow(new HibernateException("HBE"));
-    assertThrows(CrudException.class, () ->
+    assertThrows(HibernateException.class, () ->
         organisationService.getOrganisation(1L));
   }
 
@@ -122,7 +122,7 @@ class OrganisationServiceTest {
     when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
     when(organisationRepo.save(any())).thenThrow(new HibernateException("HBE"));
-    assertThrows(CrudException.class, () ->
+    assertThrows(HibernateException.class, () ->
         organisationService.promoteUserToOrgManager("testUser", 1L, principal));
   }
 }
