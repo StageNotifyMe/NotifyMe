@@ -93,9 +93,7 @@ class VenueServiceTest {
   @Test
   void getVenueFail() {
     when(venueRepo.getOne(anyLong())).thenReturn(new Venue());
-    assertThrows(CrudException.class, () -> {
-      venueService.getVenue(1L);
-    });
+    assertThrows(CrudException.class, () -> venueService.getVenue(1L));
   }
 
   @Test
@@ -113,9 +111,7 @@ class VenueServiceTest {
   void getVenuesUserNotFound() {
     doThrow(CrudException.class).when(userService).getUser("unknown");
 
-    assertThrows(CrudException.class, () -> {
-      venueService.getVenuesForUser("unknown");
-    });
+    assertThrows(CrudException.class, () -> venueService.getVenuesForUser("unknown"));
   }
 
   @Test
@@ -135,18 +131,15 @@ class VenueServiceTest {
     when(venueRepo.save(any(Venue.class))).thenReturn(getTestVenue());
     doNothing().when(userService).grantUserRole(anyString(), anyString());
 
-    assertDoesNotThrow(() -> {
-      venueService.makeUserVenueManager("userid", 1L);
-    });
+    assertDoesNotThrow(() -> venueService.makeUserVenueManager("userid", 1L));
   }
 
   @Test
   void makeUserVenueManagerFailA() {
     doThrow(CrudException.class).when(userService).getUser(anyString());
 
-    assertThrows(SaveToDatabaseException.class, () -> {
-      venueService.makeUserVenueManager("userid", 1L);
-    });
+    assertThrows(SaveToDatabaseException.class,
+        () -> venueService.makeUserVenueManager("userid", 1L));
   }
 
   @Test
@@ -154,9 +147,8 @@ class VenueServiceTest {
     when(userService.getUser(anyString())).thenReturn(getTestUser());
     doThrow(CrudException.class).when(venueRepo).findById(anyLong());
 
-    assertThrows(SaveToDatabaseException.class, () -> {
-      venueService.makeUserVenueManager("userid", 1L);
-    });
+    assertThrows(SaveToDatabaseException.class,
+        () -> venueService.makeUserVenueManager("userid", 1L));
   }
 
   @Test
@@ -165,9 +157,8 @@ class VenueServiceTest {
     when(venueRepo.findById(anyLong())).thenReturn(Optional.of(getTestVenue()));
     doThrow(CrudException.class).when(venueRepo).save(any(Venue.class));
 
-    assertThrows(SaveToDatabaseException.class, () -> {
-      venueService.makeUserVenueManager("userid", 1L);
-    });
+    assertThrows(SaveToDatabaseException.class,
+        () -> venueService.makeUserVenueManager("userid", 1L));
   }
 
   @Test
@@ -177,9 +168,20 @@ class VenueServiceTest {
     when(venueRepo.save(any(Venue.class))).thenReturn(getTestVenue());
     doThrow(CrudException.class).when(userService).grantUserRole(anyString(), anyString());
 
-    assertThrows(SaveToDatabaseException.class, () -> {
-      venueService.makeUserVenueManager("userid", 1L);
-    });
+    assertThrows(SaveToDatabaseException.class,
+        () -> venueService.makeUserVenueManager("userid", 1L));
+  }
+
+  @Test
+  void makeUserVenueManagerUserAlreadyVenueManager() {
+    var user = getTestUser();
+    when(userService.getUser(anyString())).thenReturn(user);
+    var venue = getTestVenue();
+    venue.getManagers().add(user);
+    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(venue));
+
+    assertThrows(SaveToDatabaseException.class,
+        () -> venueService.makeUserVenueManager("userid", 1L));
   }
 
   private List<GetVenueDto> getTestGetVenues() {

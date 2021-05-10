@@ -48,7 +48,6 @@ class OrganisationServiceTest {
   @Test
   void createOrganisationDbNotWorking() {
     String orgname = "testOrg";
-    Organisation testOrg = new Organisation(1L, orgname, new ArrayList<>());
     when(organisationRepo.save(any())).thenThrow(new HibernateException("HBE"));
     assertThrows(CrudException.class, () ->
         organisationService.createOrganisation(orgname));
@@ -65,8 +64,6 @@ class OrganisationServiceTest {
 
   @Test
   void getOrganisationsDbNotWorking() {
-    String orgname = "testOrg";
-    Organisation testOrg = new Organisation(1L, orgname, new ArrayList<>());
     when(organisationRepo.findAll()).thenThrow(new HibernateException("HBE"));
     assertThrows(CrudException.class, () ->
         organisationService.getOrganisations());

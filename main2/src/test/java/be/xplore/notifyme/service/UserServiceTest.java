@@ -58,9 +58,13 @@ class UserServiceTest {
   void getAllUserInfoCommunicationFail() {
     doThrow(CrudException.class).when(keycloakCommunicationService).getAllUserInfoRest(anyString());
 
+<<<<<<< HEAD
     assertThrows(CrudException.class, () -> {
       userService.getAllUserInfo();
     });
+=======
+    assertThrows(CrudException.class, () -> userService.getAllUserInfo("specialToken"));
+>>>>>>> 9d0cf90309621ea6722d47670c9dbed1354b120a
   }
 
   @Test
@@ -99,13 +103,12 @@ class UserServiceTest {
   void getUserInfoOfOther() {
     var userRep = new UserRepresentation();
     mockKeycloakSecurityContext(userRep, false);
-    assertThrows(UnauthorizedException.class, () -> {
-      userService.getUserInfo("OtherUser", getKeycloakPrincipal());
-    });
+    assertThrows(UnauthorizedException.class,
+        () -> userService.getUserInfo("OtherUser", getKeycloakPrincipal()));
   }
 
   private void mockKeycloakSecurityContext(UserRepresentation userRep,
-      Boolean hasRequiredPermission) {
+                                           Boolean hasRequiredPermission) {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
 
     KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);
@@ -151,9 +154,7 @@ class UserServiceTest {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
     when(tokenService.getIdToken(any()))
         .thenThrow(new RuntimeException("Could not get id token from principal."));
-    assertThrows(RuntimeException.class, () -> {
-      userService.getUserFromPrincipal(keycloakPrincipal);
-    });
+    assertThrows(RuntimeException.class, () -> userService.getUserFromPrincipal(keycloakPrincipal));
   }
 
   @Test
@@ -191,9 +192,7 @@ class UserServiceTest {
     doNothing().when(keycloakCommunicationService).register(any());
     getUserInfoAndSendVerification();
     when(userRepo.save(any())).thenReturn(new User());
-    assertDoesNotThrow(() -> {
-      userService.register(registerDto);
-    });
+    assertDoesNotThrow(() -> userService.register(registerDto));
   }
 
   @Test
@@ -228,9 +227,7 @@ class UserServiceTest {
         .sendEmailVerificationRequest("id");
     doNothing().when(keycloakCommunicationService).register(any(UserRegistrationDto.class));
 
-    assertThrows(CrudException.class, () -> {
-      userService.register(userRegistrationDto);
-    });
+    assertThrows(CrudException.class, () -> userService.register(userRegistrationDto));
   }
 
   @Test
@@ -257,18 +254,14 @@ class UserServiceTest {
     doNothing().when(keycloakCommunicationService)
         .giveUserRole(anyString(), eq(roleRepresentation), anyString());
 
-    assertDoesNotThrow(() -> {
-      userService.grantUserRole("userid", "rolename");
-    });
+    assertDoesNotThrow(() -> userService.grantUserRole("userid", "rolename"));
   }
 
   @Test
   void grantUserRoleFailA() {
     doThrow(CrudException.class).when(keycloakCommunicationService).getClient(anyString());
 
-    assertThrows(CrudException.class, () -> {
-      userService.grantUserRole("userid", "rolename");
-    });
+    assertThrows(CrudException.class, () -> userService.grantUserRole("userid", "rolename"));
   }
 
   @Test
@@ -279,9 +272,7 @@ class UserServiceTest {
     doThrow(CrudException.class).when(keycloakCommunicationService)
         .getClientRole(anyString(), anyString());
 
-    assertThrows(CrudException.class, () -> {
-      userService.grantUserRole("userid", "rolename");
-    });
+    assertThrows(CrudException.class, () -> userService.grantUserRole("userid", "rolename"));
   }
 
   @Test
@@ -295,9 +286,7 @@ class UserServiceTest {
     doThrow(CrudException.class).when(keycloakCommunicationService)
         .giveUserRole(anyString(), any(RoleRepresentation.class), anyString());
 
-    assertThrows(CrudException.class, () -> {
-      userService.grantUserRole("userid", "rolename");
-    });
+    assertThrows(CrudException.class, () -> userService.grantUserRole("userid", "rolename"));
   }
 
   @Test

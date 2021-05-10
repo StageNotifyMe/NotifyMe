@@ -3,6 +3,7 @@ package be.xplore.notifyme.service;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IEventRepo;
 import java.security.Principal;
@@ -70,7 +71,7 @@ public class EventService {
     if (event.isPresent()) {
       var eventObject = event.get();
       var token = tokenService.getIdToken(principal);
-      var user = userService.getUser(token.getPreferredUsername());
+      var user = userService.getUser(token.getSubject());
       if (eventObject.getLineManagers().contains(user)) {
         return eventObject;
       } else {
@@ -109,5 +110,28 @@ public class EventService {
     event.setLineManagers(new LinkedList<>());
     event.getLineManagers().add(user);
     eventRepo.save(event);
+  }
+
+  /**
+   * Adds given user to given event as line manager, also grants line manager permissions.
+   *
+   * @param userId  id of the user to add as line manager.
+   * @param eventId id of the event to add the user to as line manager.
+   */
+  public void promoteToLineManager(String userId, long eventId) {
+    try {
+      var user = userService.getUser(userId);
+      var event = this.getEvent(eventId);
+      if (!event.getLineManagers().contains(user)) {
+        event.getLineManagers().add(user);
+        eventRepo.save(event);
+      } else {
+        throw new SaveToDatabaseException("User is already line manager of this event!");
+      }
+      userService.grantUserRole(userId, "line_manager");
+    } catch (Exception e) {
+      log.error(e.getMessage());
+      throw new SaveToDatabaseException("Could not add user as line manager: " + e.getMessage());
+    }
   }
 }

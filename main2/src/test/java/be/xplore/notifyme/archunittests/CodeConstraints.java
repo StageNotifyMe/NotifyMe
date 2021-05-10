@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 
+@SuppressWarnings("unused")
 @AnalyzeClasses(packages = "be.xplore.notifyme", importOptions = {
     ImportOption.DoNotIncludeTests.class})
 public class CodeConstraints {

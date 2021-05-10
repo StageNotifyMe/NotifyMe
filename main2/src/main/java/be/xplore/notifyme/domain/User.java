@@ -1,7 +1,6 @@
 package be.xplore.notifyme.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -28,7 +27,7 @@ public class User {
   @JsonManagedReference
   private List<UserOrgApplication> appliedOrganisations;
   @ManyToMany(cascade = CascadeType.ALL)
-  private List<Venue> venues = new LinkedList<>();
+  private List<Venue> venues;
   @ManyToMany
   private List<Team> teams;
   @ManyToMany
