@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,7 +36,7 @@ public class Event {
   @OneToMany
   private List<Line> lines;
   @ManyToMany
-  private List<User> lineManagers;
+  private Set<User> lineManagers;
 
   /**
    * Constructor for API POST methods. Converts a dateTime from ISO to LocalDateTime.

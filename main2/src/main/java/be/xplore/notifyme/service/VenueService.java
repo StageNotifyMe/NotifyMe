@@ -6,7 +6,6 @@ import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.GetVenueDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
-import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
 import java.util.LinkedList;
@@ -40,20 +39,15 @@ public class VenueService {
    * @return 203 if successful, 400 if unsuccessful.
    */
   public ResponseEntity<Object> createVenue(CreateVenueDto createVenueDto, Principal principal) {
-    try {
-      var accessToken = tokenService.getIdToken(principal);
-      var user = userService.getUser(accessToken.getSubject());
-      var address =
-          new Address(createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
-              createVenueDto.getVillage(), createVenueDto.getCountry());
-      var venue =
-          new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address, user);
-      venueRepo.save(venue);
-      return new ResponseEntity<>(HttpStatus.CREATED);
-    } catch (TokenHandlerException | CrudException e) {
-      log.error(e.getMessage());
-      throw e;
-    }
+    var accessToken = tokenService.getIdToken(principal);
+    var user = userService.getUser(accessToken.getSubject());
+    var address =
+        new Address(createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
+            createVenueDto.getVillage(), createVenueDto.getCountry());
+    var venue =
+        new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address, user);
+    venueRepo.save(venue);
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   /**
@@ -63,12 +57,8 @@ public class VenueService {
    * @return the venue matching the ID or thorws error if no matches found.
    */
   public Venue getVenue(long id) {
-    var venue = venueRepo.findById(id);
-    if (venue.isPresent()) {
-      return venue.get();
-    } else {
-      throw new CrudException("Could not retrieve venue for id " + id);
-    }
+    return venueRepo.findById(id)
+        .orElseThrow(() -> new CrudException("Could not retrieve venue for id " + id));
   }
 
   /**
@@ -78,19 +68,14 @@ public class VenueService {
    * @return list object containing all venues.
    */
   public List<GetVenueDto> getVenuesForUser(String userId) {
-    try {
-      var user = userService.getUser(userId);
-      var venues = venueRepo.getAllByManagersIsContaining(user);
-      List<GetVenueDto> venueDtos = new LinkedList<>();
-      for (Venue venue : venues) {
-        venueDtos.add(new GetVenueDto(venue.getId(), venue.getName(), venue.getDescription(),
-            venue.getAddress()));
-      }
-      return venueDtos;
-    } catch (CrudException e) {
-      log.error(e.getMessage());
-      throw e;
+    var user = userService.getUser(userId);
+    var venues = venueRepo.getAllByManagersIsContaining(user);
+    List<GetVenueDto> venueDtos = new LinkedList<>();
+    for (Venue venue : venues) {
+      venueDtos.add(new GetVenueDto(venue.getId(), venue.getName(), venue.getDescription(),
+          venue.getAddress()));
     }
+    return venueDtos;
   }
 
   /**
@@ -104,15 +89,10 @@ public class VenueService {
     try {
       var user = userService.getUser(userId);
       var venue = this.getVenue(venueId);
-      if (!venue.getManagers().contains(user)) {
-        venue.getManagers().add(user);
-        venueRepo.save(venue);
-      } else {
-        throw new SaveToDatabaseException("User already is venue manager of this venue!");
-      }
+      venue.getManagers().add(user);
+      venueRepo.save(venue);
       userService.grantUserRole(userId, "venue_manager");
     } catch (Exception e) {
-      log.error(e.getMessage());
       throw new SaveToDatabaseException("Could not make user venue manager: " + e.getMessage());
     }
   }

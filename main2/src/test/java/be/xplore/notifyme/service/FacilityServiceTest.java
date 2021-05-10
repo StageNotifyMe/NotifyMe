@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Address;
@@ -14,7 +15,9 @@ import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IFacilityRepo;
+import be.xplore.notifyme.persistence.IVenueRepo;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -28,7 +31,7 @@ class FacilityServiceTest {
   private final CreateFacilityDto createFacilityDto =
       new CreateFacilityDto("descriptie", "locatie", 1, 10, 1L);
   private final Venue venue =
-      new Venue(1L, "venue", "descriptie", new Address(), new LinkedList<>(), new LinkedList<>());
+      new Venue(1L, "venue", "descriptie", new Address(), new HashSet<>(), new LinkedList<>());
   @Autowired
   private FacilityService facilityService;
   @MockBean
@@ -36,6 +39,8 @@ class FacilityServiceTest {
   @MockBean
   @Autowired
   private VenueService venueService;
+  @MockBean
+  private IVenueRepo venueRepo;
 
   @Test
   void createFacilitySuccessful() {
@@ -74,14 +79,16 @@ class FacilityServiceTest {
   @Test
   void getAllFacilitiesForVenue() {
     var facilities = new ArrayList<Facility>();
-    when(facilityRepo.getAllByVenue(any())).thenReturn(facilities);
+    var mockVenue = mock(Venue.class);
+    when(venueService.getVenue(anyLong())).thenReturn(mockVenue);
+    when(mockVenue.getFacilities()).thenReturn(facilities);
     assertEquals(facilities, facilityService.getAllFacilitesForVenue(1L));
   }
 
   @Test
   void getAllFacilitiesForVenueFail() {
-    when(facilityRepo.getAllByVenue(any()))
-        .thenThrow(new CrudException("Could not get list of facilities for venue."));
+    doThrow(CrudException.class).when(venueService).getVenue(anyLong());
+
     assertThrows(CrudException.class, () -> facilityService.getAllFacilitesForVenue(1L));
   }
 }

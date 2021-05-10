@@ -3,6 +3,7 @@ package be.xplore.notifyme.service;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
 import java.security.Principal;
@@ -34,14 +35,8 @@ public class UserService {
    * @param adminAccesstoken Admin service account token needed to authorize request.
    * @return list of Keycloak Userrepresentation.
    */
-  public List<UserRepresentation> getAllUserInfo(
-      String adminAccesstoken) {
-    try {
-      return keycloakCommunicationService.getAllUserInfoRest(adminAccesstoken);
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      throw new CrudException("Could not get users from keycloak server: " + e.getMessage());
-    }
+  public List<UserRepresentation> getAllUserInfo(String adminAccesstoken) {
+    return keycloakCommunicationService.getAllUserInfoRest(adminAccesstoken);
   }
 
   /**
@@ -67,13 +62,8 @@ public class UserService {
    * @return user object.
    */
   public User getUserFromPrincipal(Principal principal) {
-    try {
-      var decodedToken = tokenService.getIdToken(principal);
-      return this.getUser(decodedToken.getSubject());
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      throw e;
-    }
+    var decodedToken = tokenService.getIdToken(principal);
+    return this.getUser(decodedToken.getSubject());
   }
 
   /**
@@ -97,14 +87,9 @@ public class UserService {
    * @param username username of the user that needs to receive the email.
    */
   private void getUserInfoAndSendVerificationEmail(String username) {
-    try {
-      var userInfo = keycloakCommunicationService.getUserInfo(username);
-      keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
-      createUserInDatabase(userInfo.getId());
-    } catch (CrudException e) {
-      log.error(e.getMessage());
-      throw e;
-    }
+    var userInfo = keycloakCommunicationService.getUserInfo(username);
+    keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
+    createUserInDatabase(userInfo.getId());
   }
 
   /**
@@ -116,8 +101,7 @@ public class UserService {
       keycloakCommunicationService.register(userRegistrationDto);
       getUserInfoAndSendVerificationEmail(userRegistrationDto.getUsername());
     } catch (Exception e) {
-      log.error(e.getMessage());
-      throw new CrudException(
+      throw new SaveToDatabaseException(
           "Could not register new user in system: " + userRegistrationDto.getUsername());
     }
   }
@@ -164,13 +148,8 @@ public class UserService {
    * @param roleName role to grant.
    */
   public void grantUserRole(String userId, String roleName) {
-    try {
-      var client = keycloakCommunicationService.getClient(this.clientName);
-      var role = keycloakCommunicationService.getClientRole(roleName, client.getId());
-      keycloakCommunicationService.giveUserRole(userId, role, client.getId());
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      throw e;
-    }
+    var client = keycloakCommunicationService.getClient(this.clientName);
+    var role = keycloakCommunicationService.getClientRole(roleName, client.getId());
+    keycloakCommunicationService.giveUserRole(userId, role, client.getId());
   }
 }

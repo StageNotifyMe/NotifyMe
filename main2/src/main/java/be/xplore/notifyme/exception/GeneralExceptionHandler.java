@@ -9,15 +9,16 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@Slf4j
 @ControllerAdvice
+@Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class TokenExceptionHandler {
+public class GeneralExceptionHandler {
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler(value = {TokenHandlerException.class})
-  protected ResponseEntity<Object> handleConversionException(RuntimeException re) {
-    log.error(re.getMessage());
+  @ExceptionHandler(value = {Exception.class})
+  protected ResponseEntity<Object> handleControllerException(Exception re) {
+    log.error(String.format("And exception of type [%s] was thrown with message: %s",
+        re.getClass().getSimpleName(), re.getMessage()));
     return ResponseEntity.badRequest().body(re.getMessage());
   }
 }

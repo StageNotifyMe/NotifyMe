@@ -21,6 +21,7 @@ import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -172,18 +173,6 @@ class VenueServiceTest {
         () -> venueService.makeUserVenueManager("userid", 1L));
   }
 
-  @Test
-  void makeUserVenueManagerUserAlreadyVenueManager() {
-    var user = getTestUser();
-    when(userService.getUser(anyString())).thenReturn(user);
-    var venue = getTestVenue();
-    venue.getManagers().add(user);
-    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(venue));
-
-    assertThrows(SaveToDatabaseException.class,
-        () -> venueService.makeUserVenueManager("userid", 1L));
-  }
-
   private List<GetVenueDto> getTestGetVenues() {
     LinkedList<GetVenueDto> venues = new LinkedList<>();
     venues.add(new GetVenueDto(getTestVenue().getId(), getTestVenue().getName(),
@@ -198,7 +187,7 @@ class VenueServiceTest {
   }
 
   private Venue getTestVenue() {
-    return new Venue(1L, "Venue", "venue", new Address(), new LinkedList<>());
+    return new Venue(1L, "Venue", "venue", new Address(), new HashSet<>());
   }
 
   private IDToken getMockIdToken() {

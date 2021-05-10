@@ -32,6 +32,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest
@@ -139,7 +140,7 @@ class KeycloakCommunicationServiceTest {
     this.mockGetAdminAccesstoken();
     doThrow(RuntimeException.class).when(restTemplate).put(anyString(), any());
 
-    assertThrows(CrudException.class,
+    assertThrows(RestClientException.class,
         () -> keycloakCommunicationService.sendEmailVerificationRequest("user"));
   }
 
@@ -152,7 +153,7 @@ class KeycloakCommunicationServiceTest {
     final ArrayList<UserRepresentation> mockList = mock(ArrayList.class);
     final UserRepresentation mockUserRep = mock(UserRepresentation.class);
 
-    when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(mockList);
+    when(gson.fromJson("LIST", listType)).thenReturn(mockList);
     when(mockList.get(anyInt())).thenReturn(mockUserRep);
 
 
@@ -166,7 +167,7 @@ class KeycloakCommunicationServiceTest {
     var listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
 
-    when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(null);
+    when(gson.fromJson("LIST", listType)).thenReturn(null);
 
     assertThrows(CrudException.class, () -> keycloakCommunicationService.getUserInfo("user"));
   }
@@ -179,10 +180,10 @@ class KeycloakCommunicationServiceTest {
     }.getType();
     final ArrayList<UserRepresentation> mockList = mock(ArrayList.class);
 
-    when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(mockList);
+    when(gson.fromJson("LIST", listType)).thenReturn(mockList);
     doThrow(RuntimeException.class).when(mockList).get(anyInt());
 
-    assertThrows(CrudException.class, () -> keycloakCommunicationService.getUserInfo("user"));
+    assertThrows(RuntimeException.class, () -> keycloakCommunicationService.getUserInfo("user"));
   }
 
   @Test
@@ -195,7 +196,7 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(mockResponseEntity);
     when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
-    when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(mockList);
+    when(gson.fromJson("LIST", listType)).thenReturn(mockList);
 
 
     assertEquals(mockList, keycloakCommunicationService.getAllUserInfoRest("token"));
@@ -226,9 +227,9 @@ class KeycloakCommunicationServiceTest {
         .thenReturn(mockResponseEntity);
     when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
-    when(gson.fromJson(eq("LIST"), eq(listType))).thenReturn(null);
+    when(gson.fromJson("LIST", listType)).thenReturn(null);
 
-    assertThrows(CrudException.class,
+    assertThrows(RestClientException.class,
         () -> keycloakCommunicationService.getAllUserInfoRest("token"));
   }
 
@@ -247,9 +248,10 @@ class KeycloakCommunicationServiceTest {
     when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(String.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     mockGetAdminAccesstoken();
+    var testRoleRep = getTestRoleRepresentation();
 
     assertThrows(CrudException.class, () -> keycloakCommunicationService
-        .giveUserRole("userid", getTestRoleRepresentation(), "clientid"));
+        .giveUserRole("userid", testRoleRep, "clientid"));
   }
 
   @Test
@@ -272,7 +274,7 @@ class KeycloakCommunicationServiceTest {
     } else {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    when(gson.fromJson(eq("RoleArray"), eq(RoleRepresentation[].class)))
+    when(gson.fromJson("RoleArray", RoleRepresentation[].class))
         .thenReturn(new RoleRepresentation[] {getTestRoleRepresentation()});
   }
 
@@ -343,7 +345,7 @@ class KeycloakCommunicationServiceTest {
     } else {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    when(gson.fromJson(eq("clientArray"), eq(RelevantClientInfoDto[].class)))
+    when(gson.fromJson("clientArray", RelevantClientInfoDto[].class))
         .thenReturn(new RelevantClientInfoDto[] {getTestRelevantClientInfo()});
   }
 

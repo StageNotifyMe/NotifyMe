@@ -39,8 +39,9 @@ class TokenServiceTest {
 
   @Test
   void getIdTokenNoAuthorization() {
+    var keycloakPrincipal = getKeycloakPrincipal();
     assertThrows(TokenHandlerException.class,
-        () -> tokenService.getIdToken(getKeycloakPrincipal()));
+        () -> tokenService.getIdToken(keycloakPrincipal));
   }
 
   @Test
@@ -58,8 +59,9 @@ class TokenServiceTest {
 
   @Test
   void getSecurityContextNoAuthorization() {
+    var keycloakPrincipal = getKeycloakPrincipal();
     assertThrows(TokenHandlerException.class,
-        () -> tokenService.getSecurityContext(getKeycloakPrincipal()));
+        () -> tokenService.getSecurityContext(keycloakPrincipal));
   }
 
   @Test

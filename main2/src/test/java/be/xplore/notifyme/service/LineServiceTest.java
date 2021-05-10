@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Event;
@@ -17,6 +18,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ILineRepo;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +49,7 @@ class LineServiceTest {
   private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
   private final Event event =
       new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), new Venue(),
-          new LinkedList<>(), new LinkedList<>());
+          new LinkedList<>(), new HashSet<>());
   private final Facility facility =
       new Facility(1L, "descriptie", "locatie", 1, 20, new Venue(), new LinkedList<>());
   private final User user = new User();
@@ -96,10 +98,11 @@ class LineServiceTest {
 
   @Test
   void getAllLinesByEventSuccessful() {
+    var mockEvent = mock(Event.class);
     List<Line> lineList = new LinkedList<>();
     lineList.add(line);
-    when(eventService.getEvent(1L)).thenReturn(event);
-    when(lineRepo.getAllByEvent(event)).thenReturn(lineList);
+    when(eventService.getEvent(1L)).thenReturn(mockEvent);
+    when(mockEvent.getLines()).thenReturn(lineList);
 
     assertEquals(lineList, lineService.getAllLinesByEvent(1L));
   }

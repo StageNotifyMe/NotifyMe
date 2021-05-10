@@ -20,6 +20,7 @@ public class TokenService {
 
   @Value("${keycloak.resource}")
   String clientId;
+  private String defaultErrorText = "Could not extract IDToken from principal object: ";
 
   /**
    * Uses a principal object to create an IDToken.
@@ -34,8 +35,7 @@ public class TokenService {
       return keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext()
           .getToken();
     } catch (Exception e) {
-      throw new TokenHandlerException(
-          String.format("Could not extract IDToken from principal object: %s", e.getMessage()));
+      throw new TokenHandlerException(defaultErrorText + e.getMessage());
     }
   }
 
@@ -52,8 +52,7 @@ public class TokenService {
           (KeycloakAuthenticationToken) principal;
       return keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext();
     } catch (Exception e) {
-      throw new TokenHandlerException(
-          String.format("Could not extract IDToken from principal object: %s", e.getMessage()));
+      throw new TokenHandlerException(defaultErrorText + e.getMessage());
     }
   }
 
@@ -71,8 +70,7 @@ public class TokenService {
       var roles = keycloakAuthenticationToken.getAccount().getRoles();
       return roles.contains(rolename);
     } catch (Exception e) {
-      throw new TokenHandlerException(
-          String.format("Could not extract IDToken from principal object: %s", e.getMessage()));
+      throw new TokenHandlerException(defaultErrorText + e.getMessage());
     }
 
   }

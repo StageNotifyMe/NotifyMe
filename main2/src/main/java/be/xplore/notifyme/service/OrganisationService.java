@@ -30,13 +30,7 @@ public class OrganisationService {
    * @return the newly created organisation with this name.
    */
   public Organisation createOrganisation(String name) {
-    try {
-      return organisationRepo.save(new Organisation(name));
-    } catch (RuntimeException e) {
-      log.error(e.getMessage());
-      throw new CrudException(
-          "Could not create new organisation. Make sure that the name does not exist.");
-    }
+    return organisationRepo.save(new Organisation(name));
   }
 
   /**
@@ -45,12 +39,7 @@ public class OrganisationService {
    * @return a list of organisations.
    */
   public List<Organisation> getOrganisations() {
-    try {
-      return organisationRepo.findAll();
-    } catch (RuntimeException e) {
-      log.error(e.getMessage());
-      throw new CrudException("Could not get a list of organisations.");
-    }
+    return organisationRepo.findAll();
   }
 
   /**
@@ -60,16 +49,11 @@ public class OrganisationService {
    * @return the Organisation object.
    */
   public Organisation getOrganisation(Long id) {
-    try {
-      var organisation = organisationRepo.findById(id);
-      if (organisation.isPresent()) {
-        return organisation.get();
-      }
-      throw new CrudException("Organisation with id " + id + " does not exist in db");
-    } catch (RuntimeException ex) {
-      log.error(ex.getMessage());
-      throw new CrudException("Could not get organisation with Id: " + id);
+    var organisation = organisationRepo.findById(id);
+    if (organisation.isPresent()) {
+      return organisation.get();
     }
+    throw new CrudException("Organisation with id " + id + " does not exist in db");
   }
 
   /**
@@ -79,15 +63,10 @@ public class OrganisationService {
    * @param orgId    the id of the organisation to promote the user in.
    */
   public Organisation promoteUserToOrgManager(String username, Long orgId, Principal principal) {
-    try {
-      var user = userService.getUser(userService.getUserInfo(username, principal).getId());
-      var organisation = getOrganisation(orgId);
-      organisation.getUsers()
-          .add(new OrganisationUser(organisation, user, true));
-      return organisationRepo.save(organisation);
-    } catch (RuntimeException e) {
-      log.error(e.getMessage());
-      throw new CrudException("Could not promote user to organisation manager.");
-    }
+    var user = userService.getUser(userService.getUserInfo(username, principal).getId());
+    var organisation = getOrganisation(orgId);
+    organisation.getUsers()
+        .add(new OrganisationUser(organisation, user, true));
+    return organisationRepo.save(organisation);
   }
 }
