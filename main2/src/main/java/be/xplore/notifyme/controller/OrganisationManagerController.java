@@ -3,6 +3,7 @@ package be.xplore.notifyme.controller;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.ApplicationUsernameDto;
 import be.xplore.notifyme.dto.OrganisationDto;
+import be.xplore.notifyme.dto.UserApplicationResponseDto;
 import be.xplore.notifyme.service.UserOrgApplicationService;
 import be.xplore.notifyme.service.UserOrgService;
 import be.xplore.notifyme.service.UserService;
@@ -12,6 +13,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,6 +50,20 @@ public class OrganisationManagerController {
       userApplicationsDto.add(newApplicationDto);
     }
     return ResponseEntity.ok(userApplicationsDto);
+  }
+
+  /**
+   * Posts the response to a user application
+   *
+   * @param principal injected from security.
+   * @return List of applications including the username.
+   */
+  @PostMapping("userApplication")
+  public ResponseEntity<Void> respondToUserApplication(
+      @RequestBody UserApplicationResponseDto applicationResponseDto, Principal principal) {
+    userOrgApplicationService.respondToApplication(applicationResponseDto.getOrganisationUserKey(),
+        applicationResponseDto.isAccepted(), principal);
+    return ResponseEntity.ok().build();
   }
 
   @GetMapping("organisations")

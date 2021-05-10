@@ -23,5 +23,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         .body("Server could not handle request correctly.");
   }
 
-
+  @ExceptionHandler(value = {OrgApplicationNotFoundException.class})
+  protected ResponseEntity<Object> handleApplicationNotFoundException(RuntimeException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body("The requested organisation application does not exist.");
+  }
 }
