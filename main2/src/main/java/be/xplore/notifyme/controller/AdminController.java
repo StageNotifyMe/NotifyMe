@@ -4,7 +4,6 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
-import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
@@ -39,7 +38,6 @@ public class AdminController {
   private final OrganisationService organisationService;
   private final VenueService venueService;
   private final UserService userService;
-  private final KeycloakCommunicationService keycloakCommunicationService;
 
 
   @GetMapping("/adminTest")
@@ -73,7 +71,7 @@ public class AdminController {
 
   @PostMapping("/promoteUserToVmanager")
   public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
-                                                          long venueId, Principal principal) {
+      long venueId, Principal principal) {
     venueService.makeUserVenueManager(userId, venueId);
     return ResponseEntity.noContent().build();
   }
@@ -121,7 +119,7 @@ public class AdminController {
   @GetMapping("/users")
   public ResponseEntity<List<UserRepresentation>> getUsers() {
     var userRepresentations = userService
-        .getAllUserInfo(keycloakCommunicationService.getAdminAccesstoken());
+        .getAllUserInfo();
     return ResponseEntity.ok(userRepresentations);
   }
 

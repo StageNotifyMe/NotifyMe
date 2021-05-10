@@ -1,10 +1,13 @@
 package be.xplore.notifyme.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Organisation;
@@ -15,6 +18,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.aspectj.weaver.ast.Or;
 import org.hibernate.HibernateException;
 import org.junit.jupiter.api.Test;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -97,11 +101,17 @@ class OrganisationServiceTest {
     userRepresentation.setId("TestId");
     var user = new User();
     user.setUserId("TestId");
+    setupPromotionMocking(principal, userRepresentation, user);
+    assertEquals(testOrg, organisationService.promoteUserToOrgManager("testuser", 1L, principal));
+  }
+
+  private void setupPromotionMocking(Principal principal, UserRepresentation userRepresentation,
+                                     User user) {
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
     when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
     when(organisationRepo.save(any())).thenReturn(testOrg);
-    assertEquals(testOrg, organisationService.promoteUserToOrgManager("testuser", 1L, principal));
+    doNothing().when(userService).grantUserRole(anyString(), anyString());
   }
 
   @Test
@@ -117,5 +127,23 @@ class OrganisationServiceTest {
     when(organisationRepo.save(any())).thenThrow(new HibernateException("HBE"));
     assertThrows(HibernateException.class, () ->
         organisationService.promoteUserToOrgManager("testUser", 1L, principal));
+  }
+
+  @Test
+  void saveSuccessful() {
+    var org = new Organisation();
+    assertDoesNotThrow(() -> {
+      organisationService.save(org);
+    });
+  }
+
+  @Test
+  void saveFails() {
+    var org = new Organisation();
+    doThrow(RuntimeException.class).when(organisationRepo).save(any());
+
+    assertThrows(CrudException.class, () -> {
+      organisationService.save(org);
+    });
   }
 }

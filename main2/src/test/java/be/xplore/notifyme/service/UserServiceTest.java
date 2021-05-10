@@ -52,14 +52,16 @@ class UserServiceTest {
     final var decodedReturn = new ArrayList<UserRepresentation>();
     when(keycloakCommunicationService.getAllUserInfoRest(anyString()))
         .thenReturn(decodedReturn);
-    assertEquals(decodedReturn, userService.getAllUserInfo("specialToken"));
+    assertEquals(decodedReturn, userService.getAllUserInfo());
   }
 
   @Test
   void getAllUserInfoCommunicationFail() {
     doThrow(CrudException.class).when(keycloakCommunicationService).getAllUserInfoRest(anyString());
-
-    assertThrows(CrudException.class, () -> userService.getAllUserInfo("specialToken"));
+    when(keycloakCommunicationService.getAdminAccesstoken()).thenReturn("admintoken");
+    assertThrows(CrudException.class, () -> {
+      userService.getAllUserInfo();
+    });
   }
 
   @Test
@@ -104,7 +106,7 @@ class UserServiceTest {
   }
 
   private void mockKeycloakSecurityContext(UserRepresentation userRep,
-                                           Boolean hasRequiredPermission) {
+      Boolean hasRequiredPermission) {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
 
     KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);

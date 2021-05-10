@@ -34,6 +34,22 @@ public class OrganisationService {
   }
 
   /**
+   * Saves an organisation object with updated data.
+   *
+   * @param organisation the organisation to update or create.
+   * @return the newly created organisation with this name.
+   */
+  public Organisation save(Organisation organisation) {
+    try {
+      return organisationRepo.save(organisation);
+    } catch (RuntimeException e) {
+      log.error(e.getMessage());
+      throw new CrudException(
+          "Could not create new organisation. Make sure that the name does not exist.");
+    }
+  }
+
+  /**
    * Gets all of the organisations.
    *
    * @return a list of organisations.

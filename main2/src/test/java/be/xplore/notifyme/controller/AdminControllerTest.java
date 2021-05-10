@@ -120,7 +120,7 @@ class AdminControllerTest {
         + "\n\"not-before-policy\"=50,\n\"scope\"=\"roles, users\" }";
     when(keycloakCommunicationService.getAdminAccesstoken())
         .thenReturn(token);
-    when(userService.getAllUserInfo(anyString())).thenReturn(List.of(new UserRepresentation()));
+    when(userService.getAllUserInfo()).thenReturn(List.of(new UserRepresentation()));
 
     mockMvc.perform(get("/admin/users"))
         .andExpect(MockMvcResultMatchers.status().isOk());

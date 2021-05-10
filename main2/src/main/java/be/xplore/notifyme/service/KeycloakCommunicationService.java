@@ -183,8 +183,8 @@ public class KeycloakCommunicationService {
   }
 
   /**
-   * Creates an instance of HttpEntity(String) with content-type = application/json
-   * and a bearerAuth with given accessToken.
+   * Creates an instance of HttpEntity(String) with content-type = application/json and a bearerAuth
+   * with given accessToken.
    *
    * @param accessToken bearer access token.
    * @return HttpEntity(String).
@@ -197,9 +197,8 @@ public class KeycloakCommunicationService {
   }
 
   /**
-   * Creates an instance of HttpEntity(String) with content-type = application/json
-   * and a bearerAuth with given accestoken.
-   * Includes an object as body.
+   * Creates an instance of HttpEntity(String) with content-type = application/json and a bearerAuth
+   * with given accestoken. Includes an object as body.
    *
    * @param accessToken bearer access token.
    * @param body        object to include as body.
@@ -243,7 +242,7 @@ public class KeycloakCommunicationService {
   public void giveUserRole(String userId, RoleRepresentation roleToGive, String idOfClient) {
     var uri = registerUri + String.format("/%s/role-mappings/clients/%s", userId, idOfClient);
     var role = new GiveClientRoleDto(roleToGive.getId(), roleToGive.getName(), true);
-    var body = new GiveClientRoleDto[] {role};
+    var body = new GiveClientRoleDto[]{role};
     var entity = createJsonHttpEntity(getAdminAccesstoken(), body);
     var restResult = restTemplate.postForEntity(uri, entity, String.class);
     if (restResult.getStatusCode() != HttpStatus.NO_CONTENT) {

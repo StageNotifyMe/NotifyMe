@@ -32,11 +32,11 @@ public class UserService {
   /**
    * Gets Keycloak Userrepresentation with info from all of the users.
    *
-   * @param adminAccesstoken Admin service account token needed to authorize request.
    * @return list of Keycloak Userrepresentation.
    */
-  public List<UserRepresentation> getAllUserInfo(String adminAccesstoken) {
-    return keycloakCommunicationService.getAllUserInfoRest(adminAccesstoken);
+  public List<UserRepresentation> getAllUserInfo() {
+    return keycloakCommunicationService
+        .getAllUserInfoRest(keycloakCommunicationService.getAdminAccesstoken());
   }
 
   /**
