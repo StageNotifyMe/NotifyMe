@@ -2,6 +2,7 @@ package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.UserOrgApplication;
+import be.xplore.notifyme.service.security.OrganisationSecurityService;
 import java.security.Principal;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ public class UserOrgApplicationService {
 
   private final UserService userService;
   private final OrganisationService organisationService;
+  private final OrganisationSecurityService organisationSecurityService;
 
   /**
    * Creates a user application for a certain organisation.
@@ -34,5 +36,12 @@ public class UserOrgApplicationService {
   public List<UserOrgApplication> getUserOrgApplications(Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     return user.getAppliedOrganisations();
+  }
+
+  public List<UserOrgApplication> getOrgApplications(Long organisationId, Principal principal) {
+    var user = userService.getUserFromPrincipal(principal);
+    var organisation = organisationService.getOrganisation(organisationId);
+    organisationSecurityService.checkUserIsOrgManager(user,organisation);
+    return organisation.getAppliedUsers();
   }
 }

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Organisation;
@@ -100,11 +101,17 @@ class OrganisationServiceTest {
     userRepresentation.setId("TestId");
     var user = new User();
     user.setUserId("TestId");
+    setupPromotionMocking(principal,userRepresentation,user);
+    assertEquals(testOrg, organisationService.promoteUserToOrgManager("testuser", 1L, principal));
+  }
+
+  private void setupPromotionMocking(Principal principal, UserRepresentation userRepresentation,
+      User user) {
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
     when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
     when(organisationRepo.save(any())).thenReturn(testOrg);
-    assertEquals(testOrg, organisationService.promoteUserToOrgManager("testuser", 1L, principal));
+    doNothing().when(userService).grantUserRole(anyString(),anyString());
   }
 
   @Test

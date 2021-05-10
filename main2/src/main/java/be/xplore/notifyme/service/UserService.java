@@ -31,13 +31,12 @@ public class UserService {
   /**
    * Gets Keycloak Userrepresentation with info from all of the users.
    *
-   * @param adminAccesstoken Admin service account token needed to authorize request.
    * @return list of Keycloak Userrepresentation.
    */
-  public List<UserRepresentation> getAllUserInfo(
-      String adminAccesstoken) {
+  public List<UserRepresentation> getAllUserInfo() {
     try {
-      return keycloakCommunicationService.getAllUserInfoRest(adminAccesstoken);
+      return keycloakCommunicationService
+          .getAllUserInfoRest(keycloakCommunicationService.getAdminAccesstoken());
     } catch (Exception e) {
       log.error(e.getMessage());
       throw new CrudException("Could not get users from keycloak server: " + e.getMessage());

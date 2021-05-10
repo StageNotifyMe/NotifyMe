@@ -51,7 +51,7 @@ class UserServiceTest {
     final var decodedReturn = new ArrayList<UserRepresentation>();
     when(keycloakCommunicationService.getAllUserInfoRest(anyString()))
         .thenReturn(decodedReturn);
-    assertEquals(decodedReturn, userService.getAllUserInfo("specialToken"));
+    assertEquals(decodedReturn, userService.getAllUserInfo());
   }
 
   @Test
@@ -59,7 +59,7 @@ class UserServiceTest {
     doThrow(CrudException.class).when(keycloakCommunicationService).getAllUserInfoRest(anyString());
 
     assertThrows(CrudException.class, () -> {
-      userService.getAllUserInfo("specialToken");
+      userService.getAllUserInfo();
     });
   }
 

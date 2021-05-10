@@ -81,6 +81,7 @@ public class OrganisationService {
   public Organisation promoteUserToOrgManager(String username, Long orgId, Principal principal) {
     try {
       var user = userService.getUser(userService.getUserInfo(username, principal).getId());
+      userService.grantUserRole(user.getUserId(), "organisation_manager");
       var organisation = getOrganisation(orgId);
       organisation.getUsers()
           .add(new OrganisationUser(organisation, user, true));
