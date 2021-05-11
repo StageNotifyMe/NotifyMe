@@ -6,6 +6,7 @@ import be.xplore.notifyme.jpaRepositories.JpaTeamRepository;
 import be.xplore.notifyme.persistence.ITeamRepo;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 @Repository

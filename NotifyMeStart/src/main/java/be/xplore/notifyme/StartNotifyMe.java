@@ -2,11 +2,13 @@ package be.xplore.notifyme;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Starts the notify me application.
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "be.xplore.notifyme")
+@EnableJpaRepositories(basePackages = "be.xplore.notifyme")
 public class StartNotifyMe {
 
   public static void main(String[] args) {
