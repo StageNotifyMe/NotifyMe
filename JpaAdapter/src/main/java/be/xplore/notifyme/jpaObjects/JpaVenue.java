@@ -28,7 +28,7 @@ public class JpaVenue {
   @Cascade(CascadeType.ALL)
   private JpaAddress address;
 
-  @ManyToMany(cascade = javax.persistence.CascadeType.ALL)
+  @ManyToMany(cascade = javax.persistence.CascadeType.ALL,mappedBy = "venues")
   private Set<JpaUser> managers;
   @OneToMany
   private List<JpaFacility> facilities;
