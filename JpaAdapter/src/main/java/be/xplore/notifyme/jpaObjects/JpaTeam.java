@@ -22,9 +22,9 @@ public class JpaTeam {
 
   @OneToOne
   private JpaLine line;
-  @ManyToMany
+  @ManyToMany(mappedBy = "teams")
   private List<JpaOrganisation> organisations;
-  @ManyToMany
+  @ManyToMany(mappedBy = "teams")
   private Set<JpaUser> teamMembers;
 
   public Team toDomain() {

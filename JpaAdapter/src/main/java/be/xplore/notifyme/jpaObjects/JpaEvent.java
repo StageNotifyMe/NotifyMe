@@ -30,7 +30,7 @@ public class JpaEvent {
   private JpaVenue venue;
   @OneToMany
   private List<JpaLine> lines;
-  @ManyToMany
+  @ManyToMany(mappedBy = "events")
   private Set<JpaUser> lineManagers;
 
   public Event toDomain() {
