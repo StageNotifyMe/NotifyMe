@@ -12,6 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,24 +22,25 @@ import org.hibernate.annotations.CascadeType;
 /**
  * Object representation of a venue where an event can be held.
  */
-@Entity
+//@Entity
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Venue {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  /*  @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)*/
   private long id;
   private String name;
   private String description;
-  @OneToOne
-  @Cascade(CascadeType.ALL)
+  /*  @OneToOne
+    @Cascade(CascadeType.ALL)*/
   private Address address;
-  @ManyToMany(cascade = javax.persistence.CascadeType.ALL)
+  //  @ManyToMany(cascade = javax.persistence.CascadeType.ALL)
   private Set<User> managers;
-  @OneToMany
+  //  @OneToMany
   private List<Facility> facilities;
 
   /**

@@ -9,11 +9,13 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "external_user")
+//@Entity(name = "external_user")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +23,8 @@ public class User {
 
   @Id
   private String userId;
+  private String userName;
+
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
   private List<OrganisationUser> organisation;

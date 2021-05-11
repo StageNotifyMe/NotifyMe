@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,14 +12,15 @@ import lombok.Setter;
 /**
  * Object representation of an address (location in the world).
  */
-@Entity
+//@Entity
+@Builder
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class Address {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  /*  @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;*/
   private String streetAndNumber;
   private String postalCode;
   private String village;
