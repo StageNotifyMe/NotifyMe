@@ -6,6 +6,7 @@ import be.xplore.notifyme.jpaObjects.JpaVenue;
 import be.xplore.notifyme.jpaRepositories.JpaVenueRepository;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,16 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class JpaVenueAdapter implements IVenueRepo {
   private JpaVenueRepository jpaVenueRepository;
+
+  @Override
+  public Venue save(Venue venue) {
+    return jpaVenueRepository.save(new JpaVenue(venue)).toDomain();
+  }
+
+  @Override
+  public Optional<Venue> findById(long venueId) {
+    return jpaVenueRepository.findById(venueId).map(JpaVenue::toDomain);
+  }
 
   @Override
   public List<Venue> getAllByManagersIsContaining(User user) {
