@@ -8,6 +8,7 @@ import be.xplore.notifyme.jpaRepositories.JpaFacilityRepository;
 import be.xplore.notifyme.jpaRepositories.JpaVenueRepository;
 import be.xplore.notifyme.persistence.IFacilityRepo;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @AllArgsConstructor
 public class JpaFacilityAdapter implements IFacilityRepo {
+
   private final JpaFacilityRepository jpaFacilityRepository;
   private final JpaVenueRepository jpaVenueRepository;
 
@@ -24,5 +26,15 @@ public class JpaFacilityAdapter implements IFacilityRepo {
         () -> new JpaNotFoundException("Could not find venue for id " + venue.getId()));
     var jpaFacilities = jpaFacilityRepository.getAllByVenue(jpaVenue);
     return jpaFacilities.stream().map(JpaFacility::toDomain).collect(Collectors.toList());
+  }
+
+  @Override
+  public Optional<Facility> findById(long facilityId) {
+    return jpaFacilityRepository.findById(facilityId).map(JpaFacility::toDomain);
+  }
+
+  @Override
+  public Facility save(Facility facility) {
+    return jpaFacilityRepository.save(new JpaFacility(facility)).toDomain();
   }
 }
