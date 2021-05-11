@@ -35,7 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootTest
+@SpringBootTest(classes = {KeycloakCommunicationService.class})
 class KeycloakCommunicationServiceTest {
 
   @Autowired

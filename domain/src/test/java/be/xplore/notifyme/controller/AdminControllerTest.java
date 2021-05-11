@@ -19,7 +19,6 @@ import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
-import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,8 +30,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.junit.jupiter.api.Test;
 
-@SpringBootTest
+@SpringBootTest(classes = {AdminController.class})
 @AutoConfigureMockMvc
 class AdminControllerTest {
 

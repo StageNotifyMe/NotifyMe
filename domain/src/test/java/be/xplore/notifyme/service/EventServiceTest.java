@@ -37,7 +37,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-@SpringBootTest
+@SpringBootTest(classes = {EventService.class})
 class EventServiceTest {
   @Autowired
   private EventService eventService;

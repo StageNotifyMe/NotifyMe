@@ -32,7 +32,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@SpringBootTest
+@SpringBootTest(classes = {UserController.class})
 @AutoConfigureMockMvc
 class UserControllerTest {
 

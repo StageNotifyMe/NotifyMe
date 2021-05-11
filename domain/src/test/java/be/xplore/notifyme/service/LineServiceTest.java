@@ -30,7 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 
-@SpringBootTest
+@SpringBootTest(classes = {LineService.class})
 class LineServiceTest {
   @Autowired
   private LineService lineService;

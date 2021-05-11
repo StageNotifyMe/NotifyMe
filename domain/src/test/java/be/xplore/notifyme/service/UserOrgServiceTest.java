@@ -22,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-@SpringBootTest
+@SpringBootTest(classes = {UserOrgService.class})
 class UserOrgServiceTest {
 
   @Autowired

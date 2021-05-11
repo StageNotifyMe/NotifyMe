@@ -33,7 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 
-@SpringBootTest
+@SpringBootTest(classes = {VenueService.class})
 class VenueServiceTest {
 
   @Autowired
