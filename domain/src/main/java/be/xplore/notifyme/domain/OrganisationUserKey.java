@@ -2,7 +2,6 @@ package be.xplore.notifyme.domain;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,6 @@ import lombok.Setter;
 /**
  * Class that represents a key for the many to many table between organisation and user.
  */
-@Embeddable
 @NoArgsConstructor
 @Getter
 @Setter

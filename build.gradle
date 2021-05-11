@@ -12,13 +12,9 @@ checkstyle {
 	maxWarnings = 0
 }
 
-/*subprojects {
-	sonarqube {
-		properties {
-			property "sonar.sources", "src"
-		}
-	}
-}*/
+subprojects {
+
+}
 sonarqube{
 properties{
 	property "sonar.sourceEncoding", "UTF-8"

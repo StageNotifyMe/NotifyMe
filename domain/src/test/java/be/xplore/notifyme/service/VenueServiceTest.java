@@ -93,7 +93,7 @@ class VenueServiceTest {
 
   @Test
   void getVenueFail() {
-    when(venueRepo.getOne(anyLong())).thenReturn(new Venue());
+    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(new Venue()));
     assertThrows(CrudException.class, () -> venueService.getVenue(1L));
   }
 

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class JpaVenueAdapter implements IVenueRepo {
-  private JpaVenueRepository jpaVenueRepository;
+  private final JpaVenueRepository jpaVenueRepository;
 
   @Override
   public Venue save(Venue venue) {

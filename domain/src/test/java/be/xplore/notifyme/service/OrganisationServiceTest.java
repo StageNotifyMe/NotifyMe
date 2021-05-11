@@ -18,8 +18,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.aspectj.weaver.ast.Or;
-import org.hibernate.HibernateException;
 import org.junit.jupiter.api.Test;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.account.UserRepresentation;
@@ -51,8 +49,8 @@ class OrganisationServiceTest {
   @Test
   void createOrganisationDbNotWorking() {
     String orgname = "testOrg";
-    when(organisationRepo.save(any())).thenThrow(new HibernateException("HBE"));
-    assertThrows(HibernateException.class, () ->
+    when(organisationRepo.save(any())).thenThrow(new CrudException("HBE"));
+    assertThrows(CrudException.class, () ->
         organisationService.createOrganisation(orgname));
   }
 
@@ -67,8 +65,8 @@ class OrganisationServiceTest {
 
   @Test
   void getOrganisationsDbNotWorking() {
-    when(organisationRepo.findAll()).thenThrow(new HibernateException("HBE"));
-    assertThrows(HibernateException.class, () ->
+    when(organisationRepo.findAll()).thenThrow(new CrudException("HBE"));
+    assertThrows(CrudException.class, () ->
         organisationService.getOrganisations());
   }
 
@@ -89,8 +87,8 @@ class OrganisationServiceTest {
 
   @Test
   void getOrganisationDbNotWorking() {
-    when(organisationRepo.findById(anyLong())).thenThrow(new HibernateException("HBE"));
-    assertThrows(HibernateException.class, () ->
+    when(organisationRepo.findById(anyLong())).thenThrow(new CrudException("HBE"));
+    assertThrows(CrudException.class, () ->
         organisationService.getOrganisation(1L));
   }
 
@@ -124,8 +122,8 @@ class OrganisationServiceTest {
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
     when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
-    when(organisationRepo.save(any())).thenThrow(new HibernateException("HBE"));
-    assertThrows(HibernateException.class, () ->
+    when(organisationRepo.save(any())).thenThrow(new CrudException("HBE"));
+    assertThrows(CrudException.class, () ->
         organisationService.promoteUserToOrgManager("testUser", 1L, principal));
   }
 
