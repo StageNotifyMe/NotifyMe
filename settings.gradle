@@ -3,4 +3,5 @@ include 'domain'
 include 'keycloak'
 include 'JpaAdapter'
 include 'NotifyMeStart'
+include 'starter'
 

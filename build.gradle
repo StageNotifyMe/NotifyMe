@@ -1,28 +1,32 @@
-plugins{
-	id 'jacoco'
-	id 'java'
-	id "org.sonarqube" version "3.1.1"
+plugins {
+    id 'jacoco'
+    id 'java'
+    id "org.sonarqube" version "3.1.1"
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 apply plugin: 'checkstyle'
-group="be.xplore.notifyme"
+group = "be.xplore.notifyme"
+
 checkstyle {
-	toolVersion '8.29'
-	configFile file("config/checkstyle/checkstyle.xml")
-	ignoreFailures = false
-	maxWarnings = 0
+    toolVersion '8.29'
+    configFile file("config/checkstyle/checkstyle.xml")
+    ignoreFailures = false
+    maxWarnings = 0
 }
 
 subprojects {
-
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
 }
-sonarqube{
-properties{
-	property "sonar.sourceEncoding", "UTF-8"
-	property "sonar.projectKey", "StageNotifyMe_NotifyMe"
-	property "sonar.organization", "stagenotifyme"
-	property "sonar.host.url", "https://sonarcloud.io"
-	property "sonar.login", "8ea7296c618d62f96a84a22412b8d916561d1e84"
-}
+sonarqube {
+    properties {
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.projectKey", "StageNotifyMe_NotifyMe"
+        property "sonar.organization", "stagenotifyme"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.login", "8ea7296c618d62f96a84a22412b8d916561d1e84"
+    }
 }
 
 

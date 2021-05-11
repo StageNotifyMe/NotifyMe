@@ -1,6 +1,4 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.5'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'checkstyle'
     id 'jacoco'
@@ -26,23 +24,26 @@ checkstyleTest {
 repositories {
     mavenCentral()
     jcenter()
-
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    //implementation 'org.springframework.boot:spring-boot-starter'
+    //implementation 'org.projectlombok:lombok:1.18.16'
+    //compileOnly 'org.projectlombok:lombok'
+    //annotationProcessor 'org.projectlombok:lombok'
+    //testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.tngtech.archunit:archunit-junit5:0.18.0'
+    implementation group: 'org.springframework.security', name: 'spring-security-core', version: '5.4.6'
+    implementation group: 'org.springframework.security', name: 'spring-security-web', version: '5.4.6'
+    implementation group: 'org.springframework.security', name: 'spring-security-config', version: '5.4.6'
     implementation 'org.projectlombok:lombok:1.18.16'
     compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'com.tngtech.archunit:archunit-junit5:0.18.0'
-
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+    //implementation 'org.springframework.boot:spring-boot-starter-security'
     //implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.security:spring-security-test'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
 
