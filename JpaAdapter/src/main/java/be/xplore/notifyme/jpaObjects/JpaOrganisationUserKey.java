@@ -1,10 +1,11 @@
-package be.xplore.notifyme.domain;
+package be.xplore.notifyme.jpaObjects;
 
+import be.xplore.notifyme.domain.OrganisationUserKey;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,10 +18,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-@Builder
-public class OrganisationUserKey implements Serializable {
+public class JpaOrganisationUserKey implements Serializable {
 
+  @Column(name = "user_id")
   private String userId;
+  @Column(name = "organisation_id")
   private Long organisationId;
   private static final long serialVersionUID = 1L;
 
@@ -33,7 +35,7 @@ public class OrganisationUserKey implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    OrganisationUserKey that = (OrganisationUserKey) o;
+    JpaOrganisationUserKey that = (JpaOrganisationUserKey) o;
     return organisationId.longValue() == that.organisationId.longValue()
         && userId.equals(that.userId);
   }
@@ -43,4 +45,15 @@ public class OrganisationUserKey implements Serializable {
     return Objects.hash(organisationId, userId);
   }
 
+  public OrganisationUserKey toDomain() {
+    return OrganisationUserKey.builder()
+        .organisationId(this.organisationId)
+        .userId(this.userId)
+        .build();
+  }
+
+  public JpaOrganisationUserKey(OrganisationUserKey organisationUserKey) {
+    this.organisationId = organisationUserKey.getOrganisationId();
+    this.userId = organisationUserKey.getUserId();
+  }
 }

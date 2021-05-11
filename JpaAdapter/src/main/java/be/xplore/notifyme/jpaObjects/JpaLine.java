@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 @Entity
 @AllArgsConstructor
 public class JpaLine {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -35,6 +36,15 @@ public class JpaLine {
         .facility(this.facility.toDomain())
         .team(this.team.toDomain())
         .build();
+  }
+
+  public JpaLine(Line line) {
+    this.id = line.getId();
+    this.note = line.getNote();
+    this.requiredStaff = line.getRequiredStaff();
+    this.facility = new JpaFacility(line.getFacility());
+    this.event=new JpaEvent(line.getEvent());
+    this.team=new JpaTeam(line.getTeam());
   }
 
 }

@@ -25,7 +25,7 @@ public class UserOrgService {
   public List<Organisation> getOrgManagerOrganisations(Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     var organisations = new ArrayList<Organisation>();
-    for (var orgUser : user.getOrganisation()) {
+    for (var orgUser : user.getOrganisations()) {
       if (orgUser.isOrganisationLeader()) {
         organisations.add(orgUser.getOrganisation());
       }

@@ -1,9 +1,6 @@
 package be.xplore.notifyme.jpaObjects;
 
 import be.xplore.notifyme.domain.Event;
-import be.xplore.notifyme.domain.Line;
-import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.domain.Venue;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +17,7 @@ import lombok.AllArgsConstructor;
 @Entity
 @AllArgsConstructor
 public class JpaEvent {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -46,5 +44,18 @@ public class JpaEvent {
         .lines(this.lines.stream().map(JpaLine::toDomain).collect(Collectors.toList()))
         .lineManagers(this.lineManagers.stream().map(JpaUser::toDomain).collect(Collectors.toSet()))
         .build();
+  }
+
+  public JpaEvent(Event event) {
+    this.id = event.getId();
+    this.title = event.getTitle();
+    this.description = event.getDescription();
+    this.artist = event.getArtist();
+    this.dateTime = event.getDateTime();
+    this.venue = new JpaVenue(event.getVenue());
+    this.lines = event.getLines().stream().map(JpaLine::new)
+        .collect(Collectors.toList());
+    this.lineManagers = event.getLineManagers().stream().map(JpaUser::new)
+        .collect(Collectors.toSet());
   }
 }

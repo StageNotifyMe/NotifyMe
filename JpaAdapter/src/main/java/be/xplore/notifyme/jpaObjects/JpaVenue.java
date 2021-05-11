@@ -18,6 +18,7 @@ import org.hibernate.annotations.CascadeType;
 @Entity
 @AllArgsConstructor
 public class JpaVenue {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -42,5 +43,15 @@ public class JpaVenue {
         .facilities(this.facilities.stream().map(JpaFacility::toDomain).collect(
             Collectors.toList()))
         .build();
+  }
+
+  public JpaVenue(Venue venue) {
+    this.id = venue.getId();
+    this.name = venue.getName();
+    this.description = venue.getDescription();
+    this.address = new JpaAddress(venue.getAddress());
+    this.managers = venue.getManagers().stream().map(JpaUser::new).collect(Collectors.toSet());
+    this.facilities = venue.getFacilities().stream().map(JpaFacility::new)
+        .collect(Collectors.toList());
   }
 }

@@ -27,7 +27,7 @@ public class User {
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
-  private List<OrganisationUser> organisation;
+  private List<OrganisationUser> organisations;
   @OneToMany(mappedBy = "appliedUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JsonManagedReference
   private List<UserOrgApplication> appliedOrganisations;

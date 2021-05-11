@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 @Entity
 @AllArgsConstructor
 public class JpaAddress {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -26,6 +27,13 @@ public class JpaAddress {
         .village(this.village)
         .country(this.country)
         .build();
+  }
+
+  public JpaAddress(Address address) {
+    this.streetAndNumber = address.getStreetAndNumber();
+    this.postalCode = address.getPostalCode();
+    this.village = address.getVillage();
+    this.country = address.getCountry();
   }
 
 }

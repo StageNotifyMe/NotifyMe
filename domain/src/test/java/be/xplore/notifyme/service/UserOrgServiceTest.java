@@ -40,7 +40,7 @@ class UserOrgServiceTest {
     org.setId(1L);
     var user = new User();
     user.setUserId("testId");
-    user.setOrganisation(List.of(new OrganisationUser(org, user, true)));
+    user.setOrganisations(List.of(new OrganisationUser(org, user, true)));
     when(userService.getUserFromPrincipal(any())).thenReturn(user);
     Optional<Organisation> retrievedOrg = userOrgService
         .getOrgManagerOrganisations(getKeycloakPrincipal()).stream().findFirst();
