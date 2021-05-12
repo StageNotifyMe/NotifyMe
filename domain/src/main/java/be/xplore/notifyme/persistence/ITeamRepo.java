@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ITeamRepo {
   Team save(Team team);
+
   Optional<Team> findById(long teamId);
 }

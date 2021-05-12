@@ -16,6 +16,14 @@ checkstyleTest {
     source = 'src/test/java'
 }
 
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
 
 configurations {
     compileOnly {
