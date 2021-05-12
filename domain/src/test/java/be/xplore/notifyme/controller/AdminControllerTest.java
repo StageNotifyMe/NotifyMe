@@ -20,6 +20,7 @@ import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,10 @@ class AdminControllerTest {
   private VenueService venueService;
 
 
+  @BeforeAll
+  private static void setExceptionHandler(){
+    //this.mockMvc = MockMvcBuilders.standaloneSetup()
+  }
 
   @Test
   @WithMockUser(username = "adminUser", roles = {"user"})
