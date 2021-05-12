@@ -71,7 +71,7 @@ public class AdminController {
 
   @PostMapping("/promoteUserToVmanager")
   public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
-      long venueId, Principal principal) {
+      long venueId) {
     venueService.makeUserVenueManager(userId, venueId);
     return ResponseEntity.noContent().build();
   }
