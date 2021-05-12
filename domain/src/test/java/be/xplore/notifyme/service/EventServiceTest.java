@@ -1,5 +1,7 @@
 package be.xplore.notifyme.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,8 +36,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(classes = {EventService.class})
 class EventServiceTest {
@@ -59,8 +59,7 @@ class EventServiceTest {
     when(userService.getUserFromPrincipal(any(Principal.class))).thenReturn(testUser);
 
     var ced = getTestCreateEventDto();
-    assertEquals(ResponseEntity.status(HttpStatus.CREATED).build(),
-        eventService.createEvent(ced, principal));
+    assertThat(eventService.createEvent(ced, principal),instanceOf(Event.class));
   }
 
   @Test

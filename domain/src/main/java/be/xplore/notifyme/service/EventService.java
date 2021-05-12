@@ -11,8 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,13 +29,13 @@ public class EventService {
    * @param createEventDto contains all the necessary data to create an event.
    * @return HTTP Response
    */
-  public ResponseEntity<Object> createEvent(CreateEventDto createEventDto, Principal principal) {
+  public Event createEvent(CreateEventDto createEventDto, Principal principal) {
     var venue = venueService.getVenue(createEventDto.getVenueId());
     var event = new Event(createEventDto.getTitle(), createEventDto.getDescription(),
         createEventDto.getArtist(), createEventDto.getDateTime(), venue);
     eventRepo.save(event);
     makeCreatorLineManager(event, principal);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+    return event;
   }
 
   /**

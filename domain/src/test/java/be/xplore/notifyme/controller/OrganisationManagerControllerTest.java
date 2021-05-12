@@ -9,36 +9,49 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
+import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.service.UserOrgApplicationService;
 import be.xplore.notifyme.service.UserOrgService;
 import be.xplore.notifyme.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @SpringBootTest(classes = {OrganisationManagerController.class})
-@AutoConfigureMockMvc
-@Import(RestConfig.class)
+@AutoConfigureMockMvc(addFilters = false)
+@ContextConfiguration(classes = {RestConfig.class, KeycloakSecurityConfig.class})
 class OrganisationManagerControllerTest {
+  private MockMvc mockMvc;
 
   @Autowired
-  private MockMvc mockMvc;
+  private OrganisationManagerController organisationManagerController;
+
+  @BeforeEach
+  public void setup() {
+    mockMvc = MockMvcBuilders.standaloneSetup(organisationManagerController)
+        .setControllerAdvice(new GeneralExceptionHandler())
+        .build();
+  }
+
   @MockBean
   private UserOrgApplicationService userOrgApplicationService;
   @MockBean
