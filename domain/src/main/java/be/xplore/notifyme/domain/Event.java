@@ -5,13 +5,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,19 +18,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Event {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
   private String title;
   private String description;
   private String artist;
   private LocalDateTime dateTime;
 
-  @ManyToOne
   private Venue venue;
-  @OneToMany
   private List<Line> lines;
-  @ManyToMany
   private Set<User> lineManagers;
 
   /**

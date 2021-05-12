@@ -1,8 +1,7 @@
 package be.xplore.notifyme.exception;
 
-import javax.persistence.PersistenceException;
 
-public class CrudException extends PersistenceException {
+public class CrudException extends RuntimeException {
 
   public CrudException(String message) {
     super(message);

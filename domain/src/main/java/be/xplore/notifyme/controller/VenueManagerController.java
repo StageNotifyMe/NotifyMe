@@ -11,6 +11,7 @@ import be.xplore.notifyme.service.LineService;
 import be.xplore.notifyme.service.VenueService;
 import java.security.Principal;
 import java.util.LinkedList;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/vmanager")
+@RolesAllowed("venue_manager")
 @RequiredArgsConstructor
 @Validated
 public class VenueManagerController {
@@ -38,7 +40,8 @@ public class VenueManagerController {
   @PostMapping("/event")
   public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto,
                                             Principal principal) {
-    return eventService.createEvent(createEventDto, principal);
+    var result = eventService.createEvent(createEventDto, principal);
+    return ResponseEntity.status(HttpStatus.CREATED).body(result);
   }
 
   @GetMapping("/event")

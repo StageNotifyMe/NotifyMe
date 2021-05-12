@@ -9,17 +9,21 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import be.xplore.notifyme.config.KeycloakSecurityConfig;
+import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
+import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserOrgApplicationService;
 import be.xplore.notifyme.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +33,28 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@SpringBootTest(classes = {UserController.class})
+@AutoConfigureMockMvc(addFilters = false)
+@ContextConfiguration(classes = {RestConfig.class, KeycloakSecurityConfig.class})
 class UserControllerTest {
 
   @Autowired
+  private UserController userController;
+
   private MockMvc mockMvc;
+
+  @BeforeEach
+  public void setup() {
+    mockMvc = MockMvcBuilders.standaloneSetup(userController)
+        .setControllerAdvice(new GeneralExceptionHandler())
+        .build();
+  }
+
   @MockBean
   private UserService userService;
   @MockBean

@@ -2,4 +2,4 @@ rootProject.name = 'notifyme'
 include 'domain'
 include 'keycloak'
 include 'JpaAdapter'
-
+include 'NotifyMeStart'

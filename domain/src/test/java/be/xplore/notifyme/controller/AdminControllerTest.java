@@ -8,17 +8,20 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import be.xplore.notifyme.config.KeycloakSecurityConfig;
+import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserService;
 import be.xplore.notifyme.service.VenueService;
-import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +32,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@SpringBootTest(classes = {AdminController.class})
+@AutoConfigureMockMvc(addFilters = false)
+@ContextConfiguration(classes = {RestConfig.class, KeycloakSecurityConfig.class})
 class AdminControllerTest {
+  private MockMvc mockMvc;
 
   @Autowired
-  private MockMvc mockMvc;
+  private AdminController adminController;
+
+  @BeforeEach
+  public void setup() {
+    mockMvc = MockMvcBuilders.standaloneSetup(adminController)
+        .setControllerAdvice(new GeneralExceptionHandler())
+        .build();
+  }
+
+
   @MockBean
   private OrganisationService organisationService;
   @MockBean
@@ -48,7 +64,7 @@ class AdminControllerTest {
   private VenueService venueService;
 
   @Test
-  @WithMockUser
+  @WithMockUser(username = "adminUser", roles = {"user"})
   void adminInfoTestNotAdmin() throws Exception {
     mockMvc.perform(get("/admin/adminTest"))
         .andExpect(MockMvcResultMatchers.status().isForbidden());
@@ -129,8 +145,9 @@ class AdminControllerTest {
   @Test
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void promoteUserToOrgMgr() throws Exception {
-    when(organisationService.promoteUserToOrgManager(anyString(), anyLong(), any(Principal.class)))
+    when(organisationService.promoteUserToOrgManager(anyString(), anyLong(), any()))
         .thenReturn(new Organisation());
+
 
     mockMvc.perform(post("/admin/promoteUserToOrgMgr").content("{"
         + "\n\"username\"" + ": \"testuser\","

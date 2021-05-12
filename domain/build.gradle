@@ -1,12 +1,12 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.5'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
     id 'java'
     id 'checkstyle'
     id 'jacoco'
 }
 
-group = 'be.xplore'
+group = 'be.xplore.notifyme'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -14,6 +14,13 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+}
+
+bootJar{
+    enabled = false
+}
+jar{
+    enabled = true
 }
 
 checkstyleMain {
@@ -26,32 +33,28 @@ checkstyleTest {
 repositories {
     mavenCentral()
     jcenter()
-
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'com.tngtech.archunit:archunit-junit5:0.18.0'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.9.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.4.5'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.4.5'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
     implementation 'org.projectlombok:lombok:1.18.16'
     compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'com.tngtech.archunit:archunit-junit5:0.18.0'
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
 
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    testImplementation 'org.springframework.security:spring-security-test'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
-    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
 
     implementation group: 'org.keycloak', name: 'keycloak-spring-boot-starter', version: '12.0.4'
     implementation group: 'org.keycloak.bom', name: 'keycloak-adapter-bom', version: '12.0.4', ext: 'pom'
     implementation group: 'com.c4-soft.springaddons', name: 'spring-security-oauth2-test-webmvc-addons', version: '2.5.2'
-    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.9.0'
-    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.20'
-
 
     implementation 'com.google.code.gson:gson:2.8.6'
 

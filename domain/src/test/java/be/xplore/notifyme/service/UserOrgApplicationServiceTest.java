@@ -10,6 +10,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.User;
@@ -23,9 +24,11 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-@SpringBootTest
+@SpringBootTest(classes = {UserOrgApplicationService.class})
+@Import(RestConfig.class)
 class UserOrgApplicationServiceTest {
 
   @Autowired

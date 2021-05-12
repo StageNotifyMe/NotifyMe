@@ -1,11 +1,6 @@
 package be.xplore.notifyme.domain;
 
 import java.util.List;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,17 +14,13 @@ import lombok.Setter;
 //@Entity
 @Builder
 public class Facility {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
   private String description;
   private String location;
   private int minimalStaff;
   private int maximalStaff;
 
-  @ManyToOne
   private Venue venue;
-  @OneToMany
   private List<Line> lines;
 
   /**

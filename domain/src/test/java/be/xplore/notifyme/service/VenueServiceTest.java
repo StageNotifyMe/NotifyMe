@@ -33,7 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 
-@SpringBootTest
+@SpringBootTest(classes = {VenueService.class})
 class VenueServiceTest {
 
   @Autowired
@@ -93,7 +93,7 @@ class VenueServiceTest {
 
   @Test
   void getVenueFail() {
-    when(venueRepo.getOne(anyLong())).thenReturn(new Venue());
+    when(venueRepo.findById(anyLong())).thenReturn(Optional.empty());
     assertThrows(CrudException.class, () -> venueService.getVenue(1L));
   }
 

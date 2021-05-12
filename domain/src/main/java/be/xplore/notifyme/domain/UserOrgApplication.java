@@ -1,5 +1,6 @@
 package be.xplore.notifyme.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Builder
+@AllArgsConstructor
 public class UserOrgApplication {
 
   private OrganisationUserKey organisationUserKey;

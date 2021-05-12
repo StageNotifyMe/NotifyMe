@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import be.xplore.notifyme.config.KeycloakSecurityConfig;
+import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;
@@ -16,6 +18,7 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.service.EventService;
 import be.xplore.notifyme.service.FacilityService;
 import be.xplore.notifyme.service.LineService;
@@ -25,23 +28,33 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@SpringBootTest(classes = {VenueManagerController.class})
+@AutoConfigureMockMvc(addFilters = false)
+@ContextConfiguration(classes = {RestConfig.class, KeycloakSecurityConfig.class})
 class VenueManagerControllerTest {
-
   @Autowired
+  private VenueManagerController venueManagerController;
+
+  @BeforeEach
+  public void setup() {
+    mockMvc = MockMvcBuilders.standaloneSetup(venueManagerController)
+        .setControllerAdvice(new GeneralExceptionHandler())
+        .build();
+  }
+
   private MockMvc mockMvc;
   @MockBean
   private EventService eventService;
@@ -61,11 +74,13 @@ class VenueManagerControllerTest {
       "{\"description\": \"TestFacility\",\n\"location\":\"TestLocation\",\n"
           + " \"minimalStaff\":10,\n\"maximalStaff\":15,\n\"maximalStaff\":1}";
 
+  private final Event mockEvent = mock(Event.class);
+
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void createEventSuccessful() throws Exception {
     when(eventService.createEvent(any(CreateEventDto.class), any(Principal.class)))
-        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
+        .thenReturn(mockEvent);
 
     mockMvc
         .perform(post("/vmanager/event").header("Content-Type", "application/json")
@@ -76,8 +91,8 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "user", roles = {"user"})
   void unauthorizedCreate() throws Exception {
-    when(eventService.createEvent(any(CreateEventDto.class), any(Principal.class)))
-        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
+    when(eventService.createEvent(any(CreateEventDto.class), any()))
+        .thenReturn(mockEvent);
 
     mockMvc
         .perform(post("/vmanager/event").header("Content-Type", "application/json")
@@ -89,7 +104,7 @@ class VenueManagerControllerTest {
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void nullBodyCreate() throws Exception {
     when(eventService.createEvent(any(CreateEventDto.class), any((Principal.class))))
-        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
+        .thenReturn(mockEvent);
 
     mockMvc.perform(post("/vmanager/event"))
         .andExpect(MockMvcResultMatchers.status().isBadRequest());
