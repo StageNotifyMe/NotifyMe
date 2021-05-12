@@ -22,7 +22,6 @@ public class UserOrgApplicationService {
   private final UserService userService;
   private final OrganisationService organisationService;
   private final OrganisationSecurityService organisationSecurityService;
-  private final UserOrgService userOrgService;
 
   /**
    * Creates a user application for a certain organisation.
