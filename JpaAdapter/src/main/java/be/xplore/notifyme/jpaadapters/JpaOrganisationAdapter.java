@@ -1,14 +1,13 @@
-package be.xplore.notifyme.jpaAdapters;
+package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.jpaObjects.JpaOrganisation;
-import be.xplore.notifyme.jpaRepositories.JpaOrganisationRepository;
+import be.xplore.notifyme.jpaobjects.JpaOrganisation;
+import be.xplore.notifyme.jparepositories.JpaOrganisationRepository;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 @Repository

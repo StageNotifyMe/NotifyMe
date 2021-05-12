@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.Event;
 import java.time.LocalDateTime;
@@ -33,6 +33,11 @@ public class JpaEvent {
   @ManyToMany(mappedBy = "events")
   private Set<JpaUser> lineManagers;
 
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   public Event toDomain() {
     return Event.builder()
         .id(this.id)
@@ -46,6 +51,11 @@ public class JpaEvent {
         .build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param event jpa version of the object.
+   */
   public JpaEvent(Event event) {
     this.id = event.getId();
     this.title = event.getTitle();

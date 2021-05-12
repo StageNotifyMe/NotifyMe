@@ -2,6 +2,8 @@ plugins {
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
     id 'java'
+    id 'checkstyle'
+    id 'jacoco'
 }
 
 group 'be.xplore.notifyme'
@@ -35,4 +37,30 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     implementation project(':domain')
+}
+
+checkstyleMain {
+    source = 'src/main/java'
+}
+checkstyleTest {
+    source = 'src/test/java'
+}
+
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
+jacoco {
+    reportsDirectory = layout.projectDirectory.dir("jacoco")
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.enabled false
+        }
+    }
+}
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }

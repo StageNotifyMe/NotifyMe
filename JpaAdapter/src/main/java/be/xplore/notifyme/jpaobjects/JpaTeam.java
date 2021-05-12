@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.Team;
 import java.util.List;
@@ -27,6 +27,11 @@ public class JpaTeam {
   @ManyToMany(mappedBy = "teams")
   private Set<JpaUser> teamMembers;
 
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   public Team toDomain() {
     return Team.builder()
         .id(this.id)
@@ -37,6 +42,11 @@ public class JpaTeam {
         .build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param team jpa version of the object.
+   */
   public JpaTeam(Team team) {
     this.id = team.getId();
     this.line = new JpaLine(team.getLine());

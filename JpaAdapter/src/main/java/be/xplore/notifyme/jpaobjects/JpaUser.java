@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.User;
 import java.util.List;
@@ -31,6 +31,11 @@ public class JpaUser {
   @ManyToMany
   private List<JpaEvent> events;
 
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   public User toDomain() {
     return User.builder()
         .userId(this.userId)
@@ -46,6 +51,11 @@ public class JpaUser {
         .build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param user jpa version of the object.
+   */
   public JpaUser(User user) {
     this.userId = user.getUserId();
     this.userName = user.getUserName();

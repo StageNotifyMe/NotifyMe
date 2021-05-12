@@ -1,6 +1,6 @@
-package be.xplore.notifyme.jpaRepositories;
+package be.xplore.notifyme.jparepositories;
 
-import be.xplore.notifyme.jpaObjects.JpaUser;
+import be.xplore.notifyme.jpaobjects.JpaUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

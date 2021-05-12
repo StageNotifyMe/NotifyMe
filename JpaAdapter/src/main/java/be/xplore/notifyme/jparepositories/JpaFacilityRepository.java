@@ -1,7 +1,7 @@
-package be.xplore.notifyme.jpaRepositories;
+package be.xplore.notifyme.jparepositories;
 
-import be.xplore.notifyme.jpaObjects.JpaFacility;
-import be.xplore.notifyme.jpaObjects.JpaVenue;
+import be.xplore.notifyme.jpaobjects.JpaFacility;
+import be.xplore.notifyme.jpaobjects.JpaVenue;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

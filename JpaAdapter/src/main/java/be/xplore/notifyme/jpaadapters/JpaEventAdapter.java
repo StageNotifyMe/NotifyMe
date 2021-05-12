@@ -1,8 +1,8 @@
-package be.xplore.notifyme.jpaAdapters;
+package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.Event;
-import be.xplore.notifyme.jpaObjects.JpaEvent;
-import be.xplore.notifyme.jpaRepositories.JpaEventRepository;
+import be.xplore.notifyme.jpaobjects.JpaEvent;
+import be.xplore.notifyme.jparepositories.JpaEventRepository;
 import be.xplore.notifyme.persistence.IEventRepo;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

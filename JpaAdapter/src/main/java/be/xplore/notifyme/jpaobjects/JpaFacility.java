@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.Facility;
 import java.util.List;
@@ -28,7 +28,11 @@ public class JpaFacility {
   @OneToMany
   private List<JpaLine> lines;
 
-
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   public Facility toDomain() {
     return Facility.builder()
         .id(this.id)
@@ -41,6 +45,11 @@ public class JpaFacility {
         .build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param facility jpa version of the object.
+   */
   public JpaFacility(Facility facility) {
     this.id = facility.getId();
     this.description = facility.getDescription();

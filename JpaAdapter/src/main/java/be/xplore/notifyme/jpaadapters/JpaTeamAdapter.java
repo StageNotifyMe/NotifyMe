@@ -1,12 +1,11 @@
-package be.xplore.notifyme.jpaAdapters;
+package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.Team;
-import be.xplore.notifyme.jpaObjects.JpaTeam;
-import be.xplore.notifyme.jpaRepositories.JpaTeamRepository;
+import be.xplore.notifyme.jpaobjects.JpaTeam;
+import be.xplore.notifyme.jparepositories.JpaTeamRepository;
 import be.xplore.notifyme.persistence.ITeamRepo;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 @Repository

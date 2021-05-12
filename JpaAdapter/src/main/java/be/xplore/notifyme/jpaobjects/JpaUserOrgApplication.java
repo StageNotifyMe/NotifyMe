@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.UserOrgApplication;
@@ -33,6 +33,11 @@ public class JpaUserOrgApplication {
 
   private OrgApplicationStatus applicationStatus;
 
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   public UserOrgApplication toDomain() {
     return UserOrgApplication.builder()
         .organisationUserKey(this.organisationUserKey.toDomain())
@@ -41,6 +46,11 @@ public class JpaUserOrgApplication {
         .applicationStatus(this.applicationStatus).build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param userOrgApplication jpa version of the object.
+   */
   public JpaUserOrgApplication(UserOrgApplication userOrgApplication) {
     this.organisationUserKey = new JpaOrganisationUserKey(
         userOrgApplication.getOrganisationUserKey());

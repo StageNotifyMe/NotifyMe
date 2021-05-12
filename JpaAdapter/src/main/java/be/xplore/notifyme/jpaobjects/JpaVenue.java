@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.Venue;
 import java.util.List;
@@ -28,11 +28,16 @@ public class JpaVenue {
   @Cascade(CascadeType.ALL)
   private JpaAddress address;
 
-  @ManyToMany(cascade = javax.persistence.CascadeType.ALL,mappedBy = "venues")
+  @ManyToMany(cascade = javax.persistence.CascadeType.ALL, mappedBy = "venues")
   private Set<JpaUser> managers;
   @OneToMany
   private List<JpaFacility> facilities;
 
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   public Venue toDomain() {
     return Venue.builder()
         .id(this.id)
@@ -45,6 +50,11 @@ public class JpaVenue {
         .build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param venue jpa version of the object.
+   */
   public JpaVenue(Venue venue) {
     this.id = venue.getId();
     this.name = venue.getName();

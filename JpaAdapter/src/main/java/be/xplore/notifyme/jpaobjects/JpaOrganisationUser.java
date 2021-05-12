@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.OrganisationUser;
 import javax.persistence.EmbeddedId;
@@ -32,6 +32,11 @@ public class JpaOrganisationUser {
 
   private boolean isOrganisationLeader;
 
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   public OrganisationUser toDomain() {
     return OrganisationUser.builder()
         .organisationUserKey(this.organisationUserKey.toDomain())
@@ -40,6 +45,11 @@ public class JpaOrganisationUser {
         .isOrganisationLeader(this.isOrganisationLeader).build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param organisationUser jpa version of the object.
+   */
   public JpaOrganisationUser(OrganisationUser organisationUser) {
     this.organisationUserKey = new JpaOrganisationUserKey(
         organisationUser.getOrganisationUserKey());

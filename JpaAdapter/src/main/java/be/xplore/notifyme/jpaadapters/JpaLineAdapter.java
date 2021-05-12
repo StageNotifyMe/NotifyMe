@@ -1,12 +1,11 @@
-package be.xplore.notifyme.jpaAdapters;
+package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.Line;
-import be.xplore.notifyme.jpaObjects.JpaLine;
-import be.xplore.notifyme.jpaRepositories.JpaLineRepository;
+import be.xplore.notifyme.jpaobjects.JpaLine;
+import be.xplore.notifyme.jparepositories.JpaLineRepository;
 import be.xplore.notifyme.persistence.ILineRepo;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 @Repository

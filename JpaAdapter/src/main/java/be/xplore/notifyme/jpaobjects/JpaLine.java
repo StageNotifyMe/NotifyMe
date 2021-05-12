@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.Line;
 import javax.persistence.CascadeType;
@@ -27,6 +27,11 @@ public class JpaLine {
   @OneToOne(cascade = CascadeType.ALL)
   private JpaTeam team;
 
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   public Line toDomain() {
     return Line.builder()
         .id(this.id)
@@ -38,13 +43,18 @@ public class JpaLine {
         .build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param line jpa version of the object.
+   */
   public JpaLine(Line line) {
     this.id = line.getId();
     this.note = line.getNote();
     this.requiredStaff = line.getRequiredStaff();
     this.facility = new JpaFacility(line.getFacility());
-    this.event=new JpaEvent(line.getEvent());
-    this.team=new JpaTeam(line.getTeam());
+    this.event = new JpaEvent(line.getEvent());
+    this.team = new JpaTeam(line.getTeam());
   }
 
 }

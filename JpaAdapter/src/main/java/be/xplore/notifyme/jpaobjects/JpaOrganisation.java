@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.Organisation;
 import java.util.List;
@@ -34,6 +34,11 @@ public class JpaOrganisation {
   @ManyToMany
   private List<JpaTeam> teams;
 
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   public Organisation toDomain() {
     return Organisation.builder()
         .id(this.id)
@@ -45,6 +50,11 @@ public class JpaOrganisation {
         .build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param organisation jpa version of the object.
+   */
   public JpaOrganisation(Organisation organisation) {
     this.id = organisation.getId();
     this.name = organisation.getName();

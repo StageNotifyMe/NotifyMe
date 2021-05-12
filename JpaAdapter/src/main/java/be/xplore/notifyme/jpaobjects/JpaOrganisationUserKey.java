@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.OrganisationUserKey;
 import java.io.Serializable;
@@ -45,6 +45,11 @@ public class JpaOrganisationUserKey implements Serializable {
     return Objects.hash(organisationId, userId);
   }
 
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   public OrganisationUserKey toDomain() {
     return OrganisationUserKey.builder()
         .organisationId(this.organisationId)
@@ -52,6 +57,11 @@ public class JpaOrganisationUserKey implements Serializable {
         .build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param organisationUserKey jpa version of the object.
+   */
   public JpaOrganisationUserKey(OrganisationUserKey organisationUserKey) {
     this.organisationId = organisationUserKey.getOrganisationId();
     this.userId = organisationUserKey.getUserId();

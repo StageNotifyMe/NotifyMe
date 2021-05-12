@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaObjects;
+package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.Address;
 import javax.persistence.Entity;
@@ -20,6 +20,11 @@ public class JpaAddress {
   private String village;
   private String country;
 
+  /**
+   * Converts a jpa-object to a domain variant.
+   *
+   * @return domain version of the object.
+   */
   Address toDomain() {
     return Address.builder()
         .streetAndNumber(this.streetAndNumber)
@@ -29,6 +34,11 @@ public class JpaAddress {
         .build();
   }
 
+  /**
+   * Constructor for conversion from domain object to jpa-object.
+   *
+   * @param address jpa version of the object.
+   */
   public JpaAddress(Address address) {
     this.streetAndNumber = address.getStreetAndNumber();
     this.postalCode = address.getPostalCode();
