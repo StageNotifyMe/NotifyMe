@@ -12,8 +12,8 @@ repositories {
 }
 
 dependencies {
-    implementation project(':domain')
     implementation project(':JpaAdapter')
+    implementation project(':domain')
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'

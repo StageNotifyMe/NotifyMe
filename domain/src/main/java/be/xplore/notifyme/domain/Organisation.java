@@ -17,9 +17,9 @@ public class Organisation {
 
   private Long id;
   private String name;
-  private List<OrganisationUser> users;
-  private List<UserOrgApplication> appliedUsers;
-  private List<Team> teams;
+  private List<OrganisationUser> users = new ArrayList<>();
+  private List<UserOrgApplication> appliedUsers = new ArrayList<>();
+  private List<Team> teams = new ArrayList<>();
 
   public Organisation(String name) {
     this.name = name;

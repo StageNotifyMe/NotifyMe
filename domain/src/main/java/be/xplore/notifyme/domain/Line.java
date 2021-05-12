@@ -10,20 +10,15 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-//@Entity
 @Builder
 public class Line {
-  /*  @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)*/
+
   private long id;
   private String note;
   private int requiredStaff;
 
-  //@ManyToOne(cascade = CascadeType.ALL)
   private Facility facility;
-  //@ManyToOne(cascade = CascadeType.ALL)
   private Event event;
-  //  @OneToOne(cascade = CascadeType.ALL)
   private Team team;
 
   public Line(String note, int requiredStaff) {

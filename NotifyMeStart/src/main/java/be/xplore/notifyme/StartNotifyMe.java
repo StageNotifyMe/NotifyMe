@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * Starts the notify me application.
  */
 @SpringBootApplication(scanBasePackages = "be.xplore.notifyme")
-@EnableJpaRepositories(basePackages = "be.xplore.notifyme")
+@EnableJpaRepositories(basePackages = "be.xplore.notifyme.jparepositories")
 public class StartNotifyMe {
 
   public static void main(String[] args) {

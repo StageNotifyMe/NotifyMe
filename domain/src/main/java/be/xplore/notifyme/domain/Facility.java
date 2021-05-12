@@ -1,5 +1,6 @@
 package be.xplore.notifyme.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ public class Facility {
   private int maximalStaff;
 
   private Venue venue;
-  private List<Line> lines;
+  private List<Line> lines = new ArrayList<>();
 
   /**
    * Contructor used to created a facility without relational properties.

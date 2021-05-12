@@ -42,6 +42,7 @@ public class AdminController {
 
   @GetMapping("/adminTest")
   public ResponseEntity<String> adminInfoTest() {
+    var user = userService.getUser("eecc921a-9194-46b8-81db-3c17439fcb7f");
     return ResponseEntity.ok("Well hello there, admin!");
   }
 

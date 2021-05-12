@@ -1,6 +1,7 @@
 package be.xplore.notifyme.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +14,6 @@ import lombok.Setter;
 /**
  * Object representation of a venue where an event can be held.
  */
-//@Entity
 @Builder
 @Getter
 @Setter
@@ -21,18 +21,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Venue {
-  /*  @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)*/
   private long id;
   private String name;
   private String description;
-  /*  @OneToOne
-    @Cascade(CascadeType.ALL)*/
   private Address address;
-  //  @ManyToMany(cascade = javax.persistence.CascadeType.ALL)
-  private Set<User> managers;
-  //  @OneToMany
-  private List<Facility> facilities;
+  private Set<User> managers = new HashSet<>();
+  private List<Facility> facilities = new ArrayList<>();
 
   /**
    * Constructor for venue without auto generated ID.

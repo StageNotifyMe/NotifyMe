@@ -89,7 +89,7 @@ public class UserService {
   private void getUserInfoAndSendVerificationEmail(String username) {
     var userInfo = keycloakCommunicationService.getUserInfo(username);
     keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
-    createUserInDatabase(userInfo.getId());
+    createUserInDatabase(userInfo.getId(), username);
   }
 
   /**
@@ -106,8 +106,8 @@ public class UserService {
     }
   }
 
-  private void createUserInDatabase(String id) {
-    var user = new User();
+  private void createUserInDatabase(String id, String username) {
+    var user = new User(id, username);
     user.setUserId(id);
     userRepo.save(user);
   }

@@ -3,6 +3,8 @@ package be.xplore.notifyme.domain;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -11,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-//@Entity
 @Builder
 @Getter
 @Setter
@@ -25,8 +26,8 @@ public class Event {
   private LocalDateTime dateTime;
 
   private Venue venue;
-  private List<Line> lines;
-  private Set<User> lineManagers;
+  private List<Line> lines = new ArrayList<>();
+  private Set<User> lineManagers = new HashSet<>();
 
   /**
    * Constructor for API POST methods. Converts a dateTime from ISO to LocalDateTime.
