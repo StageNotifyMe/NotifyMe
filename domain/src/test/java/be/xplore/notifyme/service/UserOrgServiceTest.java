@@ -51,6 +51,18 @@ class UserOrgServiceTest {
   }
 
   @Test
+  void getOrgManagerOrganisationsNoOrgs() {
+    var org = new Organisation();
+    org.setId(1L);
+    var user = new User();
+    user.setUserId("testId");
+    user.setOrganisations(List.of(new OrganisationUser(org, user, false)));
+    when(userService.getUserFromPrincipal(any())).thenReturn(user);
+    assertEquals(0,userOrgService
+        .getOrgManagerOrganisations(getKeycloakPrincipal()).size());
+  }
+
+  @Test
   void getOrgInfoAsManager() {
     var user = new User();
     user.setUserId("testId");

@@ -110,6 +110,15 @@ class OrganisationManagerControllerTest {
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
 
+  @Test
+  @WithMockUser(username = "orgmanager", roles = {"user", "organisation_manager"})
+  void getOrgInfo() throws Exception {
+    var org = new Organisation();
+    when(userOrgService.getOrgInfoAsManager(anyLong(),any())).thenReturn(org);
+    mockMvc.perform(get("/omanager/organisation"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
   private List<Organisation> setupOrganisations() {
     var org = new Organisation();
     org.setId(1L);
