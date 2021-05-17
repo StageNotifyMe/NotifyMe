@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,11 +14,15 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class JpaEvent {
 
   @Id
@@ -32,7 +37,7 @@ public class JpaEvent {
   private JpaVenue venue;
   @OneToMany
   private List<JpaLine> lines;
-  @ManyToMany(mappedBy = "events")
+  @ManyToMany(cascade = CascadeType.ALL)
   private Set<JpaUser> lineManagers;
 
   /**
@@ -54,6 +59,38 @@ public class JpaEvent {
   }
 
   /**
+   * Converts a jpa-object to a domain variant with only primitive type attributes.
+   *
+   * @return domain version of the object.
+   */
+  public Event toDomainBase() {
+    return Event.builder()
+        .id(this.id)
+        .title(this.title)
+        .description(this.description)
+        .artist(this.artist)
+        .dateTime(this.dateTime)
+        .build();
+  }
+
+  /**
+   * Converts jpa-object to a domain variant with only primitives and line managers.
+   *
+   * @return Event.
+   */
+  public Event toDomainIncLineManagers() {
+    return Event.builder()
+        .id(this.id)
+        .title(this.title)
+        .description(this.description)
+        .artist(this.artist)
+        .dateTime(this.dateTime)
+        .lineManagers(
+            this.lineManagers.stream().map(JpaUser::toDomainBase).collect(Collectors.toSet()))
+        .build();
+  }
+
+  /**
    * Constructor for conversion from domain object to jpa-object.
    *
    * @param event jpa version of the object.
@@ -70,4 +107,5 @@ public class JpaEvent {
     this.lineManagers = event.getLineManagers().stream().map(JpaUser::new)
         .collect(Collectors.toSet());
   }
+
 }

@@ -67,6 +67,16 @@ public class UserService {
   }
 
   /**
+   * Gets a userId from a principal.
+   *
+   * @param principal authorization principal.
+   * @return String userId.
+   */
+  public String getUserIdFromPrincipal(Principal principal) {
+    return tokenService.getIdToken(principal).getSubject();
+  }
+
+  /**
    * Gets a user from the database based on ID.
    *
    * @param id of the user to get.

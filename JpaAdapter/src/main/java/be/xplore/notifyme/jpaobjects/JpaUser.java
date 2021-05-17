@@ -33,7 +33,7 @@ public class JpaUser {
   private List<JpaVenue> venues;
   @ManyToMany
   private Set<JpaTeam> teams;
-  @ManyToMany
+  @ManyToMany(cascade = CascadeType.ALL, mappedBy = "lineManagers")
   private List<JpaEvent> events;
 
   /**
@@ -56,6 +56,11 @@ public class JpaUser {
         .build();
   }
 
+  /**
+   * Converts a jpa-object to a domain variant with only primitive type attributes.
+   *
+   * @return domain version of the object.
+   */
   public User toDomainBase() {
     return User.builder()
         .userId(this.userId)

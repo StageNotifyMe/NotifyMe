@@ -7,7 +7,6 @@ import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IEventRepo;
 import java.security.Principal;
-import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +32,8 @@ public class EventService {
     var venue = venueService.getVenue(createEventDto.getVenueId());
     var event = new Event(createEventDto.getTitle(), createEventDto.getDescription(),
         createEventDto.getArtist(), createEventDto.getDateTime(), venue);
-    eventRepo.save(event);
-    makeCreatorLineManager(event, principal);
+    event = eventRepo.save(event);
+    makeCreatorLineManager(event.getId(), principal);
     return event;
   }
 
@@ -57,11 +56,10 @@ public class EventService {
    * @return event if permission is ok.
    */
   public Event getEventAndVerifyLineManagerPermission(long eventId, Principal principal) {
-    var event = eventRepo.findById(eventId)
-        .orElseThrow(() -> new CrudException("Could not retireve event for id " + eventId));
+    var event = eventRepo.findByIdWithLineManagers(eventId)
+        .orElseThrow(() -> new CrudException("Could not retrieve event for id " + eventId));
     var token = tokenService.getIdToken(principal);
-    var user = userService.getUser(token.getSubject());
-    if (event.getLineManagers().contains(user)) {
+    if (event.getLineManagers().stream().anyMatch(u -> u.getUserId().equals(token.getSubject()))) {
       return event;
     } else {
       throw new UnauthorizedException(String.format("User %s is not a line manager of event %d",
@@ -77,20 +75,18 @@ public class EventService {
    * @return list of all events accessible to the line manager.
    */
   public List<Event> getAllEventsForLineManager(String userId) {
-    return userService.getUser(userId).getEvents();
+    return eventRepo.findAllForLineManager(userId);
   }
 
   /**
    * Makes an event's creator, line manager of this event.
    *
-   * @param event     to which the line manager should have access.
+   * @param eventId   to which the line manager should have access.
    * @param principal authentication token.
    */
-  private void makeCreatorLineManager(Event event, Principal principal) {
-    var user = userService.getUserFromPrincipal(principal);
-    event.setLineManagers(new HashSet<>());
-    event.getLineManagers().add(user);
-    eventRepo.save(event);
+  private void makeCreatorLineManager(long eventId, Principal principal) {
+    var userId = userService.getUserIdFromPrincipal(principal);
+    eventRepo.addLineManager(eventId, userId);
   }
 
   /**
