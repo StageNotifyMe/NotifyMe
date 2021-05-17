@@ -12,11 +12,15 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 @Entity
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class JpaVenue {
@@ -30,7 +34,7 @@ public class JpaVenue {
   @Cascade(CascadeType.ALL)
   private JpaAddress address;
 
-  @ManyToMany(cascade = javax.persistence.CascadeType.MERGE, mappedBy = "venues")
+  @ManyToMany(cascade = javax.persistence.CascadeType.ALL)
   private Set<JpaUser> managers;
   @OneToMany
   private List<JpaFacility> facilities;
@@ -49,6 +53,20 @@ public class JpaVenue {
         .managers(this.managers.stream().map(JpaUser::toDomain).collect(Collectors.toSet()))
         .facilities(this.facilities.stream().map(JpaFacility::toDomain).collect(
             Collectors.toList()))
+        .build();
+  }
+
+  /**
+   * Makes a domain object with all primitive type attributes (no lists).
+   *
+   * @return venue object.
+   */
+  public Venue toDomainBase() {
+    return Venue.builder()
+        .id(this.id)
+        .name(this.name)
+        .description(this.description)
+        .address(this.address.toDomain())
         .build();
   }
 

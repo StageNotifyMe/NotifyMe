@@ -12,6 +12,10 @@ public interface IVenueRepo {
 
   Optional<Venue> findById(long venueId);
 
-  List<Venue> getAllByManagersIsContaining(User user);
+  List<Venue> getAllByManagersIsContaining(String userId);
+
+  Venue addVenueManager(long venueId, String userId);
+
+  List<User> getAllVenueManagers(long venueId);
 
 }

@@ -16,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.account.UserRepresentation;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +43,6 @@ public class AdminController {
 
   @GetMapping("/adminTest")
   public ResponseEntity<String> adminInfoTest() {
-    var user = userService.getUser("eecc921a-9194-46b8-81db-3c17439fcb7f");
     return ResponseEntity.ok("Well hello there, admin!");
   }
 
@@ -72,7 +72,7 @@ public class AdminController {
 
   @PostMapping("/promoteUserToVmanager")
   public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
-      long venueId) {
+                                                          long venueId) {
     venueService.makeUserVenueManager(userId, venueId);
     return ResponseEntity.noContent().build();
   }
@@ -95,7 +95,8 @@ public class AdminController {
   public ResponseEntity<Object> createVenue(
       @RequestBody @NotNull CreateVenueDto createVenueDto,
       Principal principal) {
-    return venueService.createVenue(createVenueDto, principal);
+    var venue = venueService.createVenue(createVenueDto, principal);
+    return ResponseEntity.status(HttpStatus.CREATED).body(venue);
   }
 
   /**
@@ -132,7 +133,7 @@ public class AdminController {
    */
   @GetMapping("/venueManagers")
   public ResponseEntity<Object> getAllVenueManagers(@RequestParam long venueId) {
-    var managers = venueService.getVenue(venueId).getManagers();
+    var managers = venueService.getAllVenueManagers(venueId);
     return ResponseEntity.ok(managers);
   }
 

@@ -1,6 +1,7 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Address;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.GetVenueDto;
@@ -12,8 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 //import org.springframework.transaction.annotation.Transactional;
 
@@ -38,16 +37,16 @@ public class VenueService {
    * @param principal      used to identify the user.
    * @return 203 if successful, 400 if unsuccessful.
    */
-  public ResponseEntity<Object> createVenue(CreateVenueDto createVenueDto, Principal principal) {
+  public Venue createVenue(CreateVenueDto createVenueDto, Principal principal) {
     var accessToken = tokenService.getIdToken(principal);
-    var user = userService.getUser(accessToken.getSubject());
     var address =
         new Address(createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
             createVenueDto.getVillage(), createVenueDto.getCountry());
     var venue =
-        new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address, user);
-    venueRepo.save(venue);
-    return new ResponseEntity<>(HttpStatus.CREATED);
+        new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address);
+    venue = venueRepo.save(venue);
+    venue = venueRepo.addVenueManager(venue.getId(), accessToken.getSubject());
+    return venue;
   }
 
   /**
@@ -62,14 +61,23 @@ public class VenueService {
   }
 
   /**
+   * Gets all venuemanagers for a venue.
+   *
+   * @param venueId id of which you want to get the managers.
+   * @return list of users.
+   */
+  public List<User> getAllVenueManagers(long venueId) {
+    return venueRepo.getAllVenueManagers(venueId);
+  }
+
+  /**
    * Returns all venues of which the user is a manager.
    *
    * @param userId of the user
    * @return list object containing all venues.
    */
   public List<GetVenueDto> getVenuesForUser(String userId) {
-    var user = userService.getUser(userId);
-    var venues = venueRepo.getAllByManagersIsContaining(user);
+    var venues = venueRepo.getAllByManagersIsContaining(userId);
     List<GetVenueDto> venueDtos = new LinkedList<>();
     for (Venue venue : venues) {
       venueDtos.add(new GetVenueDto(venue.getId(), venue.getName(), venue.getDescription(),
@@ -87,10 +95,7 @@ public class VenueService {
    */
   public void makeUserVenueManager(String userId, Long venueId) {
     try {
-      var user = userService.getUser(userId);
-      var venue = this.getVenue(venueId);
-      venue.getManagers().add(user);
-      venueRepo.save(venue);
+      venueRepo.addVenueManager(venueId, userId);
       userService.grantUserRole(userId, "venue_manager");
     } catch (Exception e) {
       throw new SaveToDatabaseException("Could not make user venue manager: " + e.getMessage());
