@@ -1,12 +1,12 @@
-package be.xplore.notifyme.controller;
+package controller;
 
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.ApplicationUsernameDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserApplicationResponseDto;
-import be.xplore.notifyme.service.UserOrgApplicationService;
-import be.xplore.notifyme.service.UserOrgService;
-import be.xplore.notifyme.service.UserService;
+import be.xplore.notifyme.service.IUserOrgApplicationService;
+import be.xplore.notifyme.service.IUserOrgService;
+import be.xplore.notifyme.service.IUserService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class OrganisationManagerController {
 
-  private final UserOrgApplicationService userOrgApplicationService;
-  private final UserService userService;
-  private final UserOrgService userOrgService;
+  private final IUserOrgApplicationService userOrgApplicationService;
+  private final IUserService userService;
+  private final IUserOrgService userOrgService;
 
   /**
    * Gets the user applications for a certain organisation and maps the usernames on users.

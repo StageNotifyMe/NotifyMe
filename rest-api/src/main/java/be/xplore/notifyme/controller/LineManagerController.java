@@ -1,6 +1,6 @@
-package be.xplore.notifyme.controller;
+package controller;
 
-import be.xplore.notifyme.service.EventService;
+import be.xplore.notifyme.service.IEventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/lmanager")
 @RequiredArgsConstructor
 public class LineManagerController {
-  private final EventService eventService;
+
+  private final IEventService eventService;
 
   @GetMapping("/events")
   public ResponseEntity<Object> getAllEventsForLineManager(@RequestParam String userId) {
