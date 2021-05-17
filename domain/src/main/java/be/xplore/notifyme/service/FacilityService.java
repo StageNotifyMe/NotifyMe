@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FacilityService implements IFacilityService {
   private final IFacilityRepo facilityRepo;
-  private final VenueService venueService;
 
   /**
    * Gets a facility based on a facilityId.
@@ -37,7 +36,7 @@ public class FacilityService implements IFacilityService {
    */
   @Override
   public List<Facility> getAllFacilitesForVenue(long venueId) {
-    return venueService.getVenue(venueId).getFacilities();
+    return facilityRepo.getAllByVenue(venueId);
   }
 
   /**
@@ -51,9 +50,7 @@ public class FacilityService implements IFacilityService {
     var facility =
         new Facility(createFacilityDto.getDescription(), createFacilityDto.getLocation(),
             createFacilityDto.getMinimalStaff(), createFacilityDto.getMaximalStaff());
-    var venue = venueService.getVenue(createFacilityDto.getVenueId());
-    facility.setVenue(venue);
-    facility = facilityRepo.save(facility);
+    facility = facilityRepo.create(facility, createFacilityDto.getVenueId());
     return facility;
   }
 }

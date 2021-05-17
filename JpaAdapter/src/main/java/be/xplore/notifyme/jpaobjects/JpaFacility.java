@@ -10,9 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class JpaFacility {
@@ -47,6 +51,22 @@ public class JpaFacility {
         .build();
   }
 
+
+  /**
+   * Converts a jpa-object to a domain variant with only primitive type attributes.
+   *
+   * @return domain version of the object.
+   */
+  public Facility toDomainBase() {
+    return Facility.builder()
+        .id(this.id)
+        .description(this.description)
+        .location(this.location)
+        .minimalStaff(this.minimalStaff)
+        .maximalStaff(this.maximalStaff)
+        .build();
+  }
+
   /**
    * Constructor for conversion from domain object to jpa-object.
    *
@@ -61,5 +81,16 @@ public class JpaFacility {
     this.venue = new JpaVenue(facility.getVenue());
     this.lines = facility.getLines().stream().map(JpaLine::new)
         .collect(Collectors.toList());
+  }
+
+  public JpaFacility(Facility facility, JpaVenue jpaVenue) {
+    this.id = facility.getId();
+    this.description = facility.getDescription();
+    this.location = facility.getLocation();
+    this.minimalStaff = facility.getMinimalStaff();
+    this.maximalStaff = facility.getMaximalStaff();
+    this.lines = facility.getLines().stream().map(JpaLine::new)
+        .collect(Collectors.toList());
+    this.venue = jpaVenue;
   }
 }
