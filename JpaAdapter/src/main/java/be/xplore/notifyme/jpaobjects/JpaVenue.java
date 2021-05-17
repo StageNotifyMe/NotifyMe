@@ -27,10 +27,10 @@ public class JpaVenue {
   private String name;
   private String description;
   @OneToOne
-  @Cascade(CascadeType.MERGE)
+  @Cascade(CascadeType.ALL)
   private JpaAddress address;
 
-  @ManyToMany(cascade = javax.persistence.CascadeType.ALL, mappedBy = "venues")
+  @ManyToMany(cascade = javax.persistence.CascadeType.MERGE, mappedBy = "venues")
   private Set<JpaUser> managers;
   @OneToMany
   private List<JpaFacility> facilities;

@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
@@ -19,6 +21,7 @@ import lombok.NoArgsConstructor;
 public class JpaUser {
 
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String userId;
   private String userName;
 
@@ -26,7 +29,7 @@ public class JpaUser {
   private List<JpaOrganisationUser> organisations;
   @OneToMany(mappedBy = "appliedUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<JpaUserOrgApplication> appliedOrganisations;
-  @ManyToMany(cascade = CascadeType.ALL)
+  @ManyToMany(cascade = CascadeType.MERGE)
   private List<JpaVenue> venues;
   @ManyToMany
   private Set<JpaTeam> teams;
