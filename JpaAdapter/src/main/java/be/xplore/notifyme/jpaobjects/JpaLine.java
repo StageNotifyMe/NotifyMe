@@ -29,6 +29,15 @@ public class JpaLine {
   @OneToOne(cascade = CascadeType.ALL)
   private JpaTeam team;
 
+  public JpaLine(Line line, JpaEvent jpaEvent, JpaFacility jpaFacility) {
+    this.id = line.getId();
+    this.note = line.getNote();
+    this.requiredStaff = line.getRequiredStaff();
+    this.facility = jpaFacility;
+    this.event = jpaEvent;
+    this.team = new JpaTeam();
+  }
+
   /**
    * Converts a jpa-object to a domain variant.
    *
@@ -42,6 +51,22 @@ public class JpaLine {
         .requiredStaff(this.requiredStaff)
         .facility(this.facility.toDomain())
         .team(this.team.toDomain())
+        .build();
+  }
+
+  /**
+   * Converts a jpa-object to a domain variant with only primitive type attributes.
+   *
+   * @return domain version of the object.
+   */
+  public Line toDomainBase() {
+    return Line.builder()
+        .id(this.id)
+        .note(this.note)
+        .event(this.event.toDomainBase())
+        .facility(this.facility.toDomainBase())
+        .team(this.team.toDomainBase())
+        .requiredStaff(this.requiredStaff)
         .build();
   }
 

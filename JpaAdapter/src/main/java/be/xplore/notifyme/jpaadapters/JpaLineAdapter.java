@@ -1,10 +1,15 @@
 package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.Line;
+import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.jpaobjects.JpaLine;
+import be.xplore.notifyme.jparepositories.JpaEventRepository;
+import be.xplore.notifyme.jparepositories.JpaFacilityRepository;
 import be.xplore.notifyme.jparepositories.JpaLineRepository;
 import be.xplore.notifyme.persistence.ILineRepo;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,14 +18,33 @@ import org.springframework.stereotype.Repository;
 public class JpaLineAdapter implements ILineRepo {
 
   private final JpaLineRepository jpaLineRepository;
+  private final JpaEventRepository jpaEventRepository;
+  private final JpaFacilityRepository jpaFacilityRepository;
 
   @Override
   public Optional<Line> findById(long lineId) {
-    return jpaLineRepository.findById(lineId).map(JpaLine::toDomain);
+    return jpaLineRepository.findById(lineId).map(JpaLine::toDomainBase);
   }
 
   @Override
   public Line save(Line line) {
-    return jpaLineRepository.save(new JpaLine(line)).toDomain();
+    return jpaLineRepository.save(new JpaLine(line)).toDomainBase();
+  }
+
+  @Override
+  public List<Line> getAllByEventId(long eventId) {
+    var jpaEvent = jpaEventRepository.findById(eventId)
+        .orElseThrow(() -> new CrudException("Could not find event for id " + eventId));
+    return jpaLineRepository.getAllByEvent(jpaEvent).stream().map(JpaLine::toDomainBase)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public Line create(Line line, long eventId, long facilityId) {
+    var jpaEvent = jpaEventRepository.findById(eventId)
+        .orElseThrow(() -> new CrudException("Could not find event for id " + eventId));
+    var jpaFacility = jpaFacilityRepository.findById(facilityId)
+        .orElseThrow(() -> new CrudException("Could not find facility for id " + facilityId));
+    return jpaLineRepository.save(new JpaLine(line,jpaEvent,jpaFacility)).toDomainBase();
   }
 }

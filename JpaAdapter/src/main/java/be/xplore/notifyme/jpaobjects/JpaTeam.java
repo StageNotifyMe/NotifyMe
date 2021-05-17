@@ -57,4 +57,15 @@ public class JpaTeam {
     this.teamMembers = team.getTeamMembers().stream().map(JpaUser::new).collect(
         Collectors.toSet());
   }
+
+  /**
+   * Converts a jpa-object to a domain variant with only primitive type attributes.
+   *
+   * @return domain version of the object.
+   */
+  public Team toDomainBase() {
+    return Team.builder()
+        .id(this.id)
+        .build();
+  }
 }

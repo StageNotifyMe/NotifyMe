@@ -27,7 +27,7 @@ public class LineService implements ILineService {
    */
   @Override
   public List<Line> getAllLinesByEvent(long eventId) {
-    return eventService.getEvent(eventId).getLines();
+    return lineRepo.getAllByEventId(eventId);
   }
 
   /**
@@ -50,13 +50,8 @@ public class LineService implements ILineService {
    */
   @Override
   public Line createLine(CreateLineDto createLineDto, Principal principal) {
-    var event = eventService
-        .getEventAndVerifyLineManagerPermission(createLineDto.getEventId(), principal);
-    var facility = facilityService.getFacility(createLineDto.getFacilityId());
     var line =
-        new Line(createLineDto.getNote(), createLineDto.getRequiredStaff(), event, facility,
-            new Team());
-    return lineRepo.save(line);
-
+        new Line(createLineDto.getNote(), createLineDto.getRequiredStaff(), new Team());
+    return lineRepo.create(line, createLineDto.getEventId(), createLineDto.getFacilityId());
   }
 }

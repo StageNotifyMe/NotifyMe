@@ -40,4 +40,10 @@ public class Line {
     this.facility = facility;
     this.team = team;
   }
+
+  public Line(String note, int requiredStaff, Team team) {
+    this.note = note;
+    this.requiredStaff = requiredStaff;
+    this.team = team;
+  }
 }
