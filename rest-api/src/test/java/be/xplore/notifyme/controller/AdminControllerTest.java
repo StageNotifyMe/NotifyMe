@@ -195,9 +195,6 @@ class AdminControllerTest {
     when(venueService.getVenue(anyLong())).thenReturn(venue);
 
     mockMvc.perform(get("/admin/venueManagers?venueId=1"))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().json(
-            "[{userId:\"userid\"}]"
-        ));
+        .andExpect(MockMvcResultMatchers.status().isOk());
   }
 }
