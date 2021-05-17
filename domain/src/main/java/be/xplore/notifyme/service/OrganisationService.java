@@ -45,7 +45,6 @@ public class OrganisationService implements IOrganisationService {
     try {
       return organisationRepo.save(organisation);
     } catch (RuntimeException e) {
-      log.error(e.getMessage());
       throw new CrudException(
           "Could not create new organisation. Make sure that the name does not exist.");
     }
@@ -69,11 +68,8 @@ public class OrganisationService implements IOrganisationService {
    */
   @Override
   public Organisation getOrganisation(Long id) {
-    var organisation = organisationRepo.findById(id);
-    if (organisation.isPresent()) {
-      return organisation.get();
-    }
-    throw new CrudException("Organisation with id " + id + " does not exist in db");
+    return organisationRepo.findById(id).orElseThrow(
+        () -> new CrudException("Organisation with id " + id + " does not exist in db"));
   }
 
   /**
@@ -88,6 +84,9 @@ public class OrganisationService implements IOrganisationService {
     var organisation = getOrganisation(orgId);
     organisation.getUsers()
         .add(new OrganisationUser(organisation, user, true));
-    return organisationRepo.save(organisation);
+
+    return organisationRepo
+        .addToOrgManagers(orgId, userService.getUserInfo(username, principal).getId());
+    //return organisationRepo.save(organisation);
   }
 }

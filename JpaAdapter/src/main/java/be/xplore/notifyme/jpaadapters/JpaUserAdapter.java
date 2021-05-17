@@ -17,16 +17,16 @@ public class JpaUserAdapter implements IUserRepo {
 
   @Override
   public User save(User user) {
-    return jpaUserRepository.save(new JpaUser(user)).toDomain();
+    return jpaUserRepository.save(new JpaUser(user)).toDomainBase();
   }
 
   @Override
   public Optional<User> findById(String userId) {
-    return jpaUserRepository.findById(userId).map(JpaUser::toDomain);
+    return jpaUserRepository.findById(userId).map(JpaUser::toDomainBase);
   }
 
   @Override
   public List<User> findAll() {
-    return jpaUserRepository.findAll().stream().map(JpaUser::toDomain).collect(Collectors.toList());
+    return jpaUserRepository.findAll().stream().map(JpaUser::toDomainBase).collect(Collectors.toList());
   }
 }
