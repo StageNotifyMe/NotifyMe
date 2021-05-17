@@ -2,9 +2,11 @@ package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.jpaobjects.JpaEvent;
 import be.xplore.notifyme.jparepositories.JpaEventRepository;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
+import be.xplore.notifyme.jparepositories.JpaVenueRepository;
 import be.xplore.notifyme.persistence.IEventRepo;
 import java.util.List;
 import java.util.Optional;
@@ -18,11 +20,15 @@ public class JpaEventAdapter implements IEventRepo {
 
   private final JpaEventRepository jpaEventRepository;
   private final JpaUserRepository jpaUserRepository;
+  private final JpaVenueRepository jpaVenueRepository;
 
 
   @Override
   public Event save(Event event) {
-    return jpaEventRepository.save(new JpaEvent(event)).toDomainBase();
+    var jpaVenue = jpaVenueRepository.findById(event.getVenue().getId()).orElseThrow(
+        () -> new SaveToDatabaseException(
+            "Could not retrieve venue to which the event was supposed to be linked"));
+    return jpaEventRepository.save(new JpaEvent(event, jpaVenue)).toDomainBase();
   }
 
   @Override
