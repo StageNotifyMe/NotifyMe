@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class EventService {
+public class EventService implements IEventService {
 
   private final VenueService venueService;
   private final UserService userService;
@@ -28,6 +28,7 @@ public class EventService {
    * @param createEventDto contains all the necessary data to create an event.
    * @return HTTP Response
    */
+  @Override
   public Event createEvent(CreateEventDto createEventDto, Principal principal) {
     var venue = venueService.getVenue(createEventDto.getVenueId());
     var event = new Event(createEventDto.getTitle(), createEventDto.getDescription(),
@@ -43,6 +44,7 @@ public class EventService {
    * @param eventId id of the event.
    * @return event if successful, or CrudException if not found.
    */
+  @Override
   public Event getEvent(long eventId) {
     return eventRepo.findById(eventId)
         .orElseThrow(() -> new CrudException("Could not retrieve event for id " + eventId));
@@ -55,6 +57,7 @@ public class EventService {
    * @param principal to check.
    * @return event if permission is ok.
    */
+  @Override
   public Event getEventAndVerifyLineManagerPermission(long eventId, Principal principal) {
     var event = eventRepo.findByIdWithLineManagers(eventId)
         .orElseThrow(() -> new CrudException("Could not retrieve event for id " + eventId));
@@ -68,12 +71,13 @@ public class EventService {
   }
 
   /**
-   * A line manager can edit lines for a specific event,
-   * this method returns all the events where the line manager has access to the lines.
+   * A line manager can edit lines for a specific event, this method returns all the events where
+   * the line manager has access to the lines.
    *
    * @param userId of a line manager.
    * @return list of all events accessible to the line manager.
    */
+  @Override
   public List<Event> getAllEventsForLineManager(String userId) {
     return eventRepo.findAllForLineManager(userId);
   }
@@ -95,6 +99,7 @@ public class EventService {
    * @param userId  id of the user to add as line manager.
    * @param eventId id of the event to add the user to as line manager.
    */
+  @Override
   public void promoteToLineManager(String userId, long eventId) {
     var user = userService.getUser(userId);
     var event = this.getEvent(eventId);

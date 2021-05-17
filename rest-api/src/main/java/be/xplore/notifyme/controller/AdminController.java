@@ -4,9 +4,9 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
-import be.xplore.notifyme.service.OrganisationService;
-import be.xplore.notifyme.service.UserService;
-import be.xplore.notifyme.service.VenueService;
+import be.xplore.notifyme.service.IOrganisationService;
+import be.xplore.notifyme.service.IUserService;
+import be.xplore.notifyme.service.IVenueService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class AdminController {
 
-  private final OrganisationService organisationService;
-  private final VenueService venueService;
-  private final UserService userService;
+  private final IOrganisationService organisationService;
+  private final IVenueService venueService;
+  private final IUserService userService;
 
 
   @GetMapping("/adminTest")

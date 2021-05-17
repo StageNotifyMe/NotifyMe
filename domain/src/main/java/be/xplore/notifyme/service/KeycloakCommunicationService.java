@@ -34,7 +34,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class KeycloakCommunicationService {
+public class KeycloakCommunicationService implements IKeycloakCommunicationService {
 
   @Value("${keycloak.resource}")
   String clientId;
@@ -60,6 +60,7 @@ public class KeycloakCommunicationService {
    * @param password of the user.
    * @return ResponseEntity received from keycloak that contains the access token when succesful.
    */
+  @Override
   public ResponseEntity<String> login(String username, String password) {
     final var passwordConst = "password";
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
@@ -76,6 +77,7 @@ public class KeycloakCommunicationService {
   /**
    * Registers a new user by sending a service request to the keycloak server.
    */
+  @Override
   public void register(UserRegistrationDto userRegistrationDto) {
     var request =
         createHttpEntityForUserRegistry(getAdminAccesstoken(), userRegistrationDto);
@@ -106,6 +108,7 @@ public class KeycloakCommunicationService {
    *
    * @param userId the id of the new user.
    */
+  @Override
   public void sendEmailVerificationRequest(String userId) {
     var request = createJsonHttpEntity(getAdminAccesstoken());
     var uri = String.format("%s/%s/send-verify-email", registerUri, userId);
@@ -122,6 +125,7 @@ public class KeycloakCommunicationService {
    * @param username The username of the user you want to get information from.
    * @return Keycloak Userrepresentation.
    */
+  @Override
   public UserRepresentation getUserInfo(String username) {
     var userinfoReturn = getUserInfoRest(getAdminAccesstoken(), username);
     var listType = new TypeToken<List<UserRepresentation>>() {
@@ -139,6 +143,7 @@ public class KeycloakCommunicationService {
    *
    * @return ReponseEntity that if successful contains the accesstoken.
    */
+  @Override
   public String getAdminAccesstoken() {
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
     map.add("grant_type", "client_credentials");
@@ -159,6 +164,7 @@ public class KeycloakCommunicationService {
    * @param map containing values for a body.
    * @return the map with the client_id and client_secret values added.
    */
+  @Override
   public MultiValueMap<String, String> addAuthorization(MultiValueMap<String, String> map) {
     map.add("client_id", clientId);
     map.add("client_secret", clientSecret);
@@ -172,6 +178,7 @@ public class KeycloakCommunicationService {
    * @param username    to get the info from.
    * @return response entity containing the user info as a json string.
    */
+  @Override
   public String getUserInfoRest(String accessToken, String username) {
     HttpEntity<String> request = createJsonHttpEntity(accessToken);
     var uri = String.format("%s?username=%s", registerUri, username);
@@ -189,6 +196,7 @@ public class KeycloakCommunicationService {
    * @param accessToken bearer access token.
    * @return HttpEntity(String).
    */
+  @Override
   public HttpEntity<String> createJsonHttpEntity(String accessToken) {
     var headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -204,6 +212,7 @@ public class KeycloakCommunicationService {
    * @param body        object to include as body.
    * @return HttpEntity(String).
    */
+  @Override
   public HttpEntity<String> createJsonHttpEntity(String accessToken, Object body) {
     var headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -218,6 +227,7 @@ public class KeycloakCommunicationService {
    * @param accessToken admin access token
    * @return response entity containing all the user info as a json string.
    */
+  @Override
   public List<UserRepresentation> getAllUserInfoRest(String accessToken) {
     var request = createJsonHttpEntity(accessToken);
     var userinfoReturn =
@@ -239,6 +249,7 @@ public class KeycloakCommunicationService {
    * @param roleToGive role to give to given user.
    * @param idOfClient id of the client where the role is defined.
    */
+  @Override
   public void giveUserRole(String userId, RoleRepresentation roleToGive, String idOfClient) {
     var uri = registerUri + String.format("/%s/role-mappings/clients/%s", userId, idOfClient);
     var role = new GiveClientRoleDto(roleToGive.getId(), roleToGive.getName(), true);
@@ -256,6 +267,7 @@ public class KeycloakCommunicationService {
    * @param idOfClient id of a client of the Notifyme-Realm.
    * @return list of keycloak RoleRepresentations.
    */
+  @Override
   public List<RoleRepresentation> getClientRoles(String idOfClient) {
     var entity = createJsonHttpEntity(getAdminAccesstoken());
     var uri = clientUri + String.format("/%s/roles", idOfClient);
@@ -273,6 +285,7 @@ public class KeycloakCommunicationService {
    * @param idOfClient id of a client of the Notifyme-Realm.
    * @return a keycloak RoleRepresentation.
    */
+  @Override
   public RoleRepresentation getClientRole(String roleName, String idOfClient) {
     var roles = getClientRoles(idOfClient);
     var role = roles.stream().filter(r -> r.getName().equals(roleName)).findFirst();
@@ -293,6 +306,7 @@ public class KeycloakCommunicationService {
    * @param clientId id of a client of the Notifyme-Realm.
    * @return RelevantClientInfoDto.
    */
+  @Override
   public RelevantClientInfoDto getClient(String clientId) {
     var clients = getAllClients();
     var client = clients.stream().filter(c -> c.getClientId().equals(clientId)).findFirst();
@@ -308,6 +322,7 @@ public class KeycloakCommunicationService {
    *
    * @return list of RelevantClientInfoDto.
    */
+  @Override
   public List<RelevantClientInfoDto> getAllClients() {
     var entity = createJsonHttpEntity(getAdminAccesstoken());
     var clients = restTemplate.exchange(clientUri, HttpMethod.GET, entity, String.class);

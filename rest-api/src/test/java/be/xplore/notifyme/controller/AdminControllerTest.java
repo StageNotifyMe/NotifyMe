@@ -159,7 +159,7 @@ class AdminControllerTest {
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void createVenue() throws Exception {
     when(venueService.createVenue(any(), any()))
-        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).body(new Venue()));
+        .thenReturn(new Venue());
 
     mockMvc.perform(post("/admin/venue").content("{"
         + "\n\"name\"" + ": \"testname\","

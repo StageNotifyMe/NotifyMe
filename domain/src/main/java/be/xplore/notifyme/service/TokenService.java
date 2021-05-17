@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class TokenService {
+public class TokenService implements ITokenService {
 
   @Value("${keycloak.resource}")
   String clientId;
@@ -28,6 +28,7 @@ public class TokenService {
    * @param principal contains information about the user calling the method.
    * @return an IDToken containing user information.
    */
+  @Override
   public IDToken getIdToken(Principal principal) {
     try {
       var keycloakAuthenticationToken =
@@ -46,6 +47,7 @@ public class TokenService {
    * @param principal contains information about the user calling the method.
    * @return a KeycloakSecurityContext.
    */
+  @Override
   public KeycloakSecurityContext getSecurityContext(Principal principal) {
     try {
       var keycloakAuthenticationToken =
@@ -63,6 +65,7 @@ public class TokenService {
    * @param rolename  the name of the role to check.
    * @return if the principal contains the role.
    */
+  @Override
   public boolean hasRole(Principal principal, String rolename) {
     try {
       var keycloakAuthenticationToken =

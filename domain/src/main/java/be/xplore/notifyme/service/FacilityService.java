@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class FacilityService {
+public class FacilityService implements IFacilityService {
   private final IFacilityRepo facilityRepo;
   private final VenueService venueService;
 
@@ -22,6 +22,7 @@ public class FacilityService {
    * @param facilityId id of the facility to get.
    * @return a facility object if successful, CrudException if not found.
    */
+  @Override
   public Facility getFacility(long facilityId) {
     return facilityRepo.findById(facilityId)
         .orElseThrow(() -> new CrudException("Could not find facility for id" + facilityId));
@@ -34,6 +35,7 @@ public class FacilityService {
    * @param venueId of which you want to get the facilities.
    * @return a list of facilities.
    */
+  @Override
   public List<Facility> getAllFacilitesForVenue(long venueId) {
     return venueService.getVenue(venueId).getFacilities();
   }
@@ -44,6 +46,7 @@ public class FacilityService {
    * @param createFacilityDto dto with all relevant properties in a JSON-friendly format.
    * @return the created facility.
    */
+  @Override
   public Facility createFacility(CreateFacilityDto createFacilityDto) {
     var facility =
         new Facility(createFacilityDto.getDescription(), createFacilityDto.getLocation(),

@@ -5,10 +5,10 @@ import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.dto.GetLineDto;
-import be.xplore.notifyme.service.EventService;
-import be.xplore.notifyme.service.FacilityService;
-import be.xplore.notifyme.service.LineService;
-import be.xplore.notifyme.service.VenueService;
+import be.xplore.notifyme.service.IEventService;
+import be.xplore.notifyme.service.IFacilityService;
+import be.xplore.notifyme.service.ILineService;
+import be.xplore.notifyme.service.IVenueService;
 import java.security.Principal;
 import java.util.LinkedList;
 import javax.annotation.security.RolesAllowed;
@@ -32,14 +32,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class VenueManagerController {
 
-  private final EventService eventService;
-  private final VenueService venueService;
-  private final FacilityService facilityService;
-  private final LineService lineService;
+  private final IEventService eventService;
+  private final IVenueService venueService;
+  private final IFacilityService facilityService;
+  private final ILineService lineService;
 
   @PostMapping("/event")
   public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto,
-                                            Principal principal) {
+      Principal principal) {
     var result = eventService.createEvent(createEventDto, principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(result);
   }
@@ -79,7 +79,7 @@ public class VenueManagerController {
 
   @PostMapping("/line")
   public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto,
-                                           Principal principal) {
+      Principal principal) {
     var line = lineService.createLine(createLineDto, principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(line);
   }
@@ -99,7 +99,7 @@ public class VenueManagerController {
 
   @PostMapping("/promoteToLineManager")
   public ResponseEntity<Object> promoteUserToLineManager(@RequestParam String userId,
-                                                         @RequestParam long eventId) {
+      @RequestParam long eventId) {
     eventService.promoteToLineManager(userId, eventId);
     return ResponseEntity.noContent().build();
   }

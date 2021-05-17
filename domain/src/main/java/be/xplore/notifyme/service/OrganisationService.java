@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Slf4j
 //@Transactional
-public class OrganisationService {
+public class OrganisationService implements IOrganisationService {
 
   private final IOrganisationRepo organisationRepo;
   private final UserService userService;
@@ -29,6 +29,7 @@ public class OrganisationService {
    * @param name the unique name of the organisation
    * @return the newly created organisation with this name.
    */
+  @Override
   public Organisation createOrganisation(String name) {
     return organisationRepo.save(new Organisation(name));
   }
@@ -39,6 +40,7 @@ public class OrganisationService {
    * @param organisation the organisation to update or create.
    * @return the newly created organisation with this name.
    */
+  @Override
   public Organisation save(Organisation organisation) {
     try {
       return organisationRepo.save(organisation);
@@ -54,6 +56,7 @@ public class OrganisationService {
    *
    * @return a list of organisations.
    */
+  @Override
   public List<Organisation> getOrganisations() {
     return organisationRepo.findAll();
   }
@@ -64,6 +67,7 @@ public class OrganisationService {
    * @param id of the organisation to get.
    * @return the Organisation object.
    */
+  @Override
   public Organisation getOrganisation(Long id) {
     var organisation = organisationRepo.findById(id);
     if (organisation.isPresent()) {
@@ -78,6 +82,7 @@ public class OrganisationService {
    * @param username the username of the user to be promoted.
    * @param orgId    the id of the organisation to promote the user in.
    */
+  @Override
   public Organisation promoteUserToOrgManager(String username, Long orgId, Principal principal) {
     var user = userService.getUser(userService.getUserInfo(username, principal).getId());
     var organisation = getOrganisation(orgId);

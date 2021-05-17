@@ -3,10 +3,10 @@ package be.xplore.notifyme.controller;
 import be.xplore.notifyme.dto.ApplicationOrgNameDto;
 import be.xplore.notifyme.dto.OrganisationsLimitedInfoDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
-import be.xplore.notifyme.service.KeycloakCommunicationService;
-import be.xplore.notifyme.service.OrganisationService;
-import be.xplore.notifyme.service.UserOrgApplicationService;
-import be.xplore.notifyme.service.UserService;
+import be.xplore.notifyme.service.IKeycloakCommunicationService;
+import be.xplore.notifyme.service.IOrganisationService;
+import be.xplore.notifyme.service.IUserOrgApplicationService;
+import be.xplore.notifyme.service.IUserService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class UserController {
 
-  private final UserService userService;
-  private final OrganisationService organisationService;
-  private final UserOrgApplicationService userOrgApplicationService;
-  private final KeycloakCommunicationService keycloakCommunicationService;
+  private final IUserService userService;
+  private final IOrganisationService organisationService;
+  private final IUserOrgApplicationService userOrgApplicationService;
+  private final IKeycloakCommunicationService keycloakCommunicationService;
 
   @GetMapping(value = "/token")
   public ResponseEntity<String> getAccessTokenForUser(String username, String password) {

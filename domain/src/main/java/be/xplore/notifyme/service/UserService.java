@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements IUserService {
 
   private final IUserRepo userRepo;
   private final TokenService tokenService;
@@ -34,6 +34,7 @@ public class UserService {
    *
    * @return list of Keycloak Userrepresentation.
    */
+  @Override
   public List<UserRepresentation> getAllUserInfo() {
     return keycloakCommunicationService
         .getAllUserInfoRest(keycloakCommunicationService.getAdminAccesstoken());
@@ -45,6 +46,7 @@ public class UserService {
    * @param username of the user to get info from.
    * @return Keycloak UserRepresentation object.
    */
+  @Override
   public UserRepresentation getUserInfo(String username, Principal principal) {
     var token = tokenService.getIdToken(principal);
     if (token.getPreferredUsername().equals(username)
@@ -61,6 +63,7 @@ public class UserService {
    * @param principal of and API request.
    * @return user object.
    */
+  @Override
   public User getUserFromPrincipal(Principal principal) {
     var decodedToken = tokenService.getIdToken(principal);
     return this.getUser(decodedToken.getSubject());
@@ -82,6 +85,7 @@ public class UserService {
    * @param id of the user to get.
    * @return the user or throws exception if unable to find a user with given ID.
    */
+  @Override
   public User getUser(String id) {
     var user = userRepo.findById(id);
     if (user.isPresent()) {
@@ -105,6 +109,7 @@ public class UserService {
   /**
    * Registers a new user by sending a service request to the keycloak server.
    */
+  @Override
   public void register(UserRegistrationDto userRegistrationDto) {
     //if creation was unsuccessful, don't get user info and send verification email
     try {
@@ -127,6 +132,7 @@ public class UserService {
    *
    * @return list of our domain users.
    */
+  @Override
   public List<User> getUsers() {
     try {
       return userRepo.findAll();
@@ -142,6 +148,7 @@ public class UserService {
    * @param user to update.
    * @return an updated user.
    */
+  @Override
   public User updateUser(User user) {
     try {
       return userRepo.save(user);
@@ -157,6 +164,7 @@ public class UserService {
    * @param userId   user who gets granted the role.
    * @param roleName role to grant.
    */
+  @Override
   public void grantUserRole(String userId, String roleName) {
     var client = keycloakCommunicationService.getClient(this.clientName);
     var role = keycloakCommunicationService.getClientRole(roleName, client.getId());

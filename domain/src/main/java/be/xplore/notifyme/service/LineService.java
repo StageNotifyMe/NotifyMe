@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class LineService {
+public class LineService implements ILineService {
   private final EventService eventService;
   private final FacilityService facilityService;
   private final ILineRepo lineRepo;
@@ -25,6 +25,7 @@ public class LineService {
    * @param eventId id of an event.
    * @return list of lines.
    */
+  @Override
   public List<Line> getAllLinesByEvent(long eventId) {
     return eventService.getEvent(eventId).getLines();
   }
@@ -35,6 +36,7 @@ public class LineService {
    * @param lineId id of the line to get.
    * @return line object or CrudException if not found.
    */
+  @Override
   public Line getLine(long lineId) {
     return lineRepo.findById(lineId)
         .orElseThrow(() -> new CrudException("Could not find line for id " + lineId));
@@ -46,6 +48,7 @@ public class LineService {
    * @param createLineDto contains all relevant properties of a line in a JSON-friendly format.
    * @return the created line.
    */
+  @Override
   public Line createLine(CreateLineDto createLineDto, Principal principal) {
     var event = eventService
         .getEventAndVerifyLineManagerPermission(createLineDto.getEventId(), principal);

@@ -14,7 +14,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Contains all functions and processes related to venues.
@@ -22,8 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-//@Transactional
-public class VenueService {
+public class VenueService implements IVenueService {
 
   private final TokenService tokenService;
   private final UserService userService;
@@ -37,6 +35,7 @@ public class VenueService {
    * @param principal      used to identify the user.
    * @return 203 if successful, 400 if unsuccessful.
    */
+  @Override
   public Venue createVenue(CreateVenueDto createVenueDto, Principal principal) {
     var accessToken = tokenService.getIdToken(principal);
     var address =
@@ -55,6 +54,7 @@ public class VenueService {
    * @param id of the venue to get.
    * @return the venue matching the ID or thorws error if no matches found.
    */
+  @Override
   public Venue getVenue(long id) {
     return venueRepo.findById(id)
         .orElseThrow(() -> new CrudException("Could not retrieve venue for id " + id));
@@ -66,6 +66,7 @@ public class VenueService {
    * @param venueId id of which you want to get the managers.
    * @return list of users.
    */
+  @Override
   public List<User> getAllVenueManagers(long venueId) {
     return venueRepo.getAllVenueManagers(venueId);
   }
@@ -76,6 +77,7 @@ public class VenueService {
    * @param userId of the user
    * @return list object containing all venues.
    */
+  @Override
   public List<GetVenueDto> getVenuesForUser(String userId) {
     var venues = venueRepo.getAllByManagersIsContaining(userId);
     List<GetVenueDto> venueDtos = new LinkedList<>();
@@ -93,6 +95,7 @@ public class VenueService {
    * @param userId  id of user to grant permission.
    * @param venueId id of venue over which the user gets perimissions.
    */
+  @Override
   public void makeUserVenueManager(String userId, Long venueId) {
     try {
       venueRepo.addVenueManager(venueId, userId);
