@@ -12,11 +12,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 public class JpaVenue {
 
   @Id
@@ -25,7 +27,7 @@ public class JpaVenue {
   private String name;
   private String description;
   @OneToOne
-  @Cascade(CascadeType.ALL)
+  @Cascade(CascadeType.MERGE)
   private JpaAddress address;
 
   @ManyToMany(cascade = javax.persistence.CascadeType.ALL, mappedBy = "venues")
