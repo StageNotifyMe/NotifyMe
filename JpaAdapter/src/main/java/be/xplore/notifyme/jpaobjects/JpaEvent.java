@@ -108,4 +108,17 @@ public class JpaEvent {
         .collect(Collectors.toSet());
   }
 
+  public JpaEvent(Event event, JpaVenue jpaVenue) {
+    this.id = event.getId();
+    this.title = event.getTitle();
+    this.description = event.getDescription();
+    this.artist = event.getArtist();
+    this.dateTime = event.getDateTime();
+    this.venue = jpaVenue;
+    this.lines = event.getLines().stream().map(JpaLine::new)
+        .collect(Collectors.toList());
+    this.lineManagers = event.getLineManagers().stream().map(JpaUser::new)
+        .collect(Collectors.toSet());
+  }
+
 }
