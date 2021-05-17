@@ -1,7 +1,6 @@
 package be.xplore.notifyme.archunittests;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -16,16 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @AnalyzeClasses(packages = "be.xplore.notifyme", importOptions = {
     ImportOption.DoNotIncludeTests.class})
 public class CodeConstraints {
-
-  @ArchTest
-  private static final ArchRule respectLayeredArchitecture = layeredArchitecture()
-      .layer("Controller").definedBy("..controller..")
-      .layer("Service").definedBy("..service..")
-      .layer("Persistence").definedBy("..persistence..")
-
-      .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
-      .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller")
-      .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service");
 
   @ArchTest
   public static final ArchRule controllerNaming = classes()
@@ -52,10 +41,12 @@ public class CodeConstraints {
           RestController.class);
   @ArchTest
   public static final ArchRule ServiceAnnotation = classes()
-      .that().haveSimpleNameContaining("Service").should().beAnnotatedWith(Service.class);
+      .that().haveSimpleNameContaining("Service").should().beAnnotatedWith(Service.class).orShould()
+      .beInterfaces();
   @ArchTest
   public static final ArchRule RepositoryAnnotation = classes()
-      .that().haveSimpleNameContaining("Repo").should().beAnnotatedWith(Repository.class);
+      .that().haveSimpleNameContaining("Repo").should().beAnnotatedWith(Repository.class).orShould()
+      .beInterfaces();
 
   @ArchTest
   public static final ArchRule InterfaceNaming = classes()

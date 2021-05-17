@@ -52,10 +52,14 @@ class VenueServiceTest {
     when(tokenService.getIdToken(mockPrincipal)).thenReturn(mockIdToken);
 
     User user = getTestUser();
+    Venue venue=new Venue();
+    venue.setId(1);
+    when(venueRepo.save(any())).thenReturn(venue);
+    when(venueRepo.addVenueManager(anyLong(),anyString())).thenReturn(venue);
     when(userService.getUser("abcd")).thenReturn(user);
 
-    assertEquals(HttpStatus.CREATED,
-        venueService.createVenue(getTestCreateVenueDto(), mockPrincipal).getStatusCode());
+    assertEquals(venue,
+        venueService.createVenue(getTestCreateVenueDto(), mockPrincipal));
   }
 
   @Test
@@ -101,7 +105,7 @@ class VenueServiceTest {
   void getVenuesSuccessful() {
     var user = getTestUser();
     when(userService.getUser("abcd")).thenReturn(user);
-    when(venueRepo.getAllByManagersIsContaining(user)).thenReturn(getTestVenues());
+    when(venueRepo.getAllByManagersIsContaining(user.getUserId())).thenReturn(getTestVenues());
 
     var result = venueService.getVenuesForUser("abcd");
     assertEquals(getTestGetVenues().size(), result.size());
@@ -119,7 +123,7 @@ class VenueServiceTest {
   void getVenuesNoVenuesFound() {
     var user = getTestUser();
     when(userService.getUser("abcd")).thenReturn(user);
-    when(venueRepo.getAllByManagersIsContaining(user)).thenReturn(new LinkedList<>());
+    when(venueRepo.getAllByManagersIsContaining(user.getUserId())).thenReturn(new LinkedList<>());
 
     var result = venueService.getVenuesForUser("abcd");
     assertEquals(0, result.size());
