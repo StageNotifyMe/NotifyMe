@@ -1,4 +1,4 @@
-package controller;
+package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.service.IEventService;
 import lombok.RequiredArgsConstructor;

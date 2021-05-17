@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @AllArgsConstructor
-public class UserOrgApplicationService {
+public class UserOrgApplicationService implements IUserOrgApplicationService {
 
   private final UserService userService;
   private final OrganisationService organisationService;
@@ -29,6 +29,7 @@ public class UserOrgApplicationService {
    * @param organisationId the unique organisation id.
    * @param principal      from the request context.
    */
+  @Override
   public void applyToOrganisation(Long organisationId, Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     var organisation = organisationService.getOrganisation(organisationId);
@@ -37,6 +38,7 @@ public class UserOrgApplicationService {
     userService.updateUser(user);
   }
 
+  @Override
   public List<UserOrgApplication> getUserOrgApplications(Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     return user.getAppliedOrganisations();
@@ -49,6 +51,7 @@ public class UserOrgApplicationService {
    * @param principal      representation of authorized user.
    * @return a list of user organisation applications.
    */
+  @Override
   public List<UserOrgApplication> getOrgApplications(Long organisationId, Principal principal) {
     var organisation = organisationService.getOrganisation(organisationId);
     secureOrgManagerRequestFromPrincipal(organisation, principal);
@@ -62,8 +65,9 @@ public class UserOrgApplicationService {
    * @param accept              if the request should be accepted or denied.
    * @param principal           representation of the authorized organisation admin.
    */
+  @Override
   public void respondToApplication(OrganisationUserKey organisationUserKey, boolean accept,
-                                   Principal principal) {
+      Principal principal) {
     var organisation = organisationService.getOrganisation(organisationUserKey.getOrganisationId());
     secureOrgManagerRequestFromPrincipal(organisation, principal);
     organisation.getAppliedUsers().stream().filter(

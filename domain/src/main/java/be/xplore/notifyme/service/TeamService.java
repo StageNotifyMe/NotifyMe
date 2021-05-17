@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class TeamService {
+public class TeamService implements ITeamService {
   private final ITeamRepo teamRepo;
 
 }

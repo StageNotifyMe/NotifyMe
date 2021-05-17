@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 //@Transactional
-public class VenueService {
+public class VenueService implements IVenueService {
 
   private final TokenService tokenService;
   private final UserService userService;
@@ -38,6 +38,7 @@ public class VenueService {
    * @param principal      used to identify the user.
    * @return 203 if successful, 400 if unsuccessful.
    */
+  @Override
   public ResponseEntity<Object> createVenue(CreateVenueDto createVenueDto, Principal principal) {
     var accessToken = tokenService.getIdToken(principal);
     var user = userService.getUser(accessToken.getSubject());
@@ -56,6 +57,7 @@ public class VenueService {
    * @param id of the venue to get.
    * @return the venue matching the ID or thorws error if no matches found.
    */
+  @Override
   public Venue getVenue(long id) {
     return venueRepo.findById(id)
         .orElseThrow(() -> new CrudException("Could not retrieve venue for id " + id));
@@ -67,6 +69,7 @@ public class VenueService {
    * @param userId of the user
    * @return list object containing all venues.
    */
+  @Override
   public List<GetVenueDto> getVenuesForUser(String userId) {
     var user = userService.getUser(userId);
     var venues = venueRepo.getAllByManagersIsContaining(user);
@@ -85,6 +88,7 @@ public class VenueService {
    * @param userId  id of user to grant permission.
    * @param venueId id of venue over which the user gets perimissions.
    */
+  @Override
   public void makeUserVenueManager(String userId, Long venueId) {
     try {
       var user = userService.getUser(userId);

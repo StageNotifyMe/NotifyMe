@@ -1,4 +1,4 @@
-package controller;
+package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.ApplicationUsernameDto;

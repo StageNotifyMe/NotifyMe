@@ -1,4 +1,4 @@
-package controller;
+package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.dto.CreateEventDto;

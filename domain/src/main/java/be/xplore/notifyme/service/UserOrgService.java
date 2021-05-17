@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class UserOrgService {
+public class UserOrgService implements IUserOrgService {
 
   private final UserService userService;
   private final OrganisationSecurityService organisationSecurityService;
@@ -22,6 +22,7 @@ public class UserOrgService {
    * @param principal injected by security.
    * @return a list of organisations where the user is manager.
    */
+  @Override
   public List<Organisation> getOrgManagerOrganisations(Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     var organisations = new ArrayList<Organisation>();
@@ -40,6 +41,7 @@ public class UserOrgService {
    * @param principal representation of authorized user.
    * @return the organisation and its attached info.
    */
+  @Override
   public Organisation getOrgInfoAsManager(Long orgId, Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     var organisation = organisationService.getOrganisation(orgId);

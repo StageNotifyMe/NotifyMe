@@ -1,2 +1,5 @@
-package be.xplore.notifyme.service;public interface ITeamService {
+package be.xplore.notifyme.service;
+
+public interface ITeamService {
+
 }
