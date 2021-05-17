@@ -34,14 +34,11 @@ public class Venue {
    * @param name        of the venue
    * @param description of the venue
    * @param address     of the venue
-   * @param user        who made the venue, gets assigned manager
    */
-  public Venue(String name, String description, Address address, User user) {
+  public Venue(String name, String description, Address address) {
     this.name = name;
     this.description = description;
     this.address = address;
-    this.managers = new HashSet<>();
-    this.managers.add(user);
   }
 
   /**

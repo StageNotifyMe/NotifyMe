@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'checkstyle'
+    id 'jacoco'
+}
+
+group 'be.xplore.notifyme'
+version 'unspecified'
+
+repositories {
+    mavenCentral()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation project(':domain')
+
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.9.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    implementation group: 'org.keycloak', name: 'keycloak-spring-boot-starter', version: '12.0.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.4.5'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.4.5'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation group: 'com.c4-soft.springaddons', name: 'spring-security-oauth2-test-webmvc-addons', version: '2.5.2'
+
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+
+    implementation 'org.projectlombok:lombok:1.18.16'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+}
+
+checkstyleMain {
+    source = 'src/main/java'
+}
+checkstyleTest {
+    source = 'src/test/java'
+}
+
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
+jacoco {
+    reportsDirectory = layout.projectDirectory.dir("jacoco")
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.enabled false
+        }
+    }
+}
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}

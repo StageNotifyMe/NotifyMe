@@ -29,7 +29,7 @@ public class JpaUser {
   private List<JpaOrganisationUser> organisations;
   @OneToMany(mappedBy = "appliedUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<JpaUserOrgApplication> appliedOrganisations;
-  @ManyToMany(cascade = CascadeType.MERGE)
+  @ManyToMany(cascade = CascadeType.ALL, mappedBy = "managers")
   private List<JpaVenue> venues;
   @ManyToMany
   private Set<JpaTeam> teams;
@@ -53,6 +53,13 @@ public class JpaUser {
             this.appliedOrganisations.stream().map(JpaUserOrgApplication::toDomain).collect(
                 Collectors.toList()))
         .teams(this.teams.stream().map(JpaTeam::toDomain).collect(Collectors.toSet()))
+        .build();
+  }
+
+  public User toDomainBase() {
+    return User.builder()
+        .userId(this.userId)
+        .userName(this.userName)
         .build();
   }
 
