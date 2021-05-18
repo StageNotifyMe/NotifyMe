@@ -13,4 +13,6 @@ public interface IOrganisationRepo {
   List<Organisation> findAll();
 
   Optional<Organisation> findById(Long id);
+
+  Organisation addToOrgManagers(long organisationId, String userId);
 }

@@ -52,6 +52,21 @@ public class JpaOrganisation {
         .build();
   }
 
+  public Organisation toDomainBase() {
+    return Organisation.builder()
+        .id(this.id)
+        .name(this.name)
+        .build();
+  }
+
+  public Organisation toDomainBaseIncUsers() {
+    return Organisation.builder()
+        .id(this.id)
+        .name(this.name)
+        .users(this.users.stream().map(JpaOrganisationUser::toDomain).collect(Collectors.toList()))
+        .build();
+  }
+
   /**
    * Constructor for conversion from domain object to jpa-object.
    *
@@ -68,5 +83,4 @@ public class JpaOrganisation {
             Collectors.toList());
     this.teams = organisation.getTeams().stream().map(JpaTeam::new).collect(Collectors.toList());
   }
-
 }

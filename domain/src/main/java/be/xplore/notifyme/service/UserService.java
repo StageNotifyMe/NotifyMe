@@ -87,12 +87,8 @@ public class UserService implements IUserService {
    */
   @Override
   public User getUser(String id) {
-    var user = userRepo.findById(id);
-    if (user.isPresent()) {
-      return user.get();
-    } else {
-      throw new CrudException(String.format("Could not retrieve user for id %s", id));
-    }
+    return userRepo.findById(id).orElseThrow(
+        () -> new CrudException(String.format("Could not retrieve user for id %s", id)));
   }
 
   /**
@@ -149,6 +145,7 @@ public class UserService implements IUserService {
    * @return an updated user.
    */
   @Override
+  //TODO: denk niet dat deze manier van werken nog kan met hexa
   public User updateUser(User user) {
     try {
       return userRepo.save(user);

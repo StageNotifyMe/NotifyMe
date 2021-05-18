@@ -32,6 +32,12 @@ public class JpaOrganisationUser {
 
   private boolean isOrganisationLeader;
 
+  public JpaOrganisationUser(JpaUser jpaUser, boolean isManager) {
+    this.isOrganisationLeader = isManager;
+    this.user = jpaUser;
+
+  }
+
   /**
    * Converts a jpa-object to a domain variant.
    *

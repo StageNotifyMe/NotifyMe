@@ -70,6 +70,7 @@ public class JpaEvent {
         .description(this.description)
         .artist(this.artist)
         .dateTime(this.dateTime)
+        .venue(this.venue.toDomainBase())
         .build();
   }
 
