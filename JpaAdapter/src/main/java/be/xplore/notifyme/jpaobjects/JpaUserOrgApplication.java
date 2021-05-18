@@ -67,4 +67,12 @@ public class JpaUserOrgApplication {
     this.appliedOrganisation = new JpaOrganisation(userOrgApplication.getAppliedOrganisation());
     this.applicationStatus = userOrgApplication.getApplicationStatus();
   }
+
+  public JpaUserOrgApplication(JpaOrganisation organisation, JpaUser user,
+                               OrgApplicationStatus status) {
+    this.appliedUser = user;
+    this.appliedOrganisation = organisation;
+    this.applicationStatus = status;
+    this.organisationUserKey = new JpaOrganisationUserKey(user.getUserId(), organisation.getId());
+  }
 }

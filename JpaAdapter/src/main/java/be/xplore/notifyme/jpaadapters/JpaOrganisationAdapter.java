@@ -1,9 +1,11 @@
 package be.xplore.notifyme.jpaadapters;
 
+import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.jpaobjects.JpaOrganisation;
 import be.xplore.notifyme.jpaobjects.JpaOrganisationUser;
+import be.xplore.notifyme.jpaobjects.JpaUserOrgApplication;
 import be.xplore.notifyme.jparepositories.JpaOrganisationRepository;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
@@ -51,5 +53,15 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
         .orElseThrow(() -> new CrudException("Could not find user for id " + userId));
     jpaOrg.getUsers().add(new JpaOrganisationUser(jpaUser, jpaOrg, true));
     return jpaOrganisationRepository.save(jpaOrg).toDomainBase();
+  }
+
+  @Override
+  public void applyToOrganisation(long orgId, String userId) {
+    var jpaOrg = jpaOrganisationRepository.findById(orgId)
+        .orElseThrow(() -> new CrudException("Could not find org for id " + orgId));
+    var jpaUser = jpaUserRepository.findById(userId)
+        .orElseThrow(() -> new CrudException("Could not find user for id " + userId));
+    jpaUser.getAppliedOrganisations().add(new JpaUserOrgApplication(jpaOrg, jpaUser,
+        OrgApplicationStatus.APPLIED));
   }
 }

@@ -12,4 +12,6 @@ public interface IUserRepo {
   List<User> findAll();
 
   User findByIdIncOrganisations(String userId);
+
+  User findByIdIncAppliedUsers(String userId);
 }

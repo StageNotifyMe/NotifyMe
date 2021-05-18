@@ -81,6 +81,12 @@ public class UserService implements IUserService {
     return userRepo.findByIdIncOrganisations(decodedToken.getSubject());
   }
 
+  @Override
+  public User getUserFromPrincipalIncAppliedUsers(Principal principal) {
+    var decodedToken = tokenService.getIdToken(principal);
+    return userRepo.findByIdIncAppliedUsers(decodedToken.getSubject());
+  }
+
   /**
    * Gets a userId from a principal.
    *
