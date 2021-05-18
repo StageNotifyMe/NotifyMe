@@ -41,7 +41,7 @@ class UserOrgServiceTest {
     var user = new User();
     user.setUserId("testId");
     user.setOrganisations(List.of(new OrganisationUser(org, user, true)));
-    when(userService.getUserFromPrincipal(any())).thenReturn(user);
+    when(userService.getUserFromprincipalIncOrganisations(any())).thenReturn(user);
     Optional<Organisation> retrievedOrg = userOrgService
         .getOrgManagerOrganisations(getKeycloakPrincipal()).stream().findFirst();
     if (retrievedOrg.isEmpty()) {
@@ -57,7 +57,7 @@ class UserOrgServiceTest {
     var user = new User();
     user.setUserId("testId");
     user.setOrganisations(List.of(new OrganisationUser(org, user, false)));
-    when(userService.getUserFromPrincipal(any())).thenReturn(user);
+    when(userService.getUserFromprincipalIncOrganisations(any())).thenReturn(user);
     assertEquals(0,userOrgService
         .getOrgManagerOrganisations(getKeycloakPrincipal()).size());
   }

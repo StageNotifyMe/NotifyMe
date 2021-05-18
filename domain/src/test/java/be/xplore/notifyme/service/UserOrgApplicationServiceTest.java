@@ -67,7 +67,7 @@ class UserOrgApplicationServiceTest {
   @Test
   void getOrgApplicationsSuccessful() {
     var mockOrg = mock(Organisation.class);
-    when(organisationService.getOrganisation(anyLong())).thenReturn(mockOrg);
+    when(organisationService.getOrganisationIncAppliedUsers(anyLong())).thenReturn(mockOrg);
     var testList = new LinkedList<UserOrgApplication>();
     when(mockOrg.getAppliedUsers()).thenReturn(testList);
 

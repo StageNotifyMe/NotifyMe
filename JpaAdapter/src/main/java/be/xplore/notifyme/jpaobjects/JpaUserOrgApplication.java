@@ -46,6 +46,11 @@ public class JpaUserOrgApplication {
         .applicationStatus(this.applicationStatus).build();
   }
 
+  /**
+   * Converts jpa userOrgApplication to domain representation.
+   *
+   * @return user org application.
+   */
   public UserOrgApplication toDomainBase() {
     return UserOrgApplication.builder()
         .organisationUserKey(this.organisationUserKey.toDomain())

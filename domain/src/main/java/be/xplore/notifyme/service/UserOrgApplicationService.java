@@ -95,7 +95,7 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
    * @param principal    representation of the authenticated user.
    */
   private void secureOrgManagerRequestFromPrincipal(Organisation organisation,
-                                                    Principal principal) {
+      Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     organisationSecurityService.checkUserIsOrgManager(user, organisation);
   }

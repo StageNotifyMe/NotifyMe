@@ -14,7 +14,7 @@ public interface IOrganisationService {
 
   Organisation getOrganisation(Long id);
 
-  Organisation getOrganisationIncAppliedUsers(long OrgId);
+  Organisation getOrganisationIncAppliedUsers(long orgId);
 
   Organisation promoteUserToOrgManager(String username, Long orgId, Principal principal);
 }

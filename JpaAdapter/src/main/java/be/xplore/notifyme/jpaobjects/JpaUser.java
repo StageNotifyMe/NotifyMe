@@ -88,6 +88,11 @@ public class JpaUser {
     this.events = user.getEvents().stream().map(JpaEvent::new).collect(Collectors.toList());
   }
 
+  /**
+   * Converts jpaUser to domain user. Includes the organisation data.
+   *
+   * @return domain user.
+   */
   public User toDomainIncOrganisations() {
     return User.builder()
         .userId(this.userId)

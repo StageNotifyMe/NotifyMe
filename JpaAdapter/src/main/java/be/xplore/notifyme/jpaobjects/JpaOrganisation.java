@@ -78,6 +78,11 @@ public class JpaOrganisation {
         .build();
   }
 
+  /**
+   * Converts Jpa org to domain organisation.
+   *
+   * @return Organisation with applied users and primitive props.
+   */
   public Organisation toDomainBaseIncAppliedUsers() {
     return Organisation.builder()
         .id(this.id)

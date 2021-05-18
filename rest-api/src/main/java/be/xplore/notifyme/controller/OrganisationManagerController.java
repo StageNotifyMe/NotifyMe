@@ -82,6 +82,13 @@ public class OrganisationManagerController {
     return ResponseEntity.ok(orgDtos);
   }
 
+  /**
+   * Gets an organisation with limited info for showing name and making further requests.
+   *
+   * @param organisationId unique id of the organisation the user is manager of.
+   * @param principal      representation of authorized user.
+   * @return an organisation dto with limited info.
+   */
   @GetMapping("organisation")
   public ResponseEntity<Object> organisation(Long organisationId, Principal principal) {
     var result = userOrgService.getOrgInfoAsManager(organisationId, principal);

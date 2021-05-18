@@ -60,6 +60,11 @@ public class JpaOrganisationUser {
         .isOrganisationLeader(this.isOrganisationLeader).build();
   }
 
+  /**
+   * Creates domain orguser from jpa orguser. Includes the organisations data.
+   *
+   * @return domain representation of orguser.
+   */
   public OrganisationUser toDomainBaseIncOrganisations() {
     return OrganisationUser.builder()
         .organisationUserKey(this.organisationUserKey.toDomain())

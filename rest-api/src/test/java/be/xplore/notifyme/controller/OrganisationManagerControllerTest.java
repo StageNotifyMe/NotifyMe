@@ -114,8 +114,10 @@ class OrganisationManagerControllerTest {
   @WithMockUser(username = "orgmanager", roles = {"user", "organisation_manager"})
   void getOrgInfo() throws Exception {
     var org = new Organisation();
+    org.setId(1L);
+    org.setName("orgje");
     when(userOrgService.getOrgInfoAsManager(anyLong(),any())).thenReturn(org);
-    mockMvc.perform(get("/omanager/organisation"))
+    mockMvc.perform(get("/omanager/organisation?organisationId=1"))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
 
