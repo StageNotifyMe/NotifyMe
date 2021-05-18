@@ -19,7 +19,7 @@ public class OrganisationSecurityService {
    */
   public void checkUserIsOrgManager(User user, Organisation organisation) {
     Optional<OrganisationUser> orgUser = organisation.getUsers().stream()
-        .filter(ou -> ou.getUser().getUserId().equals(user.getUserId())).findFirst();
+        .filter(ou -> ou.getOrganisationUserKey().getUserId().equals(user.getUserId())).findFirst();
     if (orgUser.isEmpty() || !orgUser.get().isOrganisationLeader()) {
       throw new UnauthorizedException("User is not part of the organization.");
     }

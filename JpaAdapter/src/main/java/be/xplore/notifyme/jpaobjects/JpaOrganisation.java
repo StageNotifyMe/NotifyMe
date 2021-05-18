@@ -63,7 +63,19 @@ public class JpaOrganisation {
     return Organisation.builder()
         .id(this.id)
         .name(this.name)
-        .users(this.users.stream().map(JpaOrganisationUser::toDomain).collect(Collectors.toList()))
+        .users(this.users.stream().map(JpaOrganisationUser::toDomainBaseIncOrganisations)
+            .collect(Collectors.toList()))
+        .build();
+  }
+
+  public Organisation toDomainBaseIncAppliedUsers() {
+    return Organisation.builder()
+        .id(this.id)
+        .name(this.name)
+        .appliedUsers(this.appliedUsers.stream().map(JpaUserOrgApplication::toDomainBase).collect(
+            Collectors.toList()))
+        .users(this.users.stream().map(JpaOrganisationUser::toDomainBaseIncOrganisations).collect(
+            Collectors.toList()))
         .build();
   }
 

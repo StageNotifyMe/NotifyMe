@@ -53,6 +53,13 @@ public class JpaOrganisationUser {
         .isOrganisationLeader(this.isOrganisationLeader).build();
   }
 
+  public OrganisationUser toDomainBaseIncOrganisations() {
+    return OrganisationUser.builder()
+        .organisationUserKey(this.organisationUserKey.toDomain())
+        .organisation(this.organisation.toDomainBase())
+        .isOrganisationLeader(this.isOrganisationLeader).build();
+  }
+
   /**
    * Constructor for conversion from domain object to jpa-object.
    *

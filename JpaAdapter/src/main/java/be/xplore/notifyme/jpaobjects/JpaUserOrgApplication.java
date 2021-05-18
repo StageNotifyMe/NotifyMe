@@ -46,6 +46,15 @@ public class JpaUserOrgApplication {
         .applicationStatus(this.applicationStatus).build();
   }
 
+  public UserOrgApplication toDomainBase() {
+    return UserOrgApplication.builder()
+        .organisationUserKey(this.organisationUserKey.toDomain())
+        .appliedUser(this.appliedUser.toDomainBase())
+        .appliedOrganisation(this.appliedOrganisation.toDomainBase())
+        .applicationStatus(this.applicationStatus)
+        .build();
+  }
+
   /**
    * Constructor for conversion from domain object to jpa-object.
    *

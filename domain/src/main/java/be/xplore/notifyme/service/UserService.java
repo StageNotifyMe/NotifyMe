@@ -70,6 +70,18 @@ public class UserService implements IUserService {
   }
 
   /**
+   * Gets a user including their organisations.
+   *
+   * @param principal of an API request.
+   * @return user object including organisations.
+   */
+  @Override
+  public User getUserFromprincipalIncOrganisations(Principal principal) {
+    var decodedToken = tokenService.getIdToken(principal);
+    return userRepo.findByIdIncOrganisations(decodedToken.getSubject());
+  }
+
+  /**
    * Gets a userId from a principal.
    *
    * @param principal authorization principal.

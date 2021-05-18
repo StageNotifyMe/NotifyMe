@@ -1,8 +1,8 @@
 package be.xplore.notifyme.controller;
 
-import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.ApplicationUsernameDto;
 import be.xplore.notifyme.dto.OrganisationDto;
+import be.xplore.notifyme.dto.OrganisationLimitedInfoDto;
 import be.xplore.notifyme.dto.UserApplicationResponseDto;
 import be.xplore.notifyme.service.IUserOrgApplicationService;
 import be.xplore.notifyme.service.IUserOrgService;
@@ -11,6 +11,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -82,7 +83,9 @@ public class OrganisationManagerController {
   }
 
   @GetMapping("organisation")
-  public ResponseEntity<Organisation> organisation(Long organisationId, Principal principal) {
-    return ResponseEntity.ok(userOrgService.getOrgInfoAsManager(organisationId, principal));
+  public ResponseEntity<Object> organisation(Long organisationId, Principal principal) {
+    var result = userOrgService.getOrgInfoAsManager(organisationId, principal);
+    var response = new OrganisationLimitedInfoDto(result);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

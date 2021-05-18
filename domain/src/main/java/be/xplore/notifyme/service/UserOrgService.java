@@ -24,7 +24,7 @@ public class UserOrgService implements IUserOrgService {
    */
   @Override
   public List<Organisation> getOrgManagerOrganisations(Principal principal) {
-    var user = userService.getUserFromPrincipal(principal);
+    var user = userService.getUserFromprincipalIncOrganisations(principal);
     var organisations = new ArrayList<Organisation>();
     for (var orgUser : user.getOrganisations()) {
       if (orgUser.isOrganisationLeader()) {

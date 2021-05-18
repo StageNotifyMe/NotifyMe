@@ -1,6 +1,7 @@
 package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.jpaobjects.JpaUser;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.IUserRepo;
@@ -27,6 +28,14 @@ public class JpaUserAdapter implements IUserRepo {
 
   @Override
   public List<User> findAll() {
-    return jpaUserRepository.findAll().stream().map(JpaUser::toDomainBase).collect(Collectors.toList());
+    return jpaUserRepository.findAll().stream().map(JpaUser::toDomainBase)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public User findByIdIncOrganisations(String userId) {
+    var jpaUser = jpaUserRepository.findById(userId)
+        .orElseThrow(() -> new CrudException("Could not find user for id " + userId));
+    return jpaUser.toDomainIncOrganisations();
   }
 }

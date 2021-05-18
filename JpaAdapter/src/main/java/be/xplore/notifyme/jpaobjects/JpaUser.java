@@ -87,4 +87,14 @@ public class JpaUser {
     this.teams = user.getTeams().stream().map(JpaTeam::new).collect(Collectors.toSet());
     this.events = user.getEvents().stream().map(JpaEvent::new).collect(Collectors.toList());
   }
+
+  public User toDomainIncOrganisations() {
+    return User.builder()
+        .userId(this.userId)
+        .userName(this.userName)
+        .organisations(
+            this.organisations.stream().map(JpaOrganisationUser::toDomainBaseIncOrganisations)
+                .collect(Collectors.toList()))
+        .build();
+  }
 }

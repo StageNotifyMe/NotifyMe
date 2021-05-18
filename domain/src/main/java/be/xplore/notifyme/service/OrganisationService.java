@@ -71,6 +71,12 @@ public class OrganisationService implements IOrganisationService {
         () -> new CrudException("Organisation with id " + id + " does not exist in db"));
   }
 
+  @Override
+  public Organisation getOrganisationIncAppliedUsers(long orgId) {
+    return organisationRepo.findByIdIncAppliedUsers(orgId).orElseThrow(
+        () -> new CrudException("Organisation with id " + orgId + " does not exist in db"));
+  }
+
   /**
    * Promotes a user to an organisation manager.
    *

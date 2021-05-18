@@ -14,5 +14,7 @@ public interface IOrganisationRepo {
 
   Optional<Organisation> findById(Long id);
 
+  Optional<Organisation> findByIdIncAppliedUsers(long orgId);
+
   Organisation addToOrgManagers(long organisationId, String userId);
 }

@@ -34,7 +34,13 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
 
   @Override
   public Optional<Organisation> findById(Long id) {
-    return jpaOrganisationRepository.findById(id).map(JpaOrganisation::toDomainBase);
+    return jpaOrganisationRepository.findById(id).map(JpaOrganisation::toDomainBaseIncUsers);
+  }
+
+  @Override
+  public Optional<Organisation> findByIdIncAppliedUsers(long orgId) {
+    return jpaOrganisationRepository.findById(orgId)
+        .map(JpaOrganisation::toDomainBaseIncAppliedUsers);
   }
 
   @Override

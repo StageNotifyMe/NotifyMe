@@ -53,7 +53,7 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
    */
   @Override
   public List<UserOrgApplication> getOrgApplications(Long organisationId, Principal principal) {
-    var organisation = organisationService.getOrganisation(organisationId);
+    var organisation = organisationService.getOrganisationIncAppliedUsers(organisationId);
     secureOrgManagerRequestFromPrincipal(organisation, principal);
     return organisation.getAppliedUsers();
   }
