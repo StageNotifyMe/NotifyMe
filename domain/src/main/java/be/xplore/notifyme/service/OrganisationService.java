@@ -1,7 +1,6 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.domain.OrganisationUser;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
 import java.security.Principal;
@@ -80,13 +79,7 @@ public class OrganisationService implements IOrganisationService {
    */
   @Override
   public Organisation promoteUserToOrgManager(String username, Long orgId, Principal principal) {
-    var user = userService.getUser(userService.getUserInfo(username, principal).getId());
-    var organisation = getOrganisation(orgId);
-    organisation.getUsers()
-        .add(new OrganisationUser(organisation, user, true));
-
     return organisationRepo
         .addToOrgManagers(orgId, userService.getUserInfo(username, principal).getId());
-    //return organisationRepo.save(organisation);
   }
 }

@@ -23,7 +23,7 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
 
   @Override
   public Organisation save(Organisation organisation) {
-    return jpaOrganisationRepository.save(new JpaOrganisation(organisation)).toDomain();
+    return jpaOrganisationRepository.save(new JpaOrganisation(organisation)).toDomainBase();
   }
 
   @Override
@@ -34,7 +34,7 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
 
   @Override
   public Optional<Organisation> findById(Long id) {
-    return jpaOrganisationRepository.findById(id).map(JpaOrganisation::toDomain);
+    return jpaOrganisationRepository.findById(id).map(JpaOrganisation::toDomainBase);
   }
 
   @Override
@@ -43,7 +43,7 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
         () -> new CrudException("Could not find organisation for id " + organisationId));
     var jpaUser = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new CrudException("Could not find user for id " + userId));
-    jpaOrg.getUsers().add(new JpaOrganisationUser(jpaUser, true));
+    jpaOrg.getUsers().add(new JpaOrganisationUser(jpaUser, jpaOrg, true));
     return jpaOrganisationRepository.save(jpaOrg).toDomainBase();
   }
 }

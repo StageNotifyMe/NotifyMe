@@ -32,10 +32,12 @@ public class JpaOrganisationUser {
 
   private boolean isOrganisationLeader;
 
-  public JpaOrganisationUser(JpaUser jpaUser, boolean isManager) {
+  public JpaOrganisationUser(JpaUser jpaUser, JpaOrganisation jpaOrganisation, boolean isManager) {
     this.isOrganisationLeader = isManager;
     this.user = jpaUser;
-
+    this.organisation = jpaOrganisation;
+    this.organisationUserKey =
+        new JpaOrganisationUserKey(jpaUser.getUserId(), jpaOrganisation.getId());
   }
 
   /**
