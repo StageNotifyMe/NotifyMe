@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class JpaUserAdapter implements IUserRepo {
+
   private final JpaUserRepository jpaUserRepository;
 
   @Override
@@ -27,6 +28,7 @@ public class JpaUserAdapter implements IUserRepo {
 
   @Override
   public List<User> findAll() {
-    return jpaUserRepository.findAll().stream().map(JpaUser::toDomainBase).collect(Collectors.toList());
+    return jpaUserRepository.findAll().stream().map(JpaUser::toDomainBase)
+        .collect(Collectors.toList());
   }
 }

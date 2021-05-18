@@ -19,14 +19,6 @@ public class JpaFacilityAdapter implements IFacilityRepo {
   private final JpaFacilityRepository jpaFacilityRepository;
   private final JpaVenueRepository jpaVenueRepository;
 
-/*  @Override
-  public List<Facility> getAllByVenue(Venue venue) {
-    var jpaVenue = jpaVenueRepository.findById(venue.getId()).orElseThrow(
-        () -> new JpaNotFoundException("Could not find venue for id " + venue.getId()));
-    var jpaFacilities = jpaFacilityRepository.getAllByVenue(jpaVenue);
-    return jpaFacilities.stream().map(JpaFacility::toDomain).collect(Collectors.toList());
-  }*/
-
   @Override
   public Optional<Facility> findById(long facilityId) {
     return jpaFacilityRepository.findById(facilityId).map(JpaFacility::toDomain);

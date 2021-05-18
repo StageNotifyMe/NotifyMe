@@ -29,6 +29,13 @@ public class JpaLine {
   @OneToOne(cascade = CascadeType.ALL)
   private JpaTeam team;
 
+  /**
+   * Create a jpa line.
+   *
+   * @param line        domain rep of line to create
+   * @param jpaEvent    jpa event to add line to.
+   * @param jpaFacility jpa facility to add line to.
+   */
   public JpaLine(Line line, JpaEvent jpaEvent, JpaFacility jpaFacility) {
     this.id = line.getId();
     this.note = line.getNote();

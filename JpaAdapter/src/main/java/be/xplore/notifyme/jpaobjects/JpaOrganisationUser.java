@@ -32,6 +32,13 @@ public class JpaOrganisationUser {
 
   private boolean isOrganisationLeader;
 
+  /**
+   * Constructs a Jpa organistation user based on the jpa user,org and if the user is a manager.
+   *
+   * @param jpaUser         the jpa User.
+   * @param jpaOrganisation the jpa organisation.
+   * @param isManager       if the user is a manager.
+   */
   public JpaOrganisationUser(JpaUser jpaUser, JpaOrganisation jpaOrganisation, boolean isManager) {
     this.isOrganisationLeader = isManager;
     this.user = jpaUser;

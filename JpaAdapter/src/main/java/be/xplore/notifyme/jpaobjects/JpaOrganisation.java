@@ -52,6 +52,11 @@ public class JpaOrganisation {
         .build();
   }
 
+  /**
+   * Converts jpa organisation to the domain model with only primitive fields filled in.
+   *
+   * @return The primitive domain representation of the organisation.
+   */
   public Organisation toDomainBase() {
     return Organisation.builder()
         .id(this.id)
@@ -59,6 +64,11 @@ public class JpaOrganisation {
         .build();
   }
 
+  /**
+   * Convert jpa org to domain model including primitive fields and a list of users.
+   *
+   * @return the domain representation of the jpa org.
+   */
   public Organisation toDomainBaseIncUsers() {
     return Organisation.builder()
         .id(this.id)

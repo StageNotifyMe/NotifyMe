@@ -39,6 +39,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {EventService.class})
 class EventServiceTest {
+
   @Autowired
   private EventService eventService;
   @MockBean
@@ -59,10 +60,10 @@ class EventServiceTest {
     when(userService.getUserFromPrincipal(any(Principal.class))).thenReturn(testUser);
 
     var ced = getTestCreateEventDto();
-    var event=new Event();
+    var event = new Event();
     event.setId(1L);
     when(eventRepo.save(any())).thenReturn(event);
-    assertThat(eventService.createEvent(ced, principal),instanceOf(Event.class));
+    assertThat(eventService.createEvent(ced, principal), instanceOf(Event.class));
   }
 
   @Test
@@ -93,7 +94,8 @@ class EventServiceTest {
   void getEventAndVerifyLineManagerPermissionSuccessful() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     final IDToken token = Mockito.mock(IDToken.class);
-    when(eventRepo.findByIdWithLineManagers(1L)).thenReturn(Optional.of(getTestEventWithLineManager()));
+    when(eventRepo.findByIdWithLineManagers(1L))
+        .thenReturn(Optional.of(getTestEventWithLineManager()));
     when(tokenService.getIdToken(any(Principal.class))).thenReturn(token);
     when(token.getSubject()).thenReturn("testUser");
     when(userService.getUser("testUser")).thenReturn(testUser);
