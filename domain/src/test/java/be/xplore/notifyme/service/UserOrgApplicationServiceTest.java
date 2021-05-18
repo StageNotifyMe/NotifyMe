@@ -41,7 +41,7 @@ class UserOrgApplicationServiceTest {
   @MockBean
   private OrganisationSecurityService organisationSecurityService;
   @MockBean
-  private IOrganisationRepo iOrganisationRepo;
+  private IOrganisationRepo organisationRepo;
 
   @Test
   void applyToOrganisation() {
@@ -61,7 +61,7 @@ class UserOrgApplicationServiceTest {
     var keycloakPrincipal = getKeycloakPrincipal();
     var user = new User();
     user.setAppliedOrganisations(new ArrayList<>());
-    when(userService.getUserFromPrincipal(any())).thenReturn(user);
+    when(userService.getUserFromPrincipalIncAppliedUsers(any())).thenReturn(user);
     assertEquals(user.getAppliedOrganisations(),
         userOrgApplicationService.getUserOrgApplications(keycloakPrincipal));
   }
@@ -110,7 +110,7 @@ class UserOrgApplicationServiceTest {
 
   private void mockRespondToApplication() {
     var mockOrg = mock(Organisation.class);
-    when(organisationService.getOrganisation(anyLong())).thenReturn(mockOrg);
+    when(organisationService.getOrganisationIncAppliedUsers(anyLong())).thenReturn(mockOrg);
     var userOrgApplication = new UserOrgApplication();
     var user = mock(User.class);
     when(userService.getUser(anyString())).thenReturn(user);
