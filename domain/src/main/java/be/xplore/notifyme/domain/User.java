@@ -28,6 +28,7 @@ public class User {
   private List<Venue> venues = new ArrayList<>();
   private Set<Team> teams = new HashSet<>();
   private List<Event> events = new ArrayList<>();
+  private List<Message> messages = new ArrayList<>();
 
   /**
    * Creates a user.
