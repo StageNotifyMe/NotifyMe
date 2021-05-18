@@ -223,6 +223,8 @@ class UserServiceTest {
     when(userRepresentation.getId()).thenReturn("id");
     doThrow(CrudException.class).when(keycloakCommunicationService)
         .sendEmailVerificationRequest("id");
+    doThrow(CrudException.class).when(userRepo)
+        .save(any());
     doNothing().when(keycloakCommunicationService).register(any(UserRegistrationDto.class));
 
     assertThrows(SaveToDatabaseException.class, () -> userService.register(userRegistrationDto));

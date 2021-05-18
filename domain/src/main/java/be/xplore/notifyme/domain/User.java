@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-//@Entity(name = "external_user")
 @Builder
 @Getter
 @Setter
@@ -30,6 +29,12 @@ public class User {
   private Set<Team> teams = new HashSet<>();
   private List<Event> events = new ArrayList<>();
 
+  /**
+   * Creates a user.
+   *
+   * @param userId   id from external server.
+   * @param userName from external server. Redundant but avoids a lot of additional calls to api.
+   */
   public User(String userId, String userName) {
     this.userId = userId;
     this.userName = userName;

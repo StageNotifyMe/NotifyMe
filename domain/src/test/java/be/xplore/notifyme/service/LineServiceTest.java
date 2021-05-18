@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Event;
@@ -16,7 +15,6 @@ import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ILineRepo;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -32,6 +30,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {LineService.class})
 class LineServiceTest {
+
   @Autowired
   private LineService lineService;
   @MockBean
@@ -53,33 +52,22 @@ class LineServiceTest {
   private final Facility facility =
       new Facility(1L, "descriptie", "locatie", 1, 20, new Venue(), new LinkedList<>());
   private final User user = new User();
-  private final Line line = new Line("note", 5);
+  private final Line line = new Line("note", 10);
 
   @Test
   void createLineSuccessful() {
     KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
-    when(eventService.getEventAndVerifyLineManagerPermission(anyLong(), any(Principal.class)))
-        .thenReturn(event);
-    when(facilityService.getFacility(1L)).thenReturn(facility);
-    when(lineRepo.save(any(Line.class))).thenAnswer(
-        invocation -> invocation.getArguments()[0]);
-    when(userService.getUserFromPrincipal(principal)).thenReturn(user);
+    when(lineRepo.create(any(Line.class), anyLong(), anyLong())).thenReturn(line);
 
     var result = lineService.createLine(createLineDto, principal);
-    assertEquals("note", result.getNote());
-    assertEquals(10, result.getRequiredStaff());
-    assertEquals(event.getId(), result.getEvent().getId());
-    assertEquals(facility.getId(), result.getFacility().getId());
+    assertEquals(line,result);
   }
 
   @Test
   void createLineEventNotFound() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
-    doThrow(new CrudException("Could not find event for id 1")).when(eventService)
-        .getEventAndVerifyLineManagerPermission(anyLong(), any(Principal.class));
-    when(facilityService.getFacility(1L)).thenReturn(facility);
-    when(lineRepo.save(any(Line.class))).thenAnswer(
-        invocation -> invocation.getArguments()[0]);
+    doThrow(new CrudException("Could not find event for id 1")).when(lineRepo)
+        .create(any(), anyLong(), anyLong());
 
     assertThrows(CrudException.class, () -> lineService.createLine(createLineDto, principal));
   }
@@ -87,29 +75,24 @@ class LineServiceTest {
   @Test
   void createLineFacilityNotFound() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
-    when(eventService.getEvent(1L)).thenReturn(event);
-    doThrow(new CrudException("Could not find facility for id 1")).when(facilityService)
-        .getFacility(1L);
-    when(lineRepo.save(any(Line.class))).thenAnswer(
-        invocation -> invocation.getArguments()[0]);
+    doThrow(new CrudException("Could not find facility for id 1")).when(lineRepo)
+        .create(any(), anyLong(), anyLong());
 
     assertThrows(CrudException.class, () -> lineService.createLine(createLineDto, principal));
   }
 
   @Test
   void getAllLinesByEventSuccessful() {
-    var mockEvent = mock(Event.class);
     List<Line> lineList = new LinkedList<>();
     lineList.add(line);
-    when(eventService.getEvent(1L)).thenReturn(mockEvent);
-    when(mockEvent.getLines()).thenReturn(lineList);
+    when(lineRepo.getAllByEventId(1L)).thenReturn(lineList);
 
     assertEquals(lineList, lineService.getAllLinesByEvent(1L));
   }
 
   @Test
   void getAllLinesByEventNotFound() {
-    doThrow(CrudException.class).when(eventService).getEvent(1L);
+    doThrow(CrudException.class).when(lineRepo).getAllByEventId(1L);
 
     assertThrows(CrudException.class, () -> lineService.getAllLinesByEvent(1L));
   }

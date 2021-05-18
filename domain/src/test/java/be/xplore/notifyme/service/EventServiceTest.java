@@ -39,6 +39,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {EventService.class})
 class EventServiceTest {
+
   @Autowired
   private EventService eventService;
   @MockBean
@@ -59,7 +60,10 @@ class EventServiceTest {
     when(userService.getUserFromPrincipal(any(Principal.class))).thenReturn(testUser);
 
     var ced = getTestCreateEventDto();
-    assertThat(eventService.createEvent(ced, principal),instanceOf(Event.class));
+    var event = new Event();
+    event.setId(1L);
+    when(eventRepo.save(any())).thenReturn(event);
+    assertThat(eventService.createEvent(ced, principal), instanceOf(Event.class));
   }
 
   @Test
@@ -90,7 +94,8 @@ class EventServiceTest {
   void getEventAndVerifyLineManagerPermissionSuccessful() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     final IDToken token = Mockito.mock(IDToken.class);
-    when(eventRepo.findById(1L)).thenReturn(Optional.of(getTestEventWithLineManager()));
+    when(eventRepo.findByIdWithLineManagers(1L))
+        .thenReturn(Optional.of(getTestEventWithLineManager()));
     when(tokenService.getIdToken(any(Principal.class))).thenReturn(token);
     when(token.getSubject()).thenReturn("testUser");
     when(userService.getUser("testUser")).thenReturn(testUser);
@@ -108,7 +113,7 @@ class EventServiceTest {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     final IDToken token = Mockito.mock(IDToken.class);
     testEvent.setLineManagers(new HashSet<>());
-    when(eventRepo.findById(1L)).thenReturn(Optional.of(testEvent));
+    when(eventRepo.findByIdWithLineManagers(1L)).thenReturn(Optional.of(testEvent));
     when(tokenService.getIdToken(any(Principal.class))).thenReturn(token);
     when(token.getPreferredUsername()).thenReturn("testUser");
     when(userService.getUser("testUser")).thenReturn(testUser);
@@ -133,15 +138,14 @@ class EventServiceTest {
   void getAllEventsForLineManagerSuccessful() {
     List<Event> eventList = new LinkedList<>();
     eventList.add(testEvent);
-    when(userService.getUser("testUser")).thenReturn(testUser);
-    when(testUser.getEvents()).thenReturn(eventList);
+    when(eventRepo.findAllForLineManager(anyString())).thenReturn(eventList);
 
     assertEquals(eventList, eventService.getAllEventsForLineManager("testUser"));
   }
 
   @Test
   void getAllEventsForLineManagerNotFound() {
-    doThrow(CrudException.class).when(userService).getUser("testUser");
+    doThrow(CrudException.class).when(eventRepo).findAllForLineManager(anyString());
 
     assertThrows(CrudException.class, () -> eventService.getAllEventsForLineManager("testUser"));
   }

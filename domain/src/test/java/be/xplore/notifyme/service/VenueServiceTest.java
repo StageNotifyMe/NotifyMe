@@ -31,7 +31,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 
 @SpringBootTest(classes = {VenueService.class})
 class VenueServiceTest {
@@ -51,11 +50,11 @@ class VenueServiceTest {
     IDToken mockIdToken = getMockIdToken();
     when(tokenService.getIdToken(mockPrincipal)).thenReturn(mockIdToken);
 
-    User user = getTestUser();
-    Venue venue=new Venue();
+    Venue venue = new Venue();
     venue.setId(1);
+    User user = getTestUser();
     when(venueRepo.save(any())).thenReturn(venue);
-    when(venueRepo.addVenueManager(anyLong(),anyString())).thenReturn(venue);
+    when(venueRepo.addVenueManager(anyLong(), anyString())).thenReturn(venue);
     when(userService.getUser("abcd")).thenReturn(user);
 
     assertEquals(venue,
@@ -71,7 +70,7 @@ class VenueServiceTest {
 
     doThrow(new CrudException(
         String.format("User with id %s could not be found", mockIdToken.getSubject())))
-        .when(userService).getUser("abcd");
+        .when(venueRepo).save(any());
 
     assertThrows(CrudException.class, () ->
         venueService.createVenue(cvdto, mockPrincipal));
@@ -114,7 +113,7 @@ class VenueServiceTest {
 
   @Test
   void getVenuesUserNotFound() {
-    doThrow(CrudException.class).when(userService).getUser("unknown");
+    doThrow(CrudException.class).when(venueRepo).getAllByManagersIsContaining(anyString());
 
     assertThrows(CrudException.class, () -> venueService.getVenuesForUser("unknown"));
   }
@@ -141,7 +140,7 @@ class VenueServiceTest {
 
   @Test
   void makeUserVenueManagerFailA() {
-    doThrow(CrudException.class).when(userService).getUser(anyString());
+    doThrow(CrudException.class).when(venueRepo).addVenueManager(anyLong(), anyString());
 
     assertThrows(SaveToDatabaseException.class,
         () -> venueService.makeUserVenueManager("userid", 1L));
@@ -150,17 +149,7 @@ class VenueServiceTest {
   @Test
   void makeUserVenueManagerFailB() {
     when(userService.getUser(anyString())).thenReturn(getTestUser());
-    doThrow(CrudException.class).when(venueRepo).findById(anyLong());
-
-    assertThrows(SaveToDatabaseException.class,
-        () -> venueService.makeUserVenueManager("userid", 1L));
-  }
-
-  @Test
-  void makeUserVenueManagerFailC() {
-    when(userService.getUser(anyString())).thenReturn(getTestUser());
-    when(venueRepo.findById(anyLong())).thenReturn(Optional.of(getTestVenue()));
-    doThrow(CrudException.class).when(venueRepo).save(any(Venue.class));
+    doThrow(CrudException.class).when(userService).grantUserRole(anyString(), anyString());
 
     assertThrows(SaveToDatabaseException.class,
         () -> venueService.makeUserVenueManager("userid", 1L));

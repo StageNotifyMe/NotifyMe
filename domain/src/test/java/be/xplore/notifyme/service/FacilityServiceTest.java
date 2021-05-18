@@ -30,6 +30,8 @@ class FacilityServiceTest {
 
   private final CreateFacilityDto createFacilityDto =
       new CreateFacilityDto("descriptie", "locatie", 1, 10, 1L);
+  private final Facility returnFacility = new Facility(1L, "descriptie", "locatie", 1, 10, null,
+      null);
   private final Venue venue =
       new Venue(1L, "venue", "descriptie", new Address(), new HashSet<>(), new LinkedList<>());
   @Autowired
@@ -45,21 +47,16 @@ class FacilityServiceTest {
   @Test
   void createFacilitySuccessful() {
     when(venueService.getVenue(1L)).thenReturn(venue);
-    when(facilityRepo.save(any(Facility.class))).thenAnswer(
-        invocation -> invocation.getArguments()[0]);
+    when(facilityRepo.create(any(Facility.class), anyLong())).thenReturn(returnFacility);
 
     var result = facilityService.createFacility(createFacilityDto);
-    assertEquals(createFacilityDto.getDescription(), result.getDescription());
-    assertEquals(createFacilityDto.getLocation(), result.getLocation());
-    assertEquals(venue.getId(), result.getVenue().getId());
+    assertEquals(returnFacility, result);
   }
 
   @Test
   void createFacilityVenueNotFound() {
-    doThrow(new CrudException("Could not find venue for id 1")).when(venueService).getVenue(1L);
-    when(facilityRepo.save(any(Facility.class))).thenAnswer(
-        invocation -> invocation.getArguments()[0]);
-
+    doThrow(new CrudException("Could not find venue for id 1")).when(facilityRepo)
+        .create(any(), anyLong());
     assertThrows(CrudException.class, () -> facilityService.createFacility(createFacilityDto));
   }
 
@@ -87,7 +84,7 @@ class FacilityServiceTest {
 
   @Test
   void getAllFacilitiesForVenueFail() {
-    doThrow(CrudException.class).when(venueService).getVenue(anyLong());
+    doThrow(CrudException.class).when(facilityRepo).getAllByVenue(anyLong());
 
     assertThrows(CrudException.class, () -> facilityService.getAllFacilitesForVenue(1L));
   }

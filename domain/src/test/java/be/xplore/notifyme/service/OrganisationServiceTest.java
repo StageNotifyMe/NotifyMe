@@ -104,11 +104,11 @@ class OrganisationServiceTest {
   }
 
   private void setupPromotionMocking(Principal principal, UserRepresentation userRepresentation,
-                                     User user) {
+      User user) {
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
     when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
-    when(organisationRepo.save(any())).thenReturn(testOrg);
+    when(organisationRepo.addToOrgManagers(anyLong(), anyString())).thenReturn(testOrg);
     doNothing().when(userService).grantUserRole(anyString(), anyString());
   }
 
@@ -122,7 +122,8 @@ class OrganisationServiceTest {
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
     when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
-    when(organisationRepo.save(any())).thenThrow(new CrudException("HBE"));
+    when(organisationRepo.addToOrgManagers(anyLong(), anyString()))
+        .thenThrow(new CrudException("HBE"));
     assertThrows(CrudException.class, () ->
         organisationService.promoteUserToOrgManager("testUser", 1L, principal));
   }

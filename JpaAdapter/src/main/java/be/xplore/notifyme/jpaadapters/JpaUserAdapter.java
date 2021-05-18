@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class JpaUserAdapter implements IUserRepo {
+
   private final JpaUserRepository jpaUserRepository;
 
   @Override

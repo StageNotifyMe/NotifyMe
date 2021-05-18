@@ -109,6 +109,12 @@ public class JpaEvent {
         .collect(Collectors.toSet());
   }
 
+  /**
+   * Create a jpa event.
+   *
+   * @param event    domain representation of new event.
+   * @param jpaVenue jpa venue to add event to.
+   */
   public JpaEvent(Event event, JpaVenue jpaVenue) {
     this.id = event.getId();
     this.title = event.getTitle();

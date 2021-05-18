@@ -83,6 +83,12 @@ public class JpaFacility {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Creates jpa facility.
+   *
+   * @param facility domain rep of facility to create.
+   * @param jpaVenue jpa venue to add facility to.
+   */
   public JpaFacility(Facility facility, JpaVenue jpaVenue) {
     this.id = facility.getId();
     this.description = facility.getDescription();

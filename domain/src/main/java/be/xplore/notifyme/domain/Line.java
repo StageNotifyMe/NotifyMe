@@ -21,6 +21,12 @@ public class Line {
   private Event event;
   private Team team;
 
+  /**
+   * Creates a line.
+   *
+   * @param note          to add to line.
+   * @param requiredStaff to add to line.
+   */
   public Line(String note, int requiredStaff) {
     this.note = note;
     this.requiredStaff = requiredStaff;
@@ -41,6 +47,13 @@ public class Line {
     this.team = team;
   }
 
+  /**
+   * Constructs a new line.
+   *
+   * @param note          memo to add to line.
+   * @param requiredStaff amount of staff needed for line.
+   * @param team          to assign to line.
+   */
   public Line(String note, int requiredStaff, Team team) {
     this.note = note;
     this.requiredStaff = requiredStaff;
