@@ -73,8 +73,15 @@ public class JpaUserOrgApplication {
     this.applicationStatus = userOrgApplication.getApplicationStatus();
   }
 
+  /**
+   * Creates a jpa userorgapplication.
+   *
+   * @param organisation a jpa organisation.
+   * @param user         a jpa user.
+   * @param status       the status of the application.
+   */
   public JpaUserOrgApplication(JpaOrganisation organisation, JpaUser user,
-                               OrgApplicationStatus status) {
+      OrgApplicationStatus status) {
     this.appliedUser = user;
     this.appliedOrganisation = organisation;
     this.applicationStatus = status;

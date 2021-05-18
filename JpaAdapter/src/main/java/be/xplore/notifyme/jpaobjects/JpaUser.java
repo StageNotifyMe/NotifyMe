@@ -58,6 +58,11 @@ public class JpaUser {
         .build();
   }
 
+  /**
+   * Converts jpa user to domain user with applied organisations.
+   *
+   * @return domain user with applied orgs.
+   */
   public User todomainIncAppliedOrganisations() {
     return User.builder()
         .userId(this.userId)
