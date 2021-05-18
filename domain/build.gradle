@@ -1,0 +1,77 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'java'
+    id 'checkstyle'
+    id 'jacoco'
+}
+
+group = 'be.xplore.notifyme'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+bootJar{
+    enabled = false
+}
+jar{
+    enabled = true
+}
+
+checkstyleMain {
+    source = 'src/main/java'
+}
+checkstyleTest {
+    source = 'src/test/java'
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    testImplementation 'com.tngtech.archunit:archunit-junit5:0.18.0'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.9.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    implementation 'org.projectlombok:lombok:1.18.16'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
+
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+
+    implementation group: 'org.keycloak', name: 'keycloak-spring-boot-starter', version: '12.0.4'
+    implementation group: 'org.keycloak.bom', name: 'keycloak-adapter-bom', version: '12.0.4', ext: 'pom'
+    implementation group: 'com.c4-soft.springaddons', name: 'spring-security-oauth2-test-webmvc-addons', version: '2.5.2'
+
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+}
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
+jacoco {
+    reportsDirectory = layout.projectDirectory.dir("jacoco")
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.enabled false
+        }
+    }
+}
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
