@@ -37,6 +37,8 @@ public class JpaUser {
   private Set<JpaTeam> teams;
   @ManyToMany(cascade = CascadeType.ALL, mappedBy = "lineManagers")
   private List<JpaEvent> events;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+  private List<JpaMessage> messages;
 
   /**
    * Converts a jpa-object to a domain variant.
