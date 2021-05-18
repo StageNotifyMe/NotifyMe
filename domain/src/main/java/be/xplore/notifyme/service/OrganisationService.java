@@ -87,6 +87,5 @@ public class OrganisationService implements IOrganisationService {
 
     return organisationRepo
         .addToOrgManagers(orgId, userService.getUserInfo(username, principal).getId());
-    //return organisationRepo.save(organisation);
   }
 }
