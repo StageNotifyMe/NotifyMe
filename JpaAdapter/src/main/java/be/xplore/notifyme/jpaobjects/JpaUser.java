@@ -58,6 +58,16 @@ public class JpaUser {
         .build();
   }
 
+  public User todomainIncAppliedOrganisations() {
+    return User.builder()
+        .userId(this.userId)
+        .userName(this.userName)
+        .appliedOrganisations(
+            this.appliedOrganisations.stream().map(JpaUserOrgApplication::toDomainBase).collect(
+                Collectors.toList()))
+        .build();
+  }
+
   /**
    * Converts a jpa-object to a domain variant with only primitive type attributes.
    *

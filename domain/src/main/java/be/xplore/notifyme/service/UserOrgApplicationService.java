@@ -6,6 +6,7 @@ import be.xplore.notifyme.domain.OrganisationUser;
 import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.exception.OrgApplicationNotFoundException;
+import be.xplore.notifyme.persistence.IOrganisationRepo;
 import be.xplore.notifyme.service.security.OrganisationSecurityService;
 import java.security.Principal;
 import java.util.List;
@@ -22,6 +23,7 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
   private final UserService userService;
   private final OrganisationService organisationService;
   private final OrganisationSecurityService organisationSecurityService;
+  private final IOrganisationRepo organisationRepo;
 
   /**
    * Creates a user application for a certain organisation.
@@ -31,16 +33,13 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
    */
   @Override
   public void applyToOrganisation(Long organisationId, Principal principal) {
-    var user = userService.getUserFromPrincipal(principal);
-    var organisation = organisationService.getOrganisation(organisationId);
-    user.getAppliedOrganisations().add(new UserOrgApplication(organisation, user,
-        OrgApplicationStatus.APPLIED));
-    userService.updateUser(user);
+    organisationRepo
+        .applyToOrganisation(organisationId, userService.getUserIdFromPrincipal(principal));
   }
 
   @Override
   public List<UserOrgApplication> getUserOrgApplications(Principal principal) {
-    var user = userService.getUserFromPrincipal(principal);
+    var user = userService.getUserFromPrincipalIncAppliedUsers(principal);
     return user.getAppliedOrganisations();
   }
 
@@ -67,8 +66,9 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
    */
   @Override
   public void respondToApplication(OrganisationUserKey organisationUserKey, boolean accept,
-      Principal principal) {
-    var organisation = organisationService.getOrganisation(organisationUserKey.getOrganisationId());
+                                   Principal principal) {
+    var organisation =
+        organisationService.getOrganisationIncAppliedUsers(organisationUserKey.getOrganisationId());
     secureOrgManagerRequestFromPrincipal(organisation, principal);
     organisation.getAppliedUsers().stream().filter(
         application -> application.getAppliedUser().getUserId()
@@ -95,8 +95,8 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
    * @param principal    representation of the authenticated user.
    */
   private void secureOrgManagerRequestFromPrincipal(Organisation organisation,
-      Principal principal) {
-    var user = userService.getUserFromPrincipal(principal);
+                                                    Principal principal) {
+    var user = userService.getUserFromprincipalIncOrganisations(principal);
     organisationSecurityService.checkUserIsOrgManager(user, organisation);
   }
 }

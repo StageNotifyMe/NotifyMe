@@ -16,6 +16,7 @@ import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.exception.OrgApplicationNotFoundException;
+import be.xplore.notifyme.persistence.IOrganisationRepo;
 import be.xplore.notifyme.service.security.OrganisationSecurityService;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -39,7 +40,8 @@ class UserOrgApplicationServiceTest {
   private OrganisationService organisationService;
   @MockBean
   private OrganisationSecurityService organisationSecurityService;
-
+  @MockBean
+  private IOrganisationRepo iOrganisationRepo;
 
   @Test
   void applyToOrganisation() {
