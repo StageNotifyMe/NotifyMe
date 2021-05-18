@@ -106,7 +106,7 @@ class UserServiceTest {
   }
 
   private void mockKeycloakSecurityContext(UserRepresentation userRep,
-      Boolean hasRequiredPermission) {
+                                           Boolean hasRequiredPermission) {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
 
     KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);
@@ -218,7 +218,8 @@ class UserServiceTest {
   void getUserInfoAndSendVerificationEmailFailEmail() {
     final UserRepresentation userRepresentation = mock(UserRepresentation.class);
     final UserRegistrationDto userRegistrationDto =
-        new UserRegistrationDto("firstname", "lastname", "email@mail.com", "username", "password");
+        new UserRegistrationDto("firstname", "lastname", "email@mail.com", "+32123456789",
+            "username", "password");
     when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRepresentation);
     when(userRepresentation.getId()).thenReturn("id");
     doThrow(CrudException.class).when(keycloakCommunicationService)

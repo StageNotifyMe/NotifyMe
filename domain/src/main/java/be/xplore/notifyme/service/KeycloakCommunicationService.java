@@ -11,7 +11,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.account.UserRepresentation;
@@ -96,11 +98,20 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
 
     var credentialRepresentation = new CredentialRepresentationDto("password",
         userRegistrationDto.getPassword(), false);
+    var attributes = createAttributes(userRegistrationDto);
     var userRepresentation = new UserRepresentationDto(userRegistrationDto.getFirstname(),
         userRegistrationDto.getLastname(), userRegistrationDto.getEmail(),
-        userRegistrationDto.getUsername(), true, List.of(credentialRepresentation));
+        userRegistrationDto.getUsername(), true, attributes, List.of(credentialRepresentation));
     String parsedUserRepresentation = gson.toJson(userRepresentation);
     return new HttpEntity<>(parsedUserRepresentation, headers);
+  }
+
+  private Map<String, List<String>> createAttributes(UserRegistrationDto userRegistrationDto) {
+    HashMap<String, List<String>> attributes = new HashMap<>();
+    var phoneNumber = new ArrayList<String>();
+    phoneNumber.add(userRegistrationDto.getPhoneNumber());
+    attributes.put("phone_number", phoneNumber);
+    return attributes;
   }
 
   /**
@@ -253,7 +264,7 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
   public void giveUserRole(String userId, RoleRepresentation roleToGive, String idOfClient) {
     var uri = registerUri + String.format("/%s/role-mappings/clients/%s", userId, idOfClient);
     var role = new GiveClientRoleDto(roleToGive.getId(), roleToGive.getName(), true);
-    var body = new GiveClientRoleDto[]{role};
+    var body = new GiveClientRoleDto[] {role};
     var entity = createJsonHttpEntity(getAdminAccesstoken(), body);
     var restResult = restTemplate.postForEntity(uri, entity, String.class);
     if (restResult.getStatusCode() != HttpStatus.NO_CONTENT) {

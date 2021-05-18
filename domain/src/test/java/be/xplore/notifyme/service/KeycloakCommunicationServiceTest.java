@@ -49,7 +49,8 @@ class KeycloakCommunicationServiceTest {
   private Gson gson;
 
   final UserRegistrationDto userRegistrationDto =
-      new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
+      new UserRegistrationDto("user", "userlastname", "user@user.be", "+32123456789", "user.user",
+          "User123!");
 
 
   @Test
@@ -94,7 +95,8 @@ class KeycloakCommunicationServiceTest {
   @Test
   void registerFailOnCreation() {
     final UserRegistrationDto userRegistrationDto =
-        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
+        new UserRegistrationDto("user", "userlastname", "user@user.be", "+32123456789", "user.user",
+            "User123!");
     when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
 
@@ -123,7 +125,8 @@ class KeycloakCommunicationServiceTest {
   @Test
   void getUserInfoRestFail() {
     final UserRegistrationDto userRegistrationDto =
-        new UserRegistrationDto("user", "userlastname", "user@user.be", "user.user", "User123!");
+        new UserRegistrationDto("user", "userlastname", "user@user.be", "+32123456789", "user.user",
+            "User123!");
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
         eq(String.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
