@@ -25,11 +25,7 @@ public class NotificationService implements INotificationService {
   public void notifyUser(String username, long messageId) {
     var userInfo = keycloakCommunicationService.getUserInfoUsername(username);
     var notification = notificationRepo.create(messageId, userInfo.getId());
-    notification.setCommunicationAddress(
-        notification.getCommunicationPreference().getCommunicationStrategy()
-            .getCommunicationAddress(userInfo));
-    notification.setUsedCommunicationStrategy(
-        notification.getCommunicationPreference().getCommunicationStrategy().toString());
+    notification.setCommunicationAddresAndUsedStrategy(userInfo);
     notificationRepo.save(notification);
     notification.send();
   }

@@ -78,6 +78,11 @@ public class JpaUser {
         .build();
   }
 
+  /**
+   * Returns the toDomainBase including notifications.
+   *
+   * @return user object.
+   */
   public User toDomainIncNotifications() {
     return User.builder()
         .userId(this.userId)
@@ -87,6 +92,11 @@ public class JpaUser {
         .build();
   }
 
+  /**
+   * Returns the toDomainBase including communicationPreference.
+   *
+   * @return user object.
+   */
   public User toDomainIncCommunicationPreference() {
     return User.builder()
         .userId(this.userId)

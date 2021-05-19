@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.keycloak.representations.account.UserRepresentation;
 
 @Getter
 @Setter
@@ -21,5 +22,18 @@ public class Notification {
 
   public void send() {
     this.getCommunicationPreference().getCommunicationStrategy().send(this);
+  }
+
+  /**
+   * Uses instance of User in this object in combination with a UserRepresentation object
+   * to set the communicationaddress and used strategy.
+   *
+   * @param userInfo UserRepresentation object.
+   */
+  public void setCommunicationAddresAndUsedStrategy(UserRepresentation userInfo) {
+    this.setCommunicationAddress(this.getCommunicationPreference().getCommunicationStrategy()
+        .getCommunicationAddress(userInfo));
+    this.setUsedCommunicationStrategy(
+        this.getCommunicationPreference().getCommunicationStrategy().toString());
   }
 }

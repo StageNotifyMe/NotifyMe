@@ -220,7 +220,8 @@ class UserServiceTest {
     final UserRegistrationDto userRegistrationDto =
         new UserRegistrationDto("firstname", "lastname", "email@mail.com", "+32123456789",
             "username", "password");
-    when(keycloakCommunicationService.getUserInfoUsername(anyString())).thenReturn(userRepresentation);
+    when(keycloakCommunicationService.getUserInfoUsername(anyString()))
+        .thenReturn(userRepresentation);
     when(userRepresentation.getId()).thenReturn("id");
     doThrow(CrudException.class).when(keycloakCommunicationService)
         .sendEmailVerificationRequest("id");

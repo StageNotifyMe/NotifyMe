@@ -27,6 +27,11 @@ public class JpaCommunicationPreference {
   @OneToOne
   private JpaUser user;
 
+  /**
+   * Converts the jpa-version of the object to a domain version with basic attributes.
+   *
+   * @return domain version of the object.
+   */
   public CommunicationPreference toDomainBase() {
     return CommunicationPreference.builder()
         .id(this.id)
@@ -34,9 +39,13 @@ public class JpaCommunicationPreference {
         .build();
   }
 
+  /**
+   * Constructor to convert domain object to jpa-version.
+   *
+   * @param communicationPreference domain version of the object.
+   */
   public JpaCommunicationPreference(CommunicationPreference communicationPreference) {
     this.id = communicationPreference.getId();
     this.communicationStrategy = communicationPreference.getCommunicationStrategy();
-    //this.user = new JpaUser(communicationPreference.getUser());
   }
 }

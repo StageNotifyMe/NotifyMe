@@ -175,7 +175,8 @@ class KeycloakCommunicationServiceTest {
 
     when(gson.fromJson("LIST", listType)).thenReturn(null);
 
-    assertThrows(CrudException.class, () -> keycloakCommunicationService.getUserInfoUsername("user"));
+    assertThrows(CrudException.class,
+        () -> keycloakCommunicationService.getUserInfoUsername("user"));
   }
 
   @Test
@@ -189,7 +190,8 @@ class KeycloakCommunicationServiceTest {
     when(gson.fromJson("LIST", listType)).thenReturn(mockList);
     doThrow(RuntimeException.class).when(mockList).get(anyInt());
 
-    assertThrows(RuntimeException.class, () -> keycloakCommunicationService.getUserInfoUsername("user"));
+    assertThrows(RuntimeException.class,
+        () -> keycloakCommunicationService.getUserInfoUsername("user"));
   }
 
   @Test

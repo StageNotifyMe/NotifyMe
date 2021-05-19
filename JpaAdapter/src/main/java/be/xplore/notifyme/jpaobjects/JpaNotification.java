@@ -31,6 +31,13 @@ public class JpaNotification {
   @OneToOne(cascade = CascadeType.ALL)
   private JpaUser receiver;
 
+  /**
+   * Constructor used to create a new notification and
+   * wire message, user and communicationPreference correctly.
+   *
+   * @param jpaMessage jpa version of the message.
+   * @param jpaUser    jpa version of the receiver.
+   */
   public JpaNotification(JpaMessage jpaMessage, JpaUser jpaUser) {
     this.message = jpaMessage;
     this.receiver = jpaUser;
@@ -39,6 +46,12 @@ public class JpaNotification {
         jpaUser.getCommunicationPreference().getCommunicationStrategy().toString();
   }
 
+  /**
+   * Constructor used for updates on an existing object.
+   *
+   * @param notification the domain version of the object to save.
+   * @param jpaUser      already converted version of notification.getReceiver.
+   */
   public JpaNotification(Notification notification, JpaUser jpaUser) {
     this.id = notification.getId();
     this.communicationAddress = notification.getCommunicationAddress();
@@ -48,6 +61,11 @@ public class JpaNotification {
     this.receiver = jpaUser;
   }
 
+  /**
+   * Converts jpa-object to domain version with basic attributes.
+   *
+   * @return domain version object.
+   */
   public Notification toDomainBase() {
     return Notification.builder()
         .id(this.id)
@@ -59,6 +77,11 @@ public class JpaNotification {
         .build();
   }
 
+  /**
+   * Contructor to convert domain object to jpa-version.
+   *
+   * @param notification domain object.
+   */
   public JpaNotification(Notification notification) {
     this.id = notification.getId();
     this.communicationAddress = notification.getCommunicationAddress();
