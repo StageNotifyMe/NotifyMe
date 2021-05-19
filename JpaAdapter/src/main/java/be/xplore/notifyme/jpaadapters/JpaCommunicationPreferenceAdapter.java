@@ -7,7 +7,10 @@ import be.xplore.notifyme.jpaobjects.JpaCommunicationPreference;
 import be.xplore.notifyme.jparepositories.JpaCommunicationPreferenceRepository;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.ICommunicationPreferenceRepo;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +22,14 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
 
   @Override
   public CommunicationPreference save(CommunicationPreference communicationPreference) {
+    if (communicationPreference.getUser().getUserId() != null) {
+      var jpaUser =
+          jpaUserRepository.findById(communicationPreference.getUser().getUserId()).orElseThrow(
+              () -> new JpaNotFoundException(
+                  "Could not find user for id " + communicationPreference.getUser().getUserId()));
+      return jpaCommunicationPreferenceRepository
+          .save(new JpaCommunicationPreference(communicationPreference, jpaUser)).toDomainBase();
+    }
     return jpaCommunicationPreferenceRepository
         .save(new JpaCommunicationPreference(communicationPreference)).toDomainBase();
   }
@@ -56,6 +67,9 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
         jpaCommunicationPreferenceRepository.findById(communicationPreferenceId).orElseThrow(
             () -> new JpaNotFoundException(
                 "Could not find communication preference for id " + communicationPreferenceId));
+    if (communicationPreference.isDefault()) {
+      throw new ValidationException("Cannot delete default communication method");
+    }
     jpaCommunicationPreferenceRepository.delete(communicationPreference);
   }
 
@@ -66,5 +80,13 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
     var preferences = jpaCommunicationPreferenceRepository.findAllByUser(jpaUser);
     return preferences.stream().map(JpaCommunicationPreference::toDomainBase)
         .filter(CommunicationPreference::isDefault).findFirst();
+  }
+
+  @Override
+  public List<CommunicationPreference> getAllForUser(String userId) {
+    var jpaUser = jpaUserRepository.findById(userId)
+        .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId));
+    return jpaCommunicationPreferenceRepository.findAllByUser(jpaUser).stream()
+        .map(JpaCommunicationPreference::toDomainBase).collect(Collectors.toList());
   }
 }

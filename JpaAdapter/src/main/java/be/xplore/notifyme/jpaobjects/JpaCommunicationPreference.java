@@ -2,7 +2,6 @@ package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;
-import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +26,7 @@ public class JpaCommunicationPreference {
   private boolean isDefault;
   @Convert(converter = CommunicationStrategyConverter.class)
   private ICommunicationStrategy communicationStrategy;
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
   private JpaUser user;
 
   public JpaCommunicationPreference(JpaUser jpaUser, boolean isActive, boolean isDefault,
@@ -49,6 +48,7 @@ public class JpaCommunicationPreference {
         .isActive(this.isActive)
         .isDefault(this.isDefault)
         .communicationStrategy(this.communicationStrategy)
+        .user(this.user.toDomainBase())
         .build();
   }
 
@@ -62,5 +62,15 @@ public class JpaCommunicationPreference {
     this.isActive = communicationPreference.isActive();
     this.isDefault = communicationPreference.isDefault();
     this.communicationStrategy = communicationPreference.getCommunicationStrategy();
+    this.user = new JpaUser(communicationPreference.getUser());
+  }
+
+  public JpaCommunicationPreference(CommunicationPreference communicationPreference,
+                                    JpaUser jpaUser) {
+    this.id = communicationPreference.getId();
+    this.isActive = communicationPreference.isActive();
+    this.isDefault = communicationPreference.isDefault();
+    this.communicationStrategy = communicationPreference.getCommunicationStrategy();
+    this.user = jpaUser;
   }
 }

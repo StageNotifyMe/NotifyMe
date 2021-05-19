@@ -1,6 +1,7 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
+import java.util.List;
 
 public interface ICommunicationPreferenceService {
   CommunicationPreference createCommunicationPreference(String userId, boolean isActive,
@@ -12,4 +13,6 @@ public interface ICommunicationPreferenceService {
                                                         boolean isActive);
 
   void deleteCommunicationPreference(long communicationPreferenceId);
+
+  List<CommunicationPreference> getAllCommunicationPreferencesForUser(String userId);
 }
