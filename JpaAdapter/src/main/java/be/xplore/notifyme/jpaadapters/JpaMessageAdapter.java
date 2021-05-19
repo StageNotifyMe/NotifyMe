@@ -1,7 +1,7 @@
 package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.Message;
-import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exceptions.JpaNotFoundException;
 import be.xplore.notifyme.jpaobjects.JpaMessage;
 import be.xplore.notifyme.jparepositories.JpaMessageRepository;
 import be.xplore.notifyme.persistence.IMessageRepo;
@@ -21,7 +21,7 @@ public class JpaMessageAdapter implements IMessageRepo {
   @Override
   public Message findById(long messageId) {
     return jpaMessageRepository.findById(messageId)
-        .orElseThrow(() -> new CrudException("Could not find message for id " + messageId))
+        .orElseThrow(() -> new JpaNotFoundException("Could not find message for id " + messageId))
         .toDomainBase();
   }
 }

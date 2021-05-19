@@ -137,7 +137,7 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
    * @return Keycloak Userrepresentation.
    */
   @Override
-  public UserRepresentation getUserInfo(String username) {
+  public UserRepresentation getUserInfoUsername(String username) {
     var userinfoReturn = getUserInfoRest(getAdminAccesstoken(), username);
     var listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();

@@ -40,7 +40,6 @@ public class AdminController {
   private final IVenueService venueService;
   private final IUserService userService;
 
-
   @GetMapping("/adminTest")
   public ResponseEntity<String> adminInfoTest() {
     return ResponseEntity.ok("Well hello there, admin!");

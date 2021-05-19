@@ -114,7 +114,7 @@ class UserServiceTest {
         .thenReturn(keycloakPrincipal.getAccount().getKeycloakSecurityContext().getIdToken());
     when(tokenService.getSecurityContext(any()))
         .thenReturn(keycloakSecurityContext);
-    when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
+    when(keycloakCommunicationService.getUserInfoUsername(anyString())).thenReturn(userRep);
     AuthorizationContext mockAuthContext = Mockito.mock(AuthorizationContext.class);
     when((keycloakSecurityContext.getAuthorizationContext())).thenReturn(mockAuthContext);
     when(tokenService.hasRole(any(), anyString())).thenReturn(hasRequiredPermission);
@@ -171,14 +171,14 @@ class UserServiceTest {
 
   private void getUserInfoAndSendVerification() {
     var userRep = new UserRepresentation();
-    when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
+    when(keycloakCommunicationService.getUserInfoUsername(anyString())).thenReturn(userRep);
     doNothing().when(keycloakCommunicationService).sendEmailVerificationRequest(anyString());
   }
 
   private void getUserInfoAndSendVerificationFail() {
     var userRep = new UserRepresentation();
     userRep.setId("testUser");
-    when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRep);
+    when(keycloakCommunicationService.getUserInfoUsername(anyString())).thenReturn(userRep);
     doThrow(new CrudException("Could not send request to keycloak"))
         .when(keycloakCommunicationService).sendEmailVerificationRequest(anyString());
   }
@@ -220,7 +220,8 @@ class UserServiceTest {
     final UserRegistrationDto userRegistrationDto =
         new UserRegistrationDto("firstname", "lastname", "email@mail.com", "+32123456789",
             "username", "password");
-    when(keycloakCommunicationService.getUserInfo(anyString())).thenReturn(userRepresentation);
+    when(keycloakCommunicationService.getUserInfoUsername(anyString()))
+        .thenReturn(userRepresentation);
     when(userRepresentation.getId()).thenReturn("id");
     doThrow(CrudException.class).when(keycloakCommunicationService)
         .sendEmailVerificationRequest("id");

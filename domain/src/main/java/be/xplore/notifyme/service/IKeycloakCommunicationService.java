@@ -17,7 +17,7 @@ public interface IKeycloakCommunicationService {
 
   void sendEmailVerificationRequest(String userId);
 
-  UserRepresentation getUserInfo(String username);
+  UserRepresentation getUserInfoUsername(String username);
 
   String getAdminAccesstoken();
 
