@@ -51,7 +51,7 @@ public class UserService implements IUserService {
     var token = tokenService.getIdToken(principal);
     if (token.getPreferredUsername().equals(username)
         || tokenService.hasRole(principal, "admin")) {
-      return keycloakCommunicationService.getUserInfo(username);
+      return keycloakCommunicationService.getUserInfoUsername(username);
     } else {
       throw new UnauthorizedException("User can only get info about themself");
     }
@@ -115,7 +115,7 @@ public class UserService implements IUserService {
    * @param username username of the user that needs to receive the email.
    */
   private void getUserInfoAndSendVerificationEmail(String username) {
-    var userInfo = keycloakCommunicationService.getUserInfo(username);
+    var userInfo = keycloakCommunicationService.getUserInfoUsername(username);
     //TODO: terug aan zetten!
     //keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
     createUserInDatabase(userInfo.getId(), username);

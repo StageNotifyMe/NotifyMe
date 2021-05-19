@@ -37,6 +37,6 @@ public class JpaCommunicationPreference {
   public JpaCommunicationPreference(CommunicationPreference communicationPreference) {
     this.id = communicationPreference.getId();
     this.communicationStrategy = communicationPreference.getCommunicationStrategy();
-    this.user = new JpaUser(communicationPreference.getUser());
+    //this.user = new JpaUser(communicationPreference.getUser());
   }
 }

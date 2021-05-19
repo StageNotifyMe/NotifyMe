@@ -31,12 +31,31 @@ public class JpaNotification {
   @OneToOne(cascade = CascadeType.ALL)
   private JpaUser receiver;
 
+  public JpaNotification(JpaMessage jpaMessage, JpaUser jpaUser) {
+    this.message = jpaMessage;
+    this.receiver = jpaUser;
+    this.communicationPreference = jpaUser.getCommunicationPreference();
+    this.usedCommunicationStrategy =
+        jpaUser.getCommunicationPreference().getCommunicationStrategy().toString();
+  }
+
+  public JpaNotification(Notification notification, JpaUser jpaUser) {
+    this.id = notification.getId();
+    this.communicationAddress = notification.getCommunicationAddress();
+    this.communicationPreference = jpaUser.getCommunicationPreference();
+    this.usedCommunicationStrategy = notification.getUsedCommunicationStrategy();
+    this.message = new JpaMessage(notification.getMessage());
+    this.receiver = jpaUser;
+  }
+
   public Notification toDomainBase() {
     return Notification.builder()
         .id(this.id)
         .communicationAddress(this.communicationAddress)
         .usedCommunicationStrategy(this.usedCommunicationStrategy)
         .receiver(this.receiver.toDomainBase())
+        .communicationPreference(this.communicationPreference.toDomainBase())
+        .message(this.message.toDomainBase())
         .build();
   }
 

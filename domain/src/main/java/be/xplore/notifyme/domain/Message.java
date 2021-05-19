@@ -15,4 +15,9 @@ public class Message {
   private long id;
   private String title;
   private String text;
+
+  public Message(String title, String text) {
+    this.title = title;
+    this.text = text;
+  }
 }

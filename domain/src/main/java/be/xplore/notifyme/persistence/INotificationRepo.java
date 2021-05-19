@@ -8,4 +8,6 @@ public interface INotificationRepo {
   public Notification save(Notification notification);
 
   public Notification findById(long notificationId);
+
+  public Notification create(long messageId, String userId);
 }

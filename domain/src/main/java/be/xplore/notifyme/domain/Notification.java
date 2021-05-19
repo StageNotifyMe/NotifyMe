@@ -18,4 +18,8 @@ public class Notification {
   private String usedCommunicationStrategy;
   private Message message;
   private User receiver;
+
+  public void send() {
+    this.getCommunicationPreference().getCommunicationStrategy().send(this);
+  }
 }
