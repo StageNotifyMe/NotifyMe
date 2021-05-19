@@ -1,5 +1,6 @@
 package be.xplore.notifyme.service;
 
+import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import java.security.Principal;
@@ -27,4 +28,6 @@ public interface IUserService {
   User updateUser(User user);
 
   void grantUserRole(String userId, String roleName);
+
+  CommunicationPreference updateCommunicationPreference(long communicationPreferenceId, boolean isActive);
 }

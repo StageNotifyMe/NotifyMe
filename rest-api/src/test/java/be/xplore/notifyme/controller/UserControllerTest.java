@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
@@ -144,6 +145,15 @@ class UserControllerTest {
 
     mockMvc
         .perform(get("/user/orgApplications"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void updateCommunicationPreference() throws Exception {
+
+    mockMvc.perform(put("/notificationSetting")
+        .content("{communicationPreferenceId: 1,\nisActive: true}"))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
 

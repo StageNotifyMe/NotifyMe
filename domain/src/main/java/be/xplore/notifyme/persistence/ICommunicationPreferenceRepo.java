@@ -1,11 +1,17 @@
 package be.xplore.notifyme.persistence;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
+import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ICommunicationPreferenceRepo {
-  public CommunicationPreference save(CommunicationPreference communicationPreference);
+  CommunicationPreference save(CommunicationPreference communicationPreference);
 
-  public CommunicationPreference findById(long communicationPreferenceId);
+  CommunicationPreference findById(long communicationPreferenceId);
+
+  CommunicationPreference create(String userId, boolean isActive, boolean isDefault,
+                                 ICommunicationStrategy strategy);
+
+  void delete(long communicationPreferenceId);
 }

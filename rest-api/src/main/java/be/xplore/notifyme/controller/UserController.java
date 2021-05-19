@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +40,14 @@ public class UserController {
     return keycloakCommunicationService.login(username, password);
   }
 
+  @PutMapping(value = "/notificationSetting")
+  public ResponseEntity<Object> upateNotificationSetting(long communicationPreferenceId,
+                                                         boolean isActive) {
+    var updatedPreference =
+        userService.updateCommunicationPreference(communicationPreferenceId, isActive);
+    return ResponseEntity.status(HttpStatus.OK).body(updatedPreference);
+  }
+
   /**
    * Allows unregistered users to create an account.
    */
@@ -51,7 +60,7 @@ public class UserController {
 
   @GetMapping(value = "/userInfo")
   public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username,
-      Principal principal) {
+                                            Principal principal) {
     return ResponseEntity.ok(userService.getUserInfo(username, principal));
   }
 

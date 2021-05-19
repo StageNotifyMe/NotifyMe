@@ -22,10 +22,20 @@ public class JpaCommunicationPreference {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
+  private boolean isActive;
+  private boolean isDefault;
   @Convert(converter = CommunicationStrategyConverter.class)
   private ICommunicationStrategy communicationStrategy;
   @OneToOne
   private JpaUser user;
+
+  public JpaCommunicationPreference(JpaUser jpaUser, boolean isActive, boolean isDefault,
+                                    ICommunicationStrategy strategy) {
+    this.user = jpaUser;
+    this.isDefault = isDefault;
+    this.isActive = isActive;
+    this.communicationStrategy = strategy;
+  }
 
   /**
    * Converts the jpa-version of the object to a domain version with basic attributes.
@@ -35,6 +45,8 @@ public class JpaCommunicationPreference {
   public CommunicationPreference toDomainBase() {
     return CommunicationPreference.builder()
         .id(this.id)
+        .isActive(this.isActive)
+        .isDefault(this.isDefault)
         .communicationStrategy(this.communicationStrategy)
         .build();
   }
@@ -46,6 +58,8 @@ public class JpaCommunicationPreference {
    */
   public JpaCommunicationPreference(CommunicationPreference communicationPreference) {
     this.id = communicationPreference.getId();
+    this.isActive = communicationPreference.isActive();
+    this.isDefault = communicationPreference.isDefault();
     this.communicationStrategy = communicationPreference.getCommunicationStrategy();
   }
 }

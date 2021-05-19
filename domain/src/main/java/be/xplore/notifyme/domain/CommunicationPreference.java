@@ -15,6 +15,8 @@ import lombok.Setter;
 public class CommunicationPreference {
   private long id;
   private User user;
+  private boolean isActive = true;
+  private boolean isDefault;
   private ICommunicationStrategy communicationStrategy;
 
   public void sendNotification(Notification notification) {

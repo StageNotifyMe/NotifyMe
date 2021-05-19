@@ -309,4 +309,11 @@ class UserServiceTest {
         userService.updateUser(testUser));
   }
 
+  @Test
+  void updateCommunicationPreference() {
+    assertDoesNotThrow(() -> {
+      userService.updateCommunicationPreference(1L, true);
+    });
+  }
+
 }
