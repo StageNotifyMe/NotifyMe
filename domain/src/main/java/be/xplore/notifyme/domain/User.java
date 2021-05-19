@@ -29,7 +29,7 @@ public class User {
   private Set<Team> teams = new HashSet<>();
   private List<Event> events = new ArrayList<>();
   private List<Notification> notifications = new ArrayList<>();
-  private CommunicationPreference communicationPreference;
+  private List<CommunicationPreference> communicationPreferences;
 
   /**
    * Creates a user.

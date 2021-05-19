@@ -38,12 +38,13 @@ public class JpaNotification {
    * @param jpaMessage jpa version of the message.
    * @param jpaUser    jpa version of the receiver.
    */
-  public JpaNotification(JpaMessage jpaMessage, JpaUser jpaUser) {
+  public JpaNotification(JpaMessage jpaMessage, JpaUser jpaUser,
+                         JpaCommunicationPreference jpaCommunicationPreference) {
     this.message = jpaMessage;
     this.receiver = jpaUser;
-    this.communicationPreference = jpaUser.getCommunicationPreference();
+    this.communicationPreference = jpaCommunicationPreference;
     this.usedCommunicationStrategy =
-        jpaUser.getCommunicationPreference().getCommunicationStrategy().toString();
+        jpaCommunicationPreference.getCommunicationStrategy().toString();
   }
 
   /**
@@ -52,10 +53,11 @@ public class JpaNotification {
    * @param notification the domain version of the object to save.
    * @param jpaUser      already converted version of notification.getReceiver.
    */
-  public JpaNotification(Notification notification, JpaUser jpaUser) {
+  public JpaNotification(Notification notification, JpaUser jpaUser,
+                         JpaCommunicationPreference jpaCommunicationPreference) {
     this.id = notification.getId();
     this.communicationAddress = notification.getCommunicationAddress();
-    this.communicationPreference = jpaUser.getCommunicationPreference();
+    this.communicationPreference = jpaCommunicationPreference;
     this.usedCommunicationStrategy = notification.getUsedCommunicationStrategy();
     this.message = new JpaMessage(notification.getMessage());
     this.receiver = jpaUser;

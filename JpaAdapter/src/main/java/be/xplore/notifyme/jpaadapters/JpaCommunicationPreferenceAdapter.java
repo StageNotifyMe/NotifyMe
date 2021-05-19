@@ -7,6 +7,7 @@ import be.xplore.notifyme.jpaobjects.JpaCommunicationPreference;
 import be.xplore.notifyme.jparepositories.JpaCommunicationPreferenceRepository;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.ICommunicationPreferenceRepo;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -36,6 +37,16 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
     var jpaUser = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId));
     var jpaComPref = new JpaCommunicationPreference(jpaUser, isActive, isDefault, strategy);
+
+    //removes old default if there is any
+    var preferences = jpaCommunicationPreferenceRepository.findAllByUser(jpaUser);
+    var currentDefault = preferences.stream()
+        .filter(JpaCommunicationPreference::isDefault).findFirst();
+    if (currentDefault.isPresent()) {
+      var currentDefaultUpdated = currentDefault.get();
+      currentDefaultUpdated.setDefault(false);
+      jpaCommunicationPreferenceRepository.save(currentDefaultUpdated);
+    }
     return jpaCommunicationPreferenceRepository.save(jpaComPref).toDomainBase();
   }
 
@@ -46,5 +57,14 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
             () -> new JpaNotFoundException(
                 "Could not find communication preference for id " + communicationPreferenceId));
     jpaCommunicationPreferenceRepository.delete(communicationPreference);
+  }
+
+  @Override
+  public Optional<CommunicationPreference> getDefaultCommunicationPreference(String userId) {
+    var jpaUser = jpaUserRepository.findById(userId)
+        .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId));
+    var preferences = jpaCommunicationPreferenceRepository.findAllByUser(jpaUser);
+    return preferences.stream().map(JpaCommunicationPreference::toDomainBase)
+        .filter(CommunicationPreference::isDefault).findFirst();
   }
 }

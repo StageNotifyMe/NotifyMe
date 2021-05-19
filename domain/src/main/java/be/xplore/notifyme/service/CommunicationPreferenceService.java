@@ -11,19 +11,22 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CommunicationPreferenceService {
+public class CommunicationPreferenceService implements ICommunicationPreferenceService {
   private final ICommunicationPreferenceRepo communicationPreferenceRepo;
 
+  @Override
   public CommunicationPreference createCommunicationPreference(String userId, boolean isActive,
                                                                boolean isDefault, String strategy) {
     var strategyImpl = getStrategyImplementation(strategy);
     return communicationPreferenceRepo.create(userId, isActive, isDefault, strategyImpl);
   }
 
+  @Override
   public CommunicationPreference getCommunicationPreference(long communicationPreferenceId) {
     return communicationPreferenceRepo.findById(communicationPreferenceId);
   }
 
+  @Override
   public CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
                                                                boolean isActive) {
     var communicationPreference = communicationPreferenceRepo.findById(communicationPreferenceId);
@@ -35,6 +38,7 @@ public class CommunicationPreferenceService {
     }
   }
 
+  @Override
   public void deleteCommunicationPreference(long communicationPreferenceId) {
     communicationPreferenceRepo.delete(communicationPreferenceId);
   }
