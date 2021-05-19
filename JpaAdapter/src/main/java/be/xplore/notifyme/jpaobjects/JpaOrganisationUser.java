@@ -69,6 +69,7 @@ public class JpaOrganisationUser {
     return OrganisationUser.builder()
         .organisationUserKey(this.organisationUserKey.toDomain())
         .organisation(this.organisation.toDomainBase())
+        .user(this.user.toDomainBase())
         .isOrganisationLeader(this.isOrganisationLeader).build();
   }
 

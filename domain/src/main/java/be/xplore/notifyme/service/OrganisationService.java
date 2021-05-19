@@ -83,7 +83,9 @@ public class OrganisationService implements IOrganisationService {
    */
   @Override
   public Organisation promoteUserToOrgManager(String username, Long orgId, Principal principal) {
+    var user = userService.getUserInfo(username, principal);
+    userService.grantUserRole(user.getId(), "organisation_manager");
     return organisationRepo
-        .addToOrgManagers(orgId, userService.getUserInfo(username, principal).getId());
+        .addToOrgManagers(orgId, user.getId());
   }
 }
