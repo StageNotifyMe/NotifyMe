@@ -15,5 +15,4 @@ public class Message {
   private long id;
   private String title;
   private String text;
-  private User user;
 }

@@ -1,6 +1,7 @@
 package be.xplore.notifyme.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,8 +10,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Notification {
-  private Object communicationAddress;
+  private long id;
+  private String communicationAddress;
   private CommunicationPreference communicationPreference;
+  private String usedCommunicationStrategy;
   private Message message;
+  private User receiver;
 }

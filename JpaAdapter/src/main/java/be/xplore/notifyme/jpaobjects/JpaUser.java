@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,8 +38,10 @@ public class JpaUser {
   private Set<JpaTeam> teams;
   @ManyToMany(cascade = CascadeType.ALL, mappedBy = "lineManagers")
   private List<JpaEvent> events;
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-  private List<JpaMessage> messages;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiver")
+  private List<JpaNotification> notifications;
+  @OneToOne(cascade = CascadeType.ALL)
+  private JpaCommunicationPreference communicationPreference;
 
   /**
    * Converts a jpa-object to a domain variant.
@@ -65,13 +68,30 @@ public class JpaUser {
    *
    * @return domain user with applied orgs.
    */
-  public User todomainIncAppliedOrganisations() {
+  public User toDomainIncAppliedOrganisations() {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
         .appliedOrganisations(
             this.appliedOrganisations.stream().map(JpaUserOrgApplication::toDomainBase).collect(
                 Collectors.toList()))
+        .build();
+  }
+
+  public User toDomainIncNotifications() {
+    return User.builder()
+        .userId(this.userId)
+        .userName(this.userName)
+        .notifications(this.notifications.stream().map(JpaNotification::toDomainBase).collect(
+            Collectors.toList()))
+        .build();
+  }
+
+  public User toDomainIncCommunicationPreference() {
+    return User.builder()
+        .userId(this.userId)
+        .userName(this.userName)
+        .communicationPreference(this.communicationPreference.toDomainBase())
         .build();
   }
 
@@ -103,6 +123,8 @@ public class JpaUser {
     this.venues = user.getVenues().stream().map(JpaVenue::new).collect(Collectors.toList());
     this.teams = user.getTeams().stream().map(JpaTeam::new).collect(Collectors.toSet());
     this.events = user.getEvents().stream().map(JpaEvent::new).collect(Collectors.toList());
+    this.notifications = user.getNotifications().stream().map(JpaNotification::new).collect(
+        Collectors.toList());
   }
 
   /**

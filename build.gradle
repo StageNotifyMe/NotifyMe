@@ -38,6 +38,7 @@ sonarqube {
         property "sonar.projectKey", "StageNotifyMe_NotifyMe"
         property "sonar.organization", "stagenotifyme"
         property "sonar.host.url", "https://sonarcloud.io"
+        //TODO: github secrets
         property "sonar.login", "8ea7296c618d62f96a84a22412b8d916561d1e84"
     }
 }
