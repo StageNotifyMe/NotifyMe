@@ -38,3 +38,5 @@ keycloak/src/test/resources/
 main2/build/
 keycloak/data/
 .idea/aws.xml
+
+gradle.properties
