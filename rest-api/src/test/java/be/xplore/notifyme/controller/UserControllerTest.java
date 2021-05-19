@@ -168,12 +168,12 @@ class UserControllerTest {
 
     mockMvc.perform(post("/user/communicationpreference")
         .header("Content-Type", "application/json")
-        .content("{\n" +
-            "   \"userId\": \"05f6194f-15fe-4c7e-b5b3-642e051b0d6d\",\n" +
-            "   \"isActive\": true,\n" +
-            "   \"isDefault\": true,\n" +
-            "   \"communicationStrategy\": \"smscommunicationstrategy\"\n" +
-            "}"))
+        .content("{\n"
+            + "   \"userId\": \"05f6194f-15fe-4c7e-b5b3-642e051b0d6d\",\n"
+            + "   \"isActive\": true,\n"
+            + "   \"isDefault\": true,\n"
+            + "   \"communicationStrategy\": \"smscommunicationstrategy\"\n"
+            + "}"))
         .andExpect(MockMvcResultMatchers.status().isCreated());
   }
 
