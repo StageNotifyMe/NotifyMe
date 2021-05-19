@@ -1,9 +1,11 @@
 package be.xplore.notifyme.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -12,14 +14,6 @@ public class PostCommunicationPreferenceDto {
   private Boolean isActive;
   private Boolean isDefault;
   private String communicationStrategy;
-
-  public PostCommunicationPreferenceDto(String userId, boolean isActive, boolean isDefault,
-                                        String communicationStrategy) {
-    this.userId = userId;
-    this.isActive = isActive;
-    this.isDefault = isDefault;
-    this.communicationStrategy = communicationStrategy;
-  }
 
   public boolean isActive() {
     return this.isActive;

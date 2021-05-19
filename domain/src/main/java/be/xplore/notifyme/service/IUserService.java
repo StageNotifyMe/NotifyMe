@@ -29,5 +29,6 @@ public interface IUserService {
 
   void grantUserRole(String userId, String roleName);
 
-  CommunicationPreference updateCommunicationPreference(long communicationPreferenceId, boolean isActive);
+  CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
+                                                        boolean isActive);
 }

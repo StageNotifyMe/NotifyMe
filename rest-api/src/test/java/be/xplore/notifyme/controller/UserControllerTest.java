@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -18,6 +19,7 @@ import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
+import be.xplore.notifyme.service.CommunicationPreferenceService;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserOrgApplicationService;
@@ -64,6 +66,8 @@ class UserControllerTest {
   private OrganisationService organisationService;
   @MockBean
   private UserOrgApplicationService userOrgApplicationService;
+  @MockBean
+  private CommunicationPreferenceService communicationPreferenceService;
 
   @Test
   void getAccessTokenForUserValid() throws Exception {
@@ -152,9 +156,34 @@ class UserControllerTest {
   @WithMockUser(username = "user", roles = {"user"})
   void updateCommunicationPreference() throws Exception {
 
-    mockMvc.perform(put("/notificationSetting")
-        .content("{communicationPreferenceId: 1,\nisActive: true}"))
+    mockMvc.perform(put("/user/communicationpreference")
+        .header("Content-Type", "application/json")
+        .content("{\n\"communicationPreferenceId\": 1,\n\"isActive\": true\n}"))
         .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void createCommunicationPreference() throws Exception {
+
+    mockMvc.perform(post("/user/communicationpreference")
+        .header("Content-Type", "application/json")
+        .content("{\n" +
+            "   \"userId\": \"05f6194f-15fe-4c7e-b5b3-642e051b0d6d\",\n" +
+            "   \"isActive\": true,\n" +
+            "   \"isDefault\": true,\n" +
+            "   \"communicationStrategy\": \"smscommunicationstrategy\"\n" +
+            "}"))
+        .andExpect(MockMvcResultMatchers.status().isCreated());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void deleteCommunicationPreference() throws Exception {
+
+    mockMvc.perform(delete("/user/communicationpreference?communicationPreferenceId=1")
+    )
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 
 }

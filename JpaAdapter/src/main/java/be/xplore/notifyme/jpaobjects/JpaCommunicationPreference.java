@@ -29,6 +29,14 @@ public class JpaCommunicationPreference {
   @ManyToOne
   private JpaUser user;
 
+  /**
+   * Cosntructor.
+   *
+   * @param jpaUser   JpaUser object.
+   * @param isActive  is active.
+   * @param isDefault is default.
+   * @param strategy  strategy.
+   */
   public JpaCommunicationPreference(JpaUser jpaUser, boolean isActive, boolean isDefault,
                                     ICommunicationStrategy strategy) {
     this.user = jpaUser;
@@ -65,6 +73,12 @@ public class JpaCommunicationPreference {
     this.user = new JpaUser(communicationPreference.getUser());
   }
 
+  /**
+   * Constructor used for updates.
+   *
+   * @param communicationPreference updated preferences.
+   * @param jpaUser                 complete JpaUser object.
+   */
   public JpaCommunicationPreference(CommunicationPreference communicationPreference,
                                     JpaUser jpaUser) {
     this.id = communicationPreference.getId();

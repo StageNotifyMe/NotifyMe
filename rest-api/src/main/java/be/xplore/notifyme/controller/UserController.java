@@ -46,6 +46,12 @@ public class UserController {
     return keycloakCommunicationService.login(username, password);
   }
 
+  /**
+   * Updates an existing communication preference object.
+   *
+   * @param dto contains updated values.
+   * @return the updated object.
+   */
   @PutMapping(value = "/communicationpreference")
   public ResponseEntity<Object> updateCommunicationPreference(
       @RequestBody UpdateCommunicationPreferenceDto dto) {
@@ -55,6 +61,13 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.OK).body(updatedPreference);
   }
 
+  /**
+   * Creates a new communication preference.
+   *
+   * @param postCommunicationPreferenceDto contains all values to create
+   *                                       a new communication preference.
+   * @return the created object.
+   */
   @PostMapping(value = "/communicationpreference")
   public ResponseEntity<Object> postCommunicationPreference(
       @RequestBody PostCommunicationPreferenceDto postCommunicationPreferenceDto) {
@@ -72,6 +85,12 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
+  /**
+   * gets all communication preferences of a user.
+   *
+   * @param userId user ID.
+   * @return list of communicationPreference.
+   */
   @GetMapping(value = "/communicationpreferences")
   public ResponseEntity<List<CommunicationPreference>> getAllcommunicationPreferences(
       String userId) {
