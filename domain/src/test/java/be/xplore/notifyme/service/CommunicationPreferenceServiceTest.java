@@ -3,6 +3,7 @@ package be.xplore.notifyme.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -15,6 +16,8 @@ import static org.mockito.Mockito.when;
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.domain.communicationstrategies.SmsCommunicationStrategy;
 import be.xplore.notifyme.persistence.ICommunicationPreferenceRepo;
 import java.util.ArrayList;
 import javax.validation.ValidationException;
@@ -96,5 +99,32 @@ class CommunicationPreferenceServiceTest {
 
     assertEquals(comPrefList,
         communicationPreferenceService.getAllCommunicationPreferencesForUser("userId"));
+  }
+
+  @Test
+  void testStrategies() {
+    when(communicationPreferenceRepo.create(anyString(), anyBoolean(), anyBoolean(), any()))
+        .thenAnswer(new Answer<CommunicationPreference>() {
+          @Override
+          public CommunicationPreference answer(InvocationOnMock invocation) throws Throwable {
+            Object[] args = invocation.getArguments();
+            CommunicationPreference comPrefObj = new CommunicationPreference();
+            comPrefObj.setId(1L);
+            comPrefObj.setUser(mock(User.class));
+            comPrefObj.setDefault((boolean) args[2]);
+            comPrefObj.setActive((boolean) args[1]);
+            comPrefObj.setCommunicationStrategy((ICommunicationStrategy) args[3]);
+            return comPrefObj;
+          }
+        });
+
+    assertEquals(EmailCommunicationStrategy.class, communicationPreferenceService
+        .createCommunicationPreference("userId", true, true, "emailcommunicationstrategy")
+        .getCommunicationStrategy().getClass());
+    assertEquals(SmsCommunicationStrategy.class, communicationPreferenceService
+        .createCommunicationPreference("userId", true, true, "smscommunicationstrategy")
+        .getCommunicationStrategy().getClass());
+    assertNull(communicationPreferenceService
+        .createCommunicationPreference("userId", true, true, "invalid").getCommunicationStrategy());
   }
 }
