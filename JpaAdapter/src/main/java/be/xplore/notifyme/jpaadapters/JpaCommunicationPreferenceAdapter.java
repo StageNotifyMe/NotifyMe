@@ -89,4 +89,22 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
     return jpaCommunicationPreferenceRepository.findAllByUser(jpaUser).stream()
         .map(JpaCommunicationPreference::toDomainBase).collect(Collectors.toList());
   }
+
+  @Override
+  public CommunicationPreference makeNewdefault(CommunicationPreference communicationPreference) {
+    var currentDefault = jpaCommunicationPreferenceRepository
+        .findAllByUser_UserId(communicationPreference.getUser().getUserId()).stream()
+        .filter(JpaCommunicationPreference::isDefault).findFirst()
+        .orElseThrow(() -> new JpaNotFoundException(
+            "Could not find default communication preference for user with id " +
+                communicationPreference.getUser().getUserId()));
+    currentDefault.setDefault(false);
+    var newDefault = jpaCommunicationPreferenceRepository.findById(communicationPreference.getId())
+        .orElseThrow(() -> new JpaNotFoundException(
+            "Could not find communication preference for id " + communicationPreference.getId()));
+    newDefault.setDefault(true);
+    newDefault.setActive(true);
+    jpaCommunicationPreferenceRepository.save(currentDefault);
+    return jpaCommunicationPreferenceRepository.save(newDefault).toDomainBase();
+  }
 }

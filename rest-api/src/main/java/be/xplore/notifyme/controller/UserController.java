@@ -63,7 +63,8 @@ public class UserController {
       @RequestBody UpdateCommunicationPreferenceDto dto) {
     var updatedPreference =
         communicationPreferenceService
-            .updateCommunicationPreference(dto.getCommunicationPreferenceId(), dto.isActive());
+            .updateCommunicationPreference(dto.getCommunicationPreferenceId(), dto.isActive(),
+                dto.isDefault());
     return ResponseEntity.status(HttpStatus.OK).body(updatedPreference);
   }
 

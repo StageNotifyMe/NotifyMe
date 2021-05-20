@@ -45,8 +45,6 @@ class UserServiceTest {
   @MockBean
   private TokenService tokenService;
   @MockBean
-  private CommunicationPreferenceService communicationPreferenceService;
-  @MockBean
   private IUserRepo userRepo;
 
 
@@ -310,13 +308,6 @@ class UserServiceTest {
 
     assertThrows(CrudException.class, () ->
         userService.updateUser(testUser));
-  }
-
-  @Test
-  void updateCommunicationPreference() {
-    assertDoesNotThrow(() -> {
-      userService.updateCommunicationPreference(1L, true);
-    });
   }
 
   @Test

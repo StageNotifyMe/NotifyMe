@@ -20,4 +20,6 @@ public interface ICommunicationPreferenceRepo {
   Optional<CommunicationPreference> getDefaultCommunicationPreference(String userId);
 
   List<CommunicationPreference> getAllForUser(String userId);
+
+  CommunicationPreference makeNewdefault(CommunicationPreference communicationPreference);
 }
