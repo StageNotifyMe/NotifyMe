@@ -352,7 +352,7 @@ class UserServiceTest {
     when(userRepo.findByIdIncOrganisations("userId")).thenReturn(mockUser);
 
     assertEquals(mockUser,
-        userService.getUserFromprincipalIncOrganisations(getKeycloakPrincipal()));
+        userService.getUserFromPrincipalIncAppliedUsers(getKeycloakPrincipal()));
   }
 
   @Test
