@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -21,6 +22,7 @@ import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.TokenHandlerException;
 import be.xplore.notifyme.persistence.IVenueRepo;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -164,6 +166,16 @@ class VenueServiceTest {
 
     assertThrows(SaveToDatabaseException.class,
         () -> venueService.makeUserVenueManager("userid", 1L));
+  }
+
+  @Test
+  void getAllVenueManagers() {
+    var userList = new ArrayList<User>();
+    userList.add(getTestUser());
+    when(venueRepo.getAllVenueManagers(1L)).thenReturn(userList);
+
+    assertTrue(venueService.getAllVenueManagers(1L).stream()
+        .anyMatch(user -> user.getUserId().equals(getTestUser().getUserId())));
   }
 
   private List<GetVenueDto> getTestGetVenues() {

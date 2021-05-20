@@ -189,4 +189,12 @@ class UserControllerTest {
         .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getAllCommunicationPreferences() throws Exception {
+    mockMvc.perform(get("/user/communicationpreferences?userId=userId")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
 }
