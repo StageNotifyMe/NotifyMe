@@ -43,6 +43,13 @@ public class UserController {
     return keycloakCommunicationService.login(username, password);
   }
 
+  /**
+   * Update users notification preferences.
+   *
+   * @param communicationPreferenceId id of the users com preferences.
+   * @param isActive                  if the setting is active.
+   * @return updated preference object.
+   */
   @PutMapping(value = "/notificationSetting")
   public ResponseEntity<Object> upateNotificationSetting(long communicationPreferenceId,
       boolean isActive) {

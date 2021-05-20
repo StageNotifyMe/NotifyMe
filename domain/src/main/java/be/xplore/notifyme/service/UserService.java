@@ -190,7 +190,8 @@ public class UserService implements IUserService {
   }
 
   @Override
-  public CommunicationPreference updateCommunicationPreference(long communicationPreferenceId, boolean isActive) {
+  public CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
+      boolean isActive) {
     return communicationPreferenceService
         .updateCommunicationPreference(communicationPreferenceId, isActive);
   }

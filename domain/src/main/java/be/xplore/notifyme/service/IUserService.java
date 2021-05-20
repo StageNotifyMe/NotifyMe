@@ -15,9 +15,9 @@ public interface IUserService {
 
   User getUserFromPrincipal(Principal principal);
 
-  User getUserFromprincipalIncOrganisations(Principal principal);
-
   User getUserFromPrincipalIncAppliedUsers(Principal principal);
+
+  User getUserFromprincipalIncOrganisations(Principal principal);
 
   User getUser(String id);
 
@@ -29,5 +29,6 @@ public interface IUserService {
 
   void grantUserRole(String userId, String roleName);
 
-  CommunicationPreference updateCommunicationPreference(long communicationPreferenceId, boolean isActive);
+  CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
+      boolean isActive);
 }

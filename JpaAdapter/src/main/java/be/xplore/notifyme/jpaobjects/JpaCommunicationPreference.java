@@ -20,6 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JpaCommunicationPreference {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -30,8 +31,16 @@ public class JpaCommunicationPreference {
   @ManyToOne(cascade = CascadeType.ALL)
   private JpaUser user;
 
+  /**
+   * Creates a jpa Com preference.
+   *
+   * @param jpaUser   jpa representation of the user.
+   * @param isActive  is the prefence active.
+   * @param isDefault is the preference the default preference?
+   * @param strategy  the strategy to use to send notifications for this preference.
+   */
   public JpaCommunicationPreference(JpaUser jpaUser, boolean isActive, boolean isDefault,
-                                    ICommunicationStrategy strategy) {
+      ICommunicationStrategy strategy) {
     this.user = jpaUser;
     this.isDefault = isDefault;
     this.isActive = isActive;
