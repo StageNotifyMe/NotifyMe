@@ -21,6 +21,7 @@ import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.service.CommunicationPreferenceService;
 import be.xplore.notifyme.service.KeycloakCommunicationService;
+import be.xplore.notifyme.service.NotificationService;
 import be.xplore.notifyme.service.OrganisationService;
 import be.xplore.notifyme.service.UserOrgApplicationService;
 import be.xplore.notifyme.service.UserService;
@@ -68,6 +69,8 @@ class UserControllerTest {
   private UserOrgApplicationService userOrgApplicationService;
   @MockBean
   private CommunicationPreferenceService communicationPreferenceService;
+  @MockBean
+  private NotificationService notificationService;
 
   @Test
   void getAccessTokenForUserValid() throws Exception {

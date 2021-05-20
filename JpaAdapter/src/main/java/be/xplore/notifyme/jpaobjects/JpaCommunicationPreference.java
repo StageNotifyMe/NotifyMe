@@ -2,6 +2,7 @@ package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;
+import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,16 +27,16 @@ public class JpaCommunicationPreference {
   private boolean isDefault;
   @Convert(converter = CommunicationStrategyConverter.class)
   private ICommunicationStrategy communicationStrategy;
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   private JpaUser user;
 
   /**
-   * Cosntructor.
+   * Creates a jpa Com preference.
    *
-   * @param jpaUser   JpaUser object.
-   * @param isActive  is active.
-   * @param isDefault is default.
-   * @param strategy  strategy.
+   * @param jpaUser   jpa representation of the user.
+   * @param isActive  is the prefence active.
+   * @param isDefault is the preference the default preference?
+   * @param strategy  the strategy to use to send notifications for this preference.
    */
   public JpaCommunicationPreference(JpaUser jpaUser, boolean isActive, boolean isDefault,
                                     ICommunicationStrategy strategy) {

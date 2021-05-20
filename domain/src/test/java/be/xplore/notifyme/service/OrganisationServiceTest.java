@@ -104,7 +104,7 @@ class OrganisationServiceTest {
   }
 
   private void setupPromotionMocking(Principal principal, UserRepresentation userRepresentation,
-                                     User user) {
+      User user) {
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
     when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
@@ -144,6 +144,20 @@ class OrganisationServiceTest {
     assertThrows(CrudException.class, () -> {
       organisationService.save(org);
     });
+  }
+
+  @Test
+  void findByIdIncAppliedUsers() {
+    var org = Organisation.builder().build();
+    when(organisationRepo.findByIdIncAppliedUsers(anyLong())).thenReturn(Optional.ofNullable(org));
+    assertEquals(org, organisationService.getOrganisationIncAppliedUsers(1L));
+  }
+
+  @Test
+  void findByIdIncAppliedUsersNotExisting() {
+    var org = Organisation.builder().build();
+    when(organisationRepo.findByIdIncAppliedUsers(anyLong())).thenReturn(Optional.empty());
+    assertThrows(CrudException.class, () -> organisationService.getOrganisationIncAppliedUsers(1L));
   }
 
   @Test

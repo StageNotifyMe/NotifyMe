@@ -9,12 +9,15 @@ import be.xplore.notifyme.jparepositories.JpaMessageRepository;
 import be.xplore.notifyme.jparepositories.JpaNotificationRepository;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.INotificationRepo;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
 public class JpaNotificationAdapter implements INotificationRepo {
+
   private final JpaNotificationRepository jpaNotificationRepository;
   private final JpaMessageRepository jpaMessageRepository;
   private final JpaUserRepository jpaUserRepository;
@@ -41,6 +44,12 @@ public class JpaNotificationAdapter implements INotificationRepo {
     return jpaNotificationRepository.findById(notificationId).orElseThrow(
         () -> new JpaNotFoundException("Could not find notification for id " + notificationId))
         .toDomainBase();
+  }
+
+  @Override
+  public List<Notification> findByUser(String userId) {
+    return jpaNotificationRepository.findByReceiver_UserId(userId).stream()
+        .map(JpaNotification::toDomainBase).collect(Collectors.toList());
   }
 
   @Override

@@ -11,7 +11,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.config.RestConfig;
+import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.domain.OrganisationUser;
 import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
@@ -20,8 +22,10 @@ import be.xplore.notifyme.persistence.IOrganisationRepo;
 import be.xplore.notifyme.service.security.OrganisationSecurityService;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,18 +46,32 @@ class UserOrgApplicationServiceTest {
   private OrganisationSecurityService organisationSecurityService;
   @MockBean
   private IOrganisationRepo organisationRepo;
+  @MockBean
+  private NotificationService notificationService;
 
   @Test
   void applyToOrganisation() {
-    var user = new User();
-    user.setAppliedOrganisations(new ArrayList<>());
+    var user = User.builder().userId("testJoiner").userName("test.joiner")
+        .appliedOrganisations(new ArrayList<>()).build();
     when(userService.getUserFromPrincipal(any())).thenReturn(user);
     when(organisationService.getOrganisation(anyLong())).thenReturn(new Organisation());
     when(userService.updateUser(any())).thenReturn(new User());
+    setupNotifyOrgAdminsForApplication();
 
     assertDoesNotThrow(() -> {
       userOrgApplicationService.applyToOrganisation(1L, getKeycloakPrincipal());
     });
+  }
+
+  private void setupNotifyOrgAdminsForApplication() {
+    final OrganisationUser organisationUser = Mockito.mock(OrganisationUser.class);
+    var user = User.builder().userId("testuser").userName("test.user").build();
+    var org = Organisation.builder().id(1L).users(List.of(organisationUser)).name("testOrg")
+        .build();
+    var message = Message.builder().id(1L).build();
+    when(notificationService.createMessage(anyString(), anyString())).thenReturn(message);
+    when(organisationService.getOrganisationIncAppliedUsers(anyLong())).thenReturn(org);
+    when(organisationUser.getUser()).thenReturn(user);
   }
 
   @Test
