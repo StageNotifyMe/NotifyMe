@@ -20,7 +20,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JpaCommunicationPreference {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -40,7 +39,7 @@ public class JpaCommunicationPreference {
    * @param strategy  the strategy to use to send notifications for this preference.
    */
   public JpaCommunicationPreference(JpaUser jpaUser, boolean isActive, boolean isDefault,
-      ICommunicationStrategy strategy) {
+                                    ICommunicationStrategy strategy) {
     this.user = jpaUser;
     this.isDefault = isDefault;
     this.isActive = isActive;
@@ -58,6 +57,7 @@ public class JpaCommunicationPreference {
         .isActive(this.isActive)
         .isDefault(this.isDefault)
         .communicationStrategy(this.communicationStrategy)
+        .user(this.user.toDomainBase())
         .build();
   }
 
@@ -71,5 +71,21 @@ public class JpaCommunicationPreference {
     this.isActive = communicationPreference.isActive();
     this.isDefault = communicationPreference.isDefault();
     this.communicationStrategy = communicationPreference.getCommunicationStrategy();
+    this.user = new JpaUser(communicationPreference.getUser());
+  }
+
+  /**
+   * Constructor used for updates.
+   *
+   * @param communicationPreference updated preferences.
+   * @param jpaUser                 complete JpaUser object.
+   */
+  public JpaCommunicationPreference(CommunicationPreference communicationPreference,
+                                    JpaUser jpaUser) {
+    this.id = communicationPreference.getId();
+    this.isActive = communicationPreference.isActive();
+    this.isDefault = communicationPreference.isDefault();
+    this.communicationStrategy = communicationPreference.getCommunicationStrategy();
+    this.user = jpaUser;
   }
 }

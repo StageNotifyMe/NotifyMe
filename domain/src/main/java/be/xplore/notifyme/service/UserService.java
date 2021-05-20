@@ -121,6 +121,7 @@ public class UserService implements IUserService {
     //TODO: terug aan zetten!
     //keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
     createUserInDatabase(userInfo.getId(), username);
+    createDefaultCommunicationPreference(userInfo.getId());
   }
 
   /**
@@ -136,6 +137,11 @@ public class UserService implements IUserService {
       throw new SaveToDatabaseException(
           "Could not register new user in system: " + userRegistrationDto.getUsername());
     }
+  }
+
+  private void createDefaultCommunicationPreference(String userId) {
+    communicationPreferenceService
+        .createCommunicationPreference(userId, true, true, "emailcommunicationstrategy");
   }
 
   private void createUserInDatabase(String id, String username) {
@@ -191,7 +197,7 @@ public class UserService implements IUserService {
 
   @Override
   public CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
-      boolean isActive) {
+                                                               boolean isActive) {
     return communicationPreferenceService
         .updateCommunicationPreference(communicationPreferenceId, isActive);
   }

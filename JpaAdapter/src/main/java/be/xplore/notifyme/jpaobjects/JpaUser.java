@@ -39,7 +39,7 @@ public class JpaUser {
   private List<JpaEvent> events;
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiver")
   private List<JpaNotification> notifications;
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
   private List<JpaCommunicationPreference> communicationPreferences;
 
   /**

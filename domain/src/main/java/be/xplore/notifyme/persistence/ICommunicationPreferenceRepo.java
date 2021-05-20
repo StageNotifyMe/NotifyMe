@@ -2,6 +2,7 @@ package be.xplore.notifyme.persistence;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +18,6 @@ public interface ICommunicationPreferenceRepo {
   void delete(long communicationPreferenceId);
 
   Optional<CommunicationPreference> getDefaultCommunicationPreference(String userId);
+
+  List<CommunicationPreference> getAllForUser(String userId);
 }

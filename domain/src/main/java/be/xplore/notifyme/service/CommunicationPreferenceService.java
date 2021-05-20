@@ -5,6 +5,7 @@ import be.xplore.notifyme.domain.communicationstrategies.EmailCommunicationStrat
 import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;
 import be.xplore.notifyme.domain.communicationstrategies.SmsCommunicationStrategy;
 import be.xplore.notifyme.persistence.ICommunicationPreferenceRepo;
+import java.util.List;
 import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,10 @@ public class CommunicationPreferenceService implements ICommunicationPreferenceS
   @Override
   public void deleteCommunicationPreference(long communicationPreferenceId) {
     communicationPreferenceRepo.delete(communicationPreferenceId);
+  }
+
+  public List<CommunicationPreference> getAllCommunicationPreferencesForUser(String userId) {
+    return communicationPreferenceRepo.getAllForUser(userId);
   }
 
   private ICommunicationStrategy getStrategyImplementation(String strategy) {
