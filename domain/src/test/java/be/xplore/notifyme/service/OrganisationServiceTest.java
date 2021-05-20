@@ -159,4 +159,16 @@ class OrganisationServiceTest {
     when(organisationRepo.findByIdIncAppliedUsers(anyLong())).thenReturn(Optional.empty());
     assertThrows(CrudException.class, () -> organisationService.getOrganisationIncAppliedUsers(1L));
   }
+
+  @Test
+  void getOrganisationIncAppliedUsers() {
+    when(organisationRepo.findByIdIncAppliedUsers(1L)).thenReturn(Optional.of(testOrg));
+    assertDoesNotThrow(() -> {
+      organisationService.getOrganisationIncAppliedUsers(1L);
+    });
+    when(organisationRepo.findByIdIncAppliedUsers(2L)).thenReturn(Optional.empty());
+    assertThrows(CrudException.class, () -> {
+      organisationService.getOrganisationIncAppliedUsers(2L);
+    });
+  }
 }
