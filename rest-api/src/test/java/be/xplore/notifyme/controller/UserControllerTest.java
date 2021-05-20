@@ -13,9 +13,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
+import be.xplore.notifyme.domain.Message;
+import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUserKey;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
@@ -193,6 +196,21 @@ class UserControllerTest {
   @WithMockUser(username = "user", roles = {"user"})
   void getAllCommunicationPreferences() throws Exception {
     mockMvc.perform(get("/user/communicationpreferences?userId=userId")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getNotifications() throws Exception {
+    var msg = Message.builder().id(1L).text("eyo").title("eyotitle").build();
+    var notif = Notification.builder().id(1L).message(msg)
+        .communicationAddress("anAddress").build();
+    when(notificationService.getNotificationsForUser(anyString())).thenReturn(List.of(notif));
+    when(userService.getUserFromPrincipal(any()))
+        .thenReturn(User.builder().userId("testId").build());
+
+    mockMvc.perform(get("/user/notifications")
         .header("Content-Type", "application/json")
     ).andExpect(MockMvcResultMatchers.status().isOk());
   }

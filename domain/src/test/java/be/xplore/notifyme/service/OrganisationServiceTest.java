@@ -10,6 +10,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
@@ -171,4 +172,20 @@ class OrganisationServiceTest {
       organisationService.getOrganisationIncAppliedUsers(2L);
     });
   }
+
+  @Test
+  void addUserToOrganisation() {
+    var org = new Organisation();
+    when(organisationRepo.addUserToOrganisation(anyString(), anyLong())).thenReturn(org);
+    assertEquals(org, organisationService.addUserToOrganisation("iets", 1L));
+  }
+
+  @Test
+  void changeApplicationStatus() {
+    var org = new Organisation();
+    when(organisationRepo.changeApplicationStatus(anyString(), anyLong(), any())).thenReturn(org);
+    assertEquals(org,
+        organisationService.changeApplicationStatus("iets", 1L, OrgApplicationStatus.APPLIED));
+  }
+
 }
