@@ -2,11 +2,9 @@ package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.domain.OrganisationUser;
 import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
-import be.xplore.notifyme.exception.OrgApplicationNotFoundException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
 import be.xplore.notifyme.service.security.OrganisationSecurityService;
 import java.security.Principal;
@@ -80,24 +78,24 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
   @Override
   public void respondToApplication(OrganisationUserKey organisationUserKey, boolean accept,
       Principal principal) {
-    var organisation =
-        organisationService.getOrganisationIncAppliedUsers(organisationUserKey.getOrganisationId());
-    secureOrgManagerRequestFromPrincipal(organisation, principal);
-    organisation.getAppliedUsers().stream().filter(
-        application -> application.getAppliedUser().getUserId()
-            .equals(organisationUserKey.getUserId())).findFirst()
-        .ifPresentOrElse(userOrgApplication -> {
-          if (accept) {
-            userOrgApplication.setApplicationStatus(OrgApplicationStatus.ACCEPTED);
-            var user = userService.getUser(organisationUserKey.getUserId());
-            organisation.getUsers().add(new OrganisationUser(organisation, user, false));
-          } else {
-            userOrgApplication.setApplicationStatus(OrgApplicationStatus.REFUSED);
-          }
-        }, () -> {
-          throw new OrgApplicationNotFoundException("Application does not exist.");
-        });
-    organisationService.save(organisation);
+    if (accept) {
+      var organisation = organisationService.addUserToOrganisation(organisationUserKey.getUserId(),
+          organisationUserKey.getOrganisationId());
+      organisationService.changeApplicationStatus(organisationUserKey.getUserId(),
+          organisationUserKey.getOrganisationId(), OrgApplicationStatus.ACCEPTED);
+      var user = userService.getUser(organisationUserKey.getUserId());
+      sendUserApplicationApprovalNotification(user, organisation);
+    } else {
+      organisationService.changeApplicationStatus(organisationUserKey.getUserId(),
+          organisationUserKey.getOrganisationId(), OrgApplicationStatus.REFUSED);
+    }
+  }
+
+  private void sendUserApplicationApprovalNotification(User user, Organisation organisation) {
+    var message = notificationService
+        .createMessage("Application Approved",
+            "A manager of " + organisation.getName() + " has approved your application.");
+    notificationService.notifyUser(user.getUserName(), message.getId());
   }
 
   /**

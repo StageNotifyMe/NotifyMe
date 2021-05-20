@@ -29,6 +29,30 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
   }
 
   @Override
+  public Organisation addUserToOrganisation(String userId, Long organisationId) {
+    var jpaUser = jpaUserRepository.findById(userId).orElseThrow();
+    var jpaorg = jpaOrganisationRepository.findById(organisationId).orElseThrow();
+    jpaorg.getUsers().add(new JpaOrganisationUser(jpaUser, jpaorg, false));
+    return jpaOrganisationRepository.save(jpaorg).toDomainBase();
+  }
+
+  @Override
+  public Organisation changeApplicationStatus(String userId, Long organisationId,
+      OrgApplicationStatus applicationStatus) {
+    var jpaorg = jpaOrganisationRepository.findById(organisationId).orElseThrow();
+    jpaorg.getAppliedUsers().stream()
+        .filter(application -> application.getOrganisationUserKey().getUserId().equals(userId)
+            && application.getOrganisationUserKey().getOrganisationId().equals(organisationId))
+        .findFirst()
+        .ifPresentOrElse(
+            userOrgApplication -> userOrgApplication.setApplicationStatus(applicationStatus),
+            () -> {
+              throw new CrudException("Could not find application to set status.");
+            });
+    return jpaOrganisationRepository.save(jpaorg).toDomainBase();
+  }
+
+  @Override
   public List<Organisation> findAll() {
     return jpaOrganisationRepository.findAll().stream().map(JpaOrganisation::toDomainBase).collect(
         Collectors.toList());
