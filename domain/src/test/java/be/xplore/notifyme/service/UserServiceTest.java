@@ -349,7 +349,7 @@ class UserServiceTest {
     when(tokenService.getIdToken(any())).thenReturn(mockToken);
     when(mockToken.getSubject()).thenReturn("userId");
     var mockUser = mock(User.class);
-    when(userRepo.findByIdIncOrganisations("userId")).thenReturn(mockUser);
+    when(userRepo.findByIdIncAppliedUsers("userId")).thenReturn(mockUser);
 
     assertEquals(mockUser,
         userService.getUserFromPrincipalIncAppliedUsers(getKeycloakPrincipal()));
