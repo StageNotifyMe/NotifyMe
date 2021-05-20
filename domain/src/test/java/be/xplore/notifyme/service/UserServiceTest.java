@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.keycloak.AuthorizationContext;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.IDToken;
 import org.keycloak.representations.account.UserRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.mockito.Mockito;
@@ -316,6 +317,56 @@ class UserServiceTest {
     assertDoesNotThrow(() -> {
       userService.updateCommunicationPreference(1L, true);
     });
+  }
+
+  @Test
+  @WithMockKeycloakAuth(authorities = "user",
+      oidc = @OidcStandardClaims(
+          email = "test@test.com",
+          emailVerified = true,
+          nickName = "ElTestor",
+          preferredUsername = "Test"))
+  void getUserFromPrincipalIncOrganisations() {
+    var mockToken = mock(IDToken.class);
+    when(tokenService.getIdToken(any())).thenReturn(mockToken);
+    when(mockToken.getSubject()).thenReturn("userId");
+    var mockUser = mock(User.class);
+    when(userRepo.findByIdIncOrganisations("userId")).thenReturn(mockUser);
+
+    assertEquals(mockUser,
+        userService.getUserFromprincipalIncOrganisations(getKeycloakPrincipal()));
+  }
+
+  @Test
+  @WithMockKeycloakAuth(authorities = "user",
+      oidc = @OidcStandardClaims(
+          email = "test@test.com",
+          emailVerified = true,
+          nickName = "ElTestor",
+          preferredUsername = "Test"))
+  void getUserFromPrincipalIncAppliedUsers() {
+    var mockToken = mock(IDToken.class);
+    when(tokenService.getIdToken(any())).thenReturn(mockToken);
+    when(mockToken.getSubject()).thenReturn("userId");
+    var mockUser = mock(User.class);
+    when(userRepo.findByIdIncOrganisations("userId")).thenReturn(mockUser);
+
+    assertEquals(mockUser,
+        userService.getUserFromprincipalIncOrganisations(getKeycloakPrincipal()));
+  }
+
+  @Test
+  @WithMockKeycloakAuth(authorities = "user",
+      oidc = @OidcStandardClaims(
+          email = "test@test.com",
+          emailVerified = true,
+          nickName = "ElTestor",
+          preferredUsername = "Test"))
+  void getUserIdFromPrincipal() {
+    var mockToken = mock(IDToken.class);
+    when(tokenService.getIdToken(any())).thenReturn(mockToken);
+    when(mockToken.getSubject()).thenReturn("userId");
+    assertEquals("userId", userService.getUserIdFromPrincipal(getKeycloakPrincipal()));
   }
 
 }
