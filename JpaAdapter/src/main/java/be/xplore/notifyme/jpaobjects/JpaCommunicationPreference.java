@@ -2,7 +2,6 @@ package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;
-import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +26,7 @@ public class JpaCommunicationPreference {
   private boolean isDefault;
   @Convert(converter = CommunicationStrategyConverter.class)
   private ICommunicationStrategy communicationStrategy;
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
   private JpaUser user;
 
   /**

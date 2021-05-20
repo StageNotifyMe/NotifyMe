@@ -1,4 +1,4 @@
-package be.xplore.notifyme.dto;
+package be.xplore.notifyme.dto.communicationpreference;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UpdateCommunicationPreferenceDto {
-  private long communicationPreferenceId;
+public class PostCommunicationPreferenceDto {
+  private String userId;
   private Boolean isActive;
   private Boolean isDefault;
+  private String communicationStrategy;
 
   public boolean isActive() {
     return this.isActive;
