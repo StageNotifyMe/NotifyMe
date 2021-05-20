@@ -17,6 +17,7 @@ import be.xplore.notifyme.domain.communicationstrategies.IEmailService;
 import be.xplore.notifyme.domain.communicationstrategies.ISmsService;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
 import org.mockito.invocation.InvocationOnMock;
@@ -27,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {NotificationService.class})
 class NotificationServiceTest {
+
   @Autowired
   private NotificationService notificationService;
   @MockBean
@@ -77,6 +79,14 @@ class NotificationServiceTest {
     assertDoesNotThrow(() -> {
       notificationService.notifyUser("userId", 1L);
     });
+  }
+
+
+  @Test
+  void getNotificationsForUser() {
+    var notifications = new ArrayList<Notification>();
+    when(notificationRepo.findByUser(anyString())).thenReturn(notifications);
+    assertEquals(notifications, notificationService.getNotificationsForUser("testUser"));
   }
 
   private UserRepresentation getDummyUserRep() {
