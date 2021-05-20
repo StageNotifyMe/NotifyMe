@@ -145,4 +145,18 @@ class OrganisationServiceTest {
       organisationService.save(org);
     });
   }
+
+  @Test
+  void findByIdIncAppliedUsers() {
+    var org = Organisation.builder().build();
+    when(organisationRepo.findByIdIncAppliedUsers(anyLong())).thenReturn(Optional.ofNullable(org));
+    assertEquals(org, organisationService.getOrganisationIncAppliedUsers(1L));
+  }
+
+  @Test
+  void findByIdIncAppliedUsersNotExisting() {
+    var org = Organisation.builder().build();
+    when(organisationRepo.findByIdIncAppliedUsers(anyLong())).thenReturn(Optional.empty());
+    assertThrows(CrudException.class, () -> organisationService.getOrganisationIncAppliedUsers(1L));
+  }
 }

@@ -1,8 +1,10 @@
 package be.xplore.notifyme.service;
 
 import be.xplore.notifyme.domain.Message;
+import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationService implements INotificationService {
+
   private final INotificationRepo notificationRepo;
   private final IMessageRepo messageRepo;
   private final KeycloakCommunicationService keycloakCommunicationService;
@@ -28,5 +31,10 @@ public class NotificationService implements INotificationService {
     notification.setCommunicationAddresAndUsedStrategy(userInfo);
     notificationRepo.save(notification);
     notification.send();
+  }
+
+  @Override
+  public List<Notification> getNotificationsForUser(String userId) {
+    return notificationRepo.findByUser(userId);
   }
 }

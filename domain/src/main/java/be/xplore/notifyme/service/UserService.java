@@ -1,5 +1,6 @@
 package be.xplore.notifyme.service;
 
+import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.CrudException;
@@ -25,6 +26,7 @@ public class UserService implements IUserService {
   private final IUserRepo userRepo;
   private final TokenService tokenService;
   private final KeycloakCommunicationService keycloakCommunicationService;
+  private final CommunicationPreferenceService communicationPreferenceService;
   @Value("${keycloak.resource}")
   private String clientName;
 
@@ -119,6 +121,7 @@ public class UserService implements IUserService {
     //TODO: terug aan zetten!
     //keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
     createUserInDatabase(userInfo.getId(), username);
+    createDefaultCommunicationPreference(userInfo.getId());
   }
 
   /**
@@ -134,6 +137,11 @@ public class UserService implements IUserService {
       throw new SaveToDatabaseException(
           "Could not register new user in system: " + userRegistrationDto.getUsername());
     }
+  }
+
+  private void createDefaultCommunicationPreference(String userId) {
+    communicationPreferenceService
+        .createCommunicationPreference(userId, true, true, "emailcommunicationstrategy");
   }
 
   private void createUserInDatabase(String id, String username) {
@@ -185,5 +193,12 @@ public class UserService implements IUserService {
     var client = keycloakCommunicationService.getClient(this.clientName);
     var role = keycloakCommunicationService.getClientRole(roleName, client.getId());
     keycloakCommunicationService.giveUserRole(userId, role, client.getId());
+  }
+
+  @Override
+  public CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
+                                                               boolean isActive) {
+    return communicationPreferenceService
+        .updateCommunicationPreference(communicationPreferenceId, isActive);
   }
 }

@@ -10,7 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,8 +39,8 @@ public class JpaUser {
   private List<JpaEvent> events;
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiver")
   private List<JpaNotification> notifications;
-  @OneToOne(cascade = CascadeType.ALL)
-  private JpaCommunicationPreference communicationPreference;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+  private List<JpaCommunicationPreference> communicationPreferences;
 
   /**
    * Converts a jpa-object to a domain variant.
@@ -101,7 +100,9 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
-        .communicationPreference(this.communicationPreference.toDomainBase())
+        .communicationPreferences(
+            this.communicationPreferences.stream().map(JpaCommunicationPreference::toDomainBase)
+                .collect(Collectors.toList()))
         .build();
   }
 
