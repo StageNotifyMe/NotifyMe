@@ -47,8 +47,6 @@ class UserServiceTest {
   private CommunicationPreferenceService communicationPreferenceService;
   @MockBean
   private IUserRepo userRepo;
-  @MockBean
-  private CommunicationPreferenceService communicationPreferenceService;
 
 
   @Test
