@@ -83,6 +83,9 @@ class CommunicationPreferenceServiceTest {
     assertThrows(ValidationException.class, () -> {
       communicationPreferenceService.updateCommunicationPreference(1L, false, false);
     });
+    assertThrows(ValidationException.class, () -> {
+      communicationPreferenceService.updateCommunicationPreference(1L, false, true);
+    });
   }
 
   @Test
