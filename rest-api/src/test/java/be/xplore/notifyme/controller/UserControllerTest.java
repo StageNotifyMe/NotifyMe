@@ -161,7 +161,8 @@ class UserControllerTest {
 
     mockMvc.perform(put("/user/communicationpreference")
         .header("Content-Type", "application/json")
-        .content("{\n\"communicationPreferenceId\": 1,\n\"isActive\": true\n}"))
+        .content(
+            "{\n\"communicationPreferenceId\": 1,\n\"isActive\": true,\n\"isDefault\": false\n}"))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
 
