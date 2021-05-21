@@ -3,6 +3,7 @@ package communication;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.communicationstrategies.ISmsService;
 import com.twilio.Twilio;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;

@@ -87,5 +87,6 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
         .orElseThrow(() -> new CrudException("Could not find user for id " + userId));
     jpaUser.getAppliedOrganisations().add(new JpaUserOrgApplication(jpaOrg, jpaUser,
         OrgApplicationStatus.APPLIED));
+    jpaUserRepository.save(jpaUser);
   }
 }
