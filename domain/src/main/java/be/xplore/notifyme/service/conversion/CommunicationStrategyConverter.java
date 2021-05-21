@@ -1,4 +1,4 @@
-package be.xplore.notifyme.jpaobjects;
+package be.xplore.notifyme.service.conversion;
 
 import be.xplore.notifyme.domain.communicationstrategies.EmailCommunicationStrategy;
 import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;

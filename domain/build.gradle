@@ -49,6 +49,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.6'
 
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+    implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
 
     implementation group: 'org.keycloak', name: 'keycloak-spring-boot-starter', version: '12.0.4'
     implementation group: 'org.keycloak.bom', name: 'keycloak-adapter-bom', version: '12.0.4', ext: 'pom'
