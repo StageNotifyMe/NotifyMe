@@ -18,6 +18,11 @@ public class GetCommunicationPreferenceDto {
   @JsonAlias("default")
   private boolean defaultt;
 
+  /**
+   * Communication preference format for export to front end.
+   *
+   * @param communicationPreference a domain version of communicationPreference.
+   */
   public GetCommunicationPreferenceDto(CommunicationPreference communicationPreference) {
     this.id = communicationPreference.getId();
     this.communicationStrategy =

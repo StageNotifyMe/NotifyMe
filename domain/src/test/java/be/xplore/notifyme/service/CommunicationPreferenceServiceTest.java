@@ -67,7 +67,7 @@ class CommunicationPreferenceServiceTest {
             return (CommunicationPreference) args[0];
           }
         });
-    var result = communicationPreferenceService.updateCommunicationPreference(1L, false);
+    var result = communicationPreferenceService.updateCommunicationPreference(1L, false, false);
     assertEquals(1L, result.getId());
     assertFalse(result.isActive());
   }
@@ -80,7 +80,7 @@ class CommunicationPreferenceServiceTest {
     when(communicationPreferenceRepo.findById(1L)).thenReturn(comPref);
 
     assertThrows(ValidationException.class, () -> {
-      communicationPreferenceService.updateCommunicationPreference(1L, false);
+      communicationPreferenceService.updateCommunicationPreference(1L, false, false);
     });
   }
 
