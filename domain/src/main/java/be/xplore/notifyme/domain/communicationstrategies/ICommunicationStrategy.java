@@ -7,4 +7,6 @@ public interface ICommunicationStrategy {
   public void send(Notification notification);
 
   public String getCommunicationAddress(UserRepresentation userRepresentation);
+
+  public String getName();
 }

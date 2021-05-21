@@ -29,11 +29,16 @@ public class CommunicationPreferenceService implements ICommunicationPreferenceS
 
   @Override
   public CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
-                                                               boolean isActive) {
+                                                               boolean isActive,
+                                                               boolean isDefault) {
     var communicationPreference = communicationPreferenceRepo.findById(communicationPreferenceId);
-    if (!communicationPreference.isDefault()) {
+    if (!communicationPreference.isDefault() && !isDefault) {
+      //toggle active state
       communicationPreference.setActive(isActive);
       return communicationPreferenceRepo.save(communicationPreference);
+    } else if (!communicationPreference.isDefault() && isDefault) {
+      //make new default
+      return communicationPreferenceRepo.makeNewdefault(communicationPreference);
     } else {
       throw new ValidationException("Cannot change default communication method");
     }

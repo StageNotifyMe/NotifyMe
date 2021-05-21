@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface JpaCommunicationPreferenceRepository
     extends JpaRepository<JpaCommunicationPreference, Long> {
   List<JpaCommunicationPreference> findAllByUser(JpaUser jpaUser);
+
+  List<JpaCommunicationPreference> findAllByUser_UserId(String userId);
 }

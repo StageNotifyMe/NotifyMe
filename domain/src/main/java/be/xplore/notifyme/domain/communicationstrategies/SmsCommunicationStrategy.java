@@ -23,4 +23,9 @@ public class SmsCommunicationStrategy implements ICommunicationStrategy {
   public String getCommunicationAddress(UserRepresentation userRepresentation) {
     return userRepresentation.getAttributes().get("phone_number").get(0);
   }
+
+  @Override
+  public String getName() {
+    return "SMS";
+  }
 }

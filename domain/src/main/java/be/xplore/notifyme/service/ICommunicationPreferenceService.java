@@ -10,7 +10,7 @@ public interface ICommunicationPreferenceService {
   CommunicationPreference getCommunicationPreference(long communicationPreferenceId);
 
   CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
-                                                        boolean isActive);
+                                                        boolean isActive, boolean isDefault);
 
   void deleteCommunicationPreference(long communicationPreferenceId);
 

@@ -23,4 +23,9 @@ public class EmailCommunicationStrategy implements ICommunicationStrategy {
   public String getCommunicationAddress(UserRepresentation userRepresentation) {
     return userRepresentation.getEmail();
   }
+
+  @Override
+  public String getName() {
+    return "Email";
+  }
 }

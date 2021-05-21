@@ -4,9 +4,10 @@ import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.dto.ApplicationOrgNameDto;
 import be.xplore.notifyme.dto.NotificationDto;
 import be.xplore.notifyme.dto.OrganisationsLimitedInfoDto;
-import be.xplore.notifyme.dto.PostCommunicationPreferenceDto;
-import be.xplore.notifyme.dto.UpdateCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
+import be.xplore.notifyme.dto.communicationpreference.GetCommunicationPreferenceDto;
+import be.xplore.notifyme.dto.communicationpreference.PostCommunicationPreferenceDto;
+import be.xplore.notifyme.dto.communicationpreference.UpdateCommunicationPreferenceDto;
 import be.xplore.notifyme.service.ICommunicationPreferenceService;
 import be.xplore.notifyme.service.IKeycloakCommunicationService;
 import be.xplore.notifyme.service.IOrganisationService;
@@ -20,6 +21,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Controller that handles user authentication related requests.
  */
+@CrossOrigin({"http://127.0.0.1:8080", "http://localhost:8080"})
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
@@ -60,7 +63,8 @@ public class UserController {
       @RequestBody UpdateCommunicationPreferenceDto dto) {
     var updatedPreference =
         communicationPreferenceService
-            .updateCommunicationPreference(dto.getCommunicationPreferenceId(), dto.isActive());
+            .updateCommunicationPreference(dto.getCommunicationPreferenceId(), dto.isActive(),
+                dto.isDefault());
     return ResponseEntity.status(HttpStatus.OK).body(updatedPreference);
   }
 
@@ -82,7 +86,7 @@ public class UserController {
   }
 
   @DeleteMapping(value = "/communicationpreference")
-  public ResponseEntity<Void> deleteCommunicationPreference(
+  public ResponseEntity<Object> deleteCommunicationPreference(
       @RequestParam long communicationPreferenceId) {
     communicationPreferenceService.deleteCommunicationPreference(communicationPreferenceId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -95,11 +99,15 @@ public class UserController {
    * @return list of communicationPreference.
    */
   @GetMapping(value = "/communicationpreferences")
-  public ResponseEntity<List<CommunicationPreference>> getAllcommunicationPreferences(
+  public ResponseEntity<List<GetCommunicationPreferenceDto>> getAllcommunicationPreferences(
       String userId) {
     var communicationPreferences =
         communicationPreferenceService.getAllCommunicationPreferencesForUser(userId);
-    return ResponseEntity.ok(communicationPreferences);
+    var parsedComPrefs = new ArrayList<GetCommunicationPreferenceDto>();
+    for (CommunicationPreference comPref : communicationPreferences) {
+      parsedComPrefs.add(new GetCommunicationPreferenceDto(comPref));
+    }
+    return ResponseEntity.ok(parsedComPrefs);
   }
 
   /**
