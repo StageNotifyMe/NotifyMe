@@ -13,6 +13,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
+import be.xplore.notifyme.domain.Message;
+import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
@@ -213,6 +215,21 @@ class UserControllerTest {
                 + "\"id\": 1,\n" + "\"active\": true,\n"
                 + "\"defaultt\": true,\n" + "\"communicationStrategy\": \"Email\"\n"
                 + "}]"));
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getNotifications() throws Exception {
+    var msg = Message.builder().id(1L).text("eyo").title("eyotitle").build();
+    var notif = Notification.builder().id(1L).message(msg)
+        .communicationAddress("anAddress").build();
+    when(notificationService.getNotificationsForUser(anyString())).thenReturn(List.of(notif));
+    when(userService.getUserFromPrincipal(any()))
+        .thenReturn(User.builder().userId("testId").build());
+
+    mockMvc.perform(get("/user/notifications")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
   }
 
 }

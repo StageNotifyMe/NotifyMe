@@ -1,5 +1,6 @@
 package be.xplore.notifyme.service;
 
+import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
@@ -87,5 +88,31 @@ public class OrganisationService implements IOrganisationService {
     userService.grantUserRole(user.getId(), "organisation_manager");
     return organisationRepo
         .addToOrgManagers(orgId, user.getId());
+  }
+
+  /**
+   * Add a user to an organisation.
+   *
+   * @param userId        unique user Id.
+   * @param oranisationId unique organisation id.
+   * @return the updated organisation.
+   */
+  @Override
+  public Organisation addUserToOrganisation(String userId, Long oranisationId) {
+    return organisationRepo.addUserToOrganisation(userId, oranisationId);
+  }
+
+  /**
+   * Changes the application status.
+   *
+   * @param userId            unique user id.
+   * @param oranisationId     unique organisation id.
+   * @param applicationStatus status to set.
+   * @return organisation related to the application.
+   */
+  @Override
+  public Organisation changeApplicationStatus(String userId, Long oranisationId,
+      OrgApplicationStatus applicationStatus) {
+    return organisationRepo.changeApplicationStatus(userId, oranisationId, applicationStatus);
   }
 }

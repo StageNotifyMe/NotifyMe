@@ -128,15 +128,15 @@ class UserOrgApplicationServiceTest {
 
   private void mockRespondToApplication() {
     var mockOrg = mock(Organisation.class);
-    when(organisationService.getOrganisationIncAppliedUsers(anyLong())).thenReturn(mockOrg);
+    when(organisationService.addUserToOrganisation(anyString(), anyLong())).thenReturn(mockOrg);
     var userOrgApplication = new UserOrgApplication();
     var user = mock(User.class);
-    when(userService.getUser(anyString())).thenReturn(user);
+    when(userService.getUser("userid")).thenReturn(user);
+    when(userService.getUser("notFoundId")).thenThrow(OrgApplicationNotFoundException.class);
     userOrgApplication.setAppliedUser(user);
-    var appliedUserList = new ArrayList<UserOrgApplication>();
-    appliedUserList.add(userOrgApplication);
     when(user.getUserId()).thenReturn("userid");
-    when(mockOrg.getAppliedUsers()).thenReturn(appliedUserList);
+    var message = Message.builder().id(1L).build();
+    when(notificationService.createMessage(anyString(), anyString())).thenReturn(message);
   }
 
   private void mockSecureOrgManagerRequestFromPrincipal() {
