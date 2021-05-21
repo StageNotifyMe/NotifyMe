@@ -1,10 +1,10 @@
-package be.xplore.notifyme.communication;
+package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
-import be.xplore.notifyme.communication.communicationstrategies.EmailCommunicationStrategy;
-import be.xplore.notifyme.communication.communicationstrategies.ICommunicationStrategy;
-import be.xplore.notifyme.communication.communicationstrategies.SmsCommunicationStrategy;
 import be.xplore.notifyme.persistence.ICommunicationPreferenceRepo;
+import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.SmsCommunicationStrategy;
 import java.util.List;
 import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +13,12 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CommunicationPreferenceService implements ICommunicationPreferenceService {
+
   private final ICommunicationPreferenceRepo communicationPreferenceRepo;
 
   @Override
   public CommunicationPreference createCommunicationPreference(String userId, boolean isActive,
-                                                               boolean isDefault, String strategy) {
+      boolean isDefault, String strategy) {
     var strategyImpl = getStrategyImplementation(strategy);
     return communicationPreferenceRepo.create(userId, isActive, isDefault, strategyImpl);
   }
@@ -29,8 +30,8 @@ public class CommunicationPreferenceService implements ICommunicationPreferenceS
 
   @Override
   public CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
-                                                               boolean isActive,
-                                                               boolean isDefault) {
+      boolean isActive,
+      boolean isDefault) {
     var communicationPreference = communicationPreferenceRepo.findById(communicationPreferenceId);
     if (!communicationPreference.isDefault() && !isDefault) {
       //toggle active state

@@ -1,5 +1,10 @@
 package be.xplore.notifyme.controller;
 
+import be.xplore.notifyme.services.IKeycloakCommunicationService;
+import be.xplore.notifyme.services.IOrganisationService;
+import be.xplore.notifyme.services.IUserOrgApplicationService;
+import be.xplore.notifyme.services.IUserService;
+import be.xplore.notifyme.services.NotificationService;
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.dto.ApplicationOrgNameDto;
 import be.xplore.notifyme.dto.NotificationDto;
@@ -8,12 +13,7 @@ import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.communicationpreference.GetCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.PostCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.UpdateCommunicationPreferenceDto;
-import be.xplore.notifyme.communication.ICommunicationPreferenceService;
-import be.xplore.notifyme.communication.IKeycloakCommunicationService;
-import be.xplore.notifyme.communication.IOrganisationService;
-import be.xplore.notifyme.communication.IUserOrgApplicationService;
-import be.xplore.notifyme.communication.IUserService;
-import be.xplore.notifyme.communication.NotificationService;
+import be.xplore.notifyme.services.ICommunicationPreferenceService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,8 +71,8 @@ public class UserController {
   /**
    * Creates a new communication preference.
    *
-   * @param postCommunicationPreferenceDto contains all values to create
-   *                                       a new communication preference.
+   * @param postCommunicationPreferenceDto contains all values to create a new communication
+   *                                       preference.
    * @return the created object.
    */
   @PostMapping(value = "/communicationpreference")
@@ -122,7 +122,7 @@ public class UserController {
 
   @GetMapping(value = "/userInfo")
   public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username,
-                                            Principal principal) {
+      Principal principal) {
     return ResponseEntity.ok(userService.getUserInfo(username, principal));
   }
 

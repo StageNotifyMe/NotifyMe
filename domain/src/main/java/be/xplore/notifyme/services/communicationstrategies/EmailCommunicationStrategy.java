@@ -1,4 +1,4 @@
-package be.xplore.notifyme.communication.communicationstrategies;
+package be.xplore.notifyme.services.communicationstrategies;
 
 import be.xplore.notifyme.domain.Notification;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -11,7 +11,8 @@ import org.keycloak.representations.account.UserRepresentation;
 @Getter
 @Setter
 @JsonSerialize
-public class EmailCommunicationStrategy implements ICommunicationStrategy {
+public class EmailCommunicationStrategy implements
+   ICommunicationStrategy {
   private final IEmailService emailService;
 
   @Override

@@ -1,4 +1,4 @@
-package be.xplore.notifyme.communication;
+package be.xplore.notifyme.services;
 
 import java.security.Principal;
 import org.keycloak.KeycloakSecurityContext;

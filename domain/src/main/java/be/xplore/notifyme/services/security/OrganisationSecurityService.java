@@ -1,4 +1,4 @@
-package be.xplore.notifyme.communication.security;
+package be.xplore.notifyme.services.security;
 
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUser;

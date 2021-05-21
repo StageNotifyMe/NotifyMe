@@ -1,7 +1,7 @@
-package be.xplore.notifyme.communication;
+package be.xplore.notifyme.services;
 
+import be.xplore.notifyme.services.communicationstrategies.IEmailService;
 import be.xplore.notifyme.config.SesConfig;
-import be.xplore.notifyme.communication.communicationstrategies.IEmailService;
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class SesService implements IEmailService {
+
   private final SesConfig sesConfig;
 
   public Properties getProperties() {

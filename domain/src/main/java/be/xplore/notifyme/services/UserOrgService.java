@@ -1,7 +1,7 @@
-package be.xplore.notifyme.communication;
+package be.xplore.notifyme.services;
 
+import be.xplore.notifyme.services.security.OrganisationSecurityService;
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.communication.security.OrganisationSecurityService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;

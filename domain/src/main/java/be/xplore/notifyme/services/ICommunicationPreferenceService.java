@@ -1,4 +1,4 @@
-package be.xplore.notifyme.communication;
+package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
 import java.util.List;
