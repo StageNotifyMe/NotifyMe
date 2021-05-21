@@ -1,4 +1,4 @@
-package be.xplore.notifyme.communication;
+package be.xplore.notifyme.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,10 +16,10 @@ import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.communication.communicationstrategies.EmailCommunicationStrategy;
-import be.xplore.notifyme.communication.communicationstrategies.ICommunicationStrategy;
-import be.xplore.notifyme.communication.communicationstrategies.SmsCommunicationStrategy;
 import be.xplore.notifyme.persistence.ICommunicationPreferenceRepo;
+import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.SmsCommunicationStrategy;
 import java.util.ArrayList;
 import javax.validation.ValidationException;
 import org.junit.jupiter.api.Test;
@@ -31,6 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {CommunicationPreferenceService.class})
 class CommunicationPreferenceServiceTest {
+
   @Autowired
   CommunicationPreferenceService communicationPreferenceService;
   @MockBean

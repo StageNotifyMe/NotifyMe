@@ -9,6 +9,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import be.xplore.notifyme.communication.UserOrgApplicationService;
+import be.xplore.notifyme.communication.UserOrgService;
+import be.xplore.notifyme.communication.UserService;
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.domain.OrgApplicationStatus;
@@ -17,9 +20,6 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.exception.UnauthorizedException;
-import be.xplore.notifyme.communication.UserOrgApplicationService;
-import be.xplore.notifyme.communication.UserOrgService;
-import be.xplore.notifyme.communication.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +40,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {RestConfig.class, KeycloakSecurityConfig.class})
 class OrganisationManagerControllerTest {
+
   private MockMvc mockMvc;
 
   @Autowired
@@ -116,7 +117,7 @@ class OrganisationManagerControllerTest {
     var org = new Organisation();
     org.setId(1L);
     org.setName("orgje");
-    when(userOrgService.getOrgInfoAsManager(anyLong(),any())).thenReturn(org);
+    when(userOrgService.getOrgInfoAsManager(anyLong(), any())).thenReturn(org);
     mockMvc.perform(get("/omanager/organisation?organisationId=1"))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }

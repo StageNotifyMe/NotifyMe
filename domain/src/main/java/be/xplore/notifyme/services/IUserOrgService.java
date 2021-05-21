@@ -1,4 +1,4 @@
-package be.xplore.notifyme.communication;
+package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.Organisation;
 import java.security.Principal;

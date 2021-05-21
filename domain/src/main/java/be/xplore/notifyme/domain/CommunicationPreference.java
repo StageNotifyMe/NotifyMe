@@ -1,6 +1,6 @@
 package be.xplore.notifyme.domain;
 
-import be.xplore.notifyme.communication.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

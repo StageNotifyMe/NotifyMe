@@ -9,6 +9,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import be.xplore.notifyme.communication.EventService;
+import be.xplore.notifyme.communication.FacilityService;
+import be.xplore.notifyme.communication.LineService;
+import be.xplore.notifyme.communication.VenueService;
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.domain.Event;
@@ -19,10 +23,6 @@ import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
-import be.xplore.notifyme.communication.EventService;
-import be.xplore.notifyme.communication.FacilityService;
-import be.xplore.notifyme.communication.LineService;
-import be.xplore.notifyme.communication.VenueService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,6 +45,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {RestConfig.class, KeycloakSecurityConfig.class})
 class VenueManagerControllerTest {
+
   @Autowired
   private VenueManagerController venueManagerController;
 

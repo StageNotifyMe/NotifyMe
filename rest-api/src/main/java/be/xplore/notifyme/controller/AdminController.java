@@ -1,12 +1,13 @@
 package be.xplore.notifyme.controller;
 
+import be.xplore.notifyme.services.INotificationService;
+import be.xplore.notifyme.services.IOrganisationService;
+import be.xplore.notifyme.services.IUserService;
+import be.xplore.notifyme.services.IVenueService;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
-import be.xplore.notifyme.services.IOrganisationService;
-import be.xplore.notifyme.services.IUserService;
-import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +41,13 @@ public class AdminController {
   private final IVenueService venueService;
   private final IUserService userService;
 
+  private final INotificationService notificationService;
+
   @GetMapping("/adminTest")
   public ResponseEntity<String> adminInfoTest() {
+
+    var message = notificationService.createMessage("TEST BERICHT", "Ik ben in je mailbox papa");
+    notificationService.notifyUser("janssensj", message.getId());
     return ResponseEntity.ok("Well hello there, admin!");
   }
 
@@ -71,7 +77,7 @@ public class AdminController {
 
   @PostMapping("/promoteUserToVmanager")
   public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
-                                                          long venueId) {
+      long venueId) {
     venueService.makeUserVenueManager(userId, venueId);
     return ResponseEntity.noContent().build();
   }
