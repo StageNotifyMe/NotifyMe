@@ -16,9 +16,9 @@ import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.domain.communicationstrategies.EmailCommunicationStrategy;
-import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;
-import be.xplore.notifyme.domain.communicationstrategies.SmsCommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.SmsCommunicationStrategy;
 import be.xplore.notifyme.persistence.ICommunicationPreferenceRepo;
 import java.util.ArrayList;
 import javax.validation.ValidationException;

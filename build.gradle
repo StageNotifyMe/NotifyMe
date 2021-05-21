@@ -10,7 +10,7 @@ group = "be.xplore.notifyme"
 
 checkstyle {
     toolVersion '8.29'
-    configFile file("be.xplore.notifyme.config/checkstyle/checkstyle.xml")
+    configFile file("be.xplore.notifyme.be.xplore.notifyme.config/checkstyle/checkstyle.xml")
     ignoreFailures = false
     maxWarnings = 0
 }
