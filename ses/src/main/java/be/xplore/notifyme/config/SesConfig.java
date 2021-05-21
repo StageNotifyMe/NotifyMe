@@ -1,14 +1,12 @@
 package be.xplore.notifyme.config;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@Setter
 @Configuration
 @ConfigurationProperties(prefix = "sesconfig")
 public class SesConfig {
