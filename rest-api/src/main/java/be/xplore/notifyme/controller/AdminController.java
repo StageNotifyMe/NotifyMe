@@ -4,6 +4,7 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
+import be.xplore.notifyme.service.INotificationService;
 import be.xplore.notifyme.service.IOrganisationService;
 import be.xplore.notifyme.service.IUserService;
 import be.xplore.notifyme.service.IVenueService;
@@ -40,8 +41,13 @@ public class AdminController {
   private final IVenueService venueService;
   private final IUserService userService;
 
+  private final INotificationService notificationService;
+
   @GetMapping("/adminTest")
   public ResponseEntity<String> adminInfoTest() {
+
+    var message = notificationService.createMessage("TEST BERICHT", "Ik ben in je mailbox papa");
+    notificationService.notifyUser("janssensj", message.getId());
     return ResponseEntity.ok("Well hello there, admin!");
   }
 

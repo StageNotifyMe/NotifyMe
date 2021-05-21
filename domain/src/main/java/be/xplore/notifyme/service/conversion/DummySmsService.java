@@ -1,9 +1,8 @@
-package be.xplore.notifyme.domain.communicationstrategies.dummyimplements;
+package be.xplore.notifyme.service.conversion;
 
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.communicationstrategies.ISmsService;
 import org.springframework.stereotype.Service;
-
 @Service
 public class DummySmsService implements ISmsService {
   @Override
@@ -12,3 +11,4 @@ public class DummySmsService implements ISmsService {
         .println(String.format("PHONE_NUMBER: %s\nMESSAGE: %s", phoneNumber, message.getText()));
   }
 }
+
