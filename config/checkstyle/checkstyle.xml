@@ -29,7 +29,7 @@
     </module>
     <!-- https://checkstyle.org/config_filters.html#SuppressionFilter -->
     <module name="SuppressionFilter">
-        <property name="file" value="${org.checkstyle.google.suppressionfilter.be.xplore.notifyme.config}"
+        <property name="file" value="${org.checkstyle.google.suppressionfilter.be.xplore.notifyme.be.xplore.notifyme.config}"
                   default="checkstyle-suppressions.xml"/>
         <property name="optional" value="true"/>
     </module>
@@ -320,7 +320,7 @@
         </module>
         <!-- https://checkstyle.org/config_filters.html#SuppressionXpathFilter -->
         <module name="SuppressionXpathFilter">
-            <property name="file" value="${org.checkstyle.google.suppressionxpathfilter.be.xplore.notifyme.config}"
+            <property name="file" value="${org.checkstyle.google.suppressionxpathfilter.be.xplore.notifyme.be.xplore.notifyme.config}"
                       default="checkstyle-xpath-suppressions.xml"/>
             <property name="optional" value="true"/>
         </module>

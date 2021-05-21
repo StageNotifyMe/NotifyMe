@@ -13,11 +13,10 @@ repositories {
 
 dependencies {
     implementation project(':JpaAdapter')
+    implementation project(':sms-service')
+    implementation project(':ses')
     implementation project(':domain')
     implementation project(':rest-api')
-    implementation project(':sms-service')
-
-    implementation project(':ses')
 
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-security'

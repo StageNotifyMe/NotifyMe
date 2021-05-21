@@ -1,4 +1,4 @@
-package be.xplore.notifyme.domain.communicationstrategies;
+package be.xplore.notifyme.services.communicationstrategies;
 
 import be.xplore.notifyme.domain.Message;
 

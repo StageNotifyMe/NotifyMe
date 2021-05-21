@@ -1,37 +1,34 @@
-package communication;
+package be.xplore.notifyme.services;
 
+import be.xplore.notifyme.config.SmsConfiguration;
 import be.xplore.notifyme.domain.Message;
-import be.xplore.notifyme.domain.communicationstrategies.ISmsService;
+import be.xplore.notifyme.services.communicationstrategies.ISmsService;
 import com.twilio.Twilio;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Service
-@Primary
-@RequiredArgsConstructor
 @Slf4j
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class SmsCommunicationService implements ISmsService {
 
-  @Value("${twilio.phone.no}")
-  private final String twilioPhoneNo;
-  @Value("${twilio.account.sid}")
-  private final String twilioAccountSid;
-  @Value("${twilio.account.key}")
-  private final String twilioAuthToken;
+  private final SmsConfiguration smsConfiguration;
 
   @Override
   public void send(Object phoneNumber, Message message) {
-    Twilio.init(twilioAccountSid, twilioAuthToken);
+    Twilio.init(smsConfiguration.getSid(), smsConfiguration.getKey());
     var phoneNo = (String) phoneNumber;
     var msg = com.twilio.rest.api.v2010.account.Message.creator(
-        new com.twilio.type.PhoneNumber(twilioPhoneNo),
         new com.twilio.type.PhoneNumber(phoneNo),
+        new com.twilio.type.PhoneNumber(smsConfiguration.getPhoneNo()),
         buildSms(message))
         .create();
-    log.info(msg.getBody());
+    log.info(msg.getStatus().toString());
   }
 
   private String buildSms(Message message) {

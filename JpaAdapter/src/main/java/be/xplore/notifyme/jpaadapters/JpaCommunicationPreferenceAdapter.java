@@ -1,7 +1,7 @@
 package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
-import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
 import be.xplore.notifyme.exceptions.JpaNotFoundException;
 import be.xplore.notifyme.jpaobjects.JpaCommunicationPreference;
 import be.xplore.notifyme.jparepositories.JpaCommunicationPreferenceRepository;
