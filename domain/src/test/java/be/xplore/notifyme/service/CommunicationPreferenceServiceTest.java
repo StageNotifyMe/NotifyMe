@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -82,6 +83,41 @@ class CommunicationPreferenceServiceTest {
     assertThrows(ValidationException.class, () -> {
       communicationPreferenceService.updateCommunicationPreference(1L, false, false);
     });
+  }
+
+  @Test
+  void updateCommunicationPreferenceNewDefault() {
+    var mockUser = mock(User.class);
+    CommunicationPreference comPref = new CommunicationPreference(1L, mockUser, true, true,
+        new EmailCommunicationStrategy(null));
+    CommunicationPreference comPrefB = new CommunicationPreference(2L, mockUser, false, false,
+        new EmailCommunicationStrategy(null));
+    when(communicationPreferenceRepo.findById(1L)).thenReturn(comPref);
+    when(communicationPreferenceRepo.findById(2L)).thenReturn(comPrefB);
+    this.mockMakeNewDefault();
+    var newDefaultResult =
+        communicationPreferenceService.updateCommunicationPreference(2L, true, true);
+    assertEquals(2L, newDefaultResult.getId());
+    assertTrue(newDefaultResult.isActive());
+    assertTrue(newDefaultResult.isDefault());
+
+  }
+
+  private void mockMakeNewDefault() {
+    when(communicationPreferenceRepo.makeNewdefault(any()))
+        .thenAnswer(new Answer<CommunicationPreference>() {
+          @Override
+          public CommunicationPreference answer(InvocationOnMock invocation) throws Throwable {
+            Object[] args = invocation.getArguments();
+            var given = (CommunicationPreference) args[0];
+            var comPref =
+                new CommunicationPreference(given.getId(), given.getUser(), given.isActive(),
+                    given.isDefault(), given.getCommunicationStrategy());
+            comPref.setDefault(true);
+            comPref.setActive(true);
+            return comPref;
+          }
+        });
   }
 
   @Test
