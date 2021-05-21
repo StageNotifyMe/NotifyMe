@@ -13,9 +13,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
+import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
-import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUserKey;
