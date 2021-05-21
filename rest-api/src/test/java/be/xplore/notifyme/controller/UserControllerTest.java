@@ -13,10 +13,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
+import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUserKey;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
+import be.xplore.notifyme.domain.communicationstrategies.EmailCommunicationStrategy;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.service.CommunicationPreferenceService;
@@ -196,6 +199,20 @@ class UserControllerTest {
     mockMvc.perform(get("/user/communicationpreferences?userId=userId")
         .header("Content-Type", "application/json")
     ).andExpect(MockMvcResultMatchers.status().isOk());
+
+    var prefList = new ArrayList<CommunicationPreference>();
+    prefList.add(new CommunicationPreference(1L, new User(), true, true,
+        new EmailCommunicationStrategy(null)));
+    when(communicationPreferenceService.getAllCommunicationPreferencesForUser("userId"))
+        .thenReturn(prefList);
+    mockMvc.perform(get("/user/communicationpreferences?userId=userId")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content()
+            .json("[{\n"
+                + "\"id\": 1,\n" + "\"active\": true,\n"
+                + "\"defaultt\": true,\n" + "\"communicationStrategy\": \"Email\"\n"
+                + "}]"));
   }
 
 }

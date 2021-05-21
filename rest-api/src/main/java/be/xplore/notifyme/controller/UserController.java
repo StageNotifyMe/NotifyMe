@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Controller that handles user authentication related requests.
  */
+@CrossOrigin({"http://127.0.0.1:8080", "http://localhost:8080"})
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
@@ -57,7 +58,6 @@ public class UserController {
    * @param dto contains updated values.
    * @return the updated object.
    */
-  @CrossOrigin
   @PutMapping(value = "/communicationpreference")
   public ResponseEntity<Object> updateCommunicationPreference(
       @RequestBody UpdateCommunicationPreferenceDto dto) {
@@ -85,7 +85,6 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.CREATED).body(createdPreference);
   }
 
-  @CrossOrigin
   @DeleteMapping(value = "/communicationpreference")
   public ResponseEntity<Object> deleteCommunicationPreference(
       @RequestParam long communicationPreferenceId) {
