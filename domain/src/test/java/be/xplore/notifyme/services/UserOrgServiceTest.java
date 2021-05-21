@@ -1,4 +1,4 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.communication;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,7 +12,7 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUser;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.UnauthorizedException;
-import be.xplore.notifyme.services.security.OrganisationSecurityService;
+import be.xplore.notifyme.communication.security.OrganisationSecurityService;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

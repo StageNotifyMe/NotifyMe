@@ -1,4 +1,4 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.communication;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,9 +12,9 @@ import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
-import be.xplore.notifyme.services.communicationstrategies.IEmailService;
-import be.xplore.notifyme.services.communicationstrategies.ISmsService;
+import be.xplore.notifyme.communication.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.communication.communicationstrategies.IEmailService;
+import be.xplore.notifyme.communication.communicationstrategies.ISmsService;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
 import java.util.ArrayList;

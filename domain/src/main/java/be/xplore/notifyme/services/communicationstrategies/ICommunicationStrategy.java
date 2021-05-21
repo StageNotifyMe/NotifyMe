@@ -1,4 +1,4 @@
-package be.xplore.notifyme.services.communicationstrategies;
+package be.xplore.notifyme.communication.communicationstrategies;
 
 import be.xplore.notifyme.domain.Notification;
 import org.keycloak.representations.account.UserRepresentation;

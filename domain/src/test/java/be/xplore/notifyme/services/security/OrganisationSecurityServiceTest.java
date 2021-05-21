@@ -1,4 +1,4 @@
-package be.xplore.notifyme.services.security;
+package be.xplore.notifyme.communication.security;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

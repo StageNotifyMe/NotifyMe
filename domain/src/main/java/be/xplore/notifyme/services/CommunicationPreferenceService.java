@@ -1,9 +1,9 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.communication;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
-import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
-import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
-import be.xplore.notifyme.services.communicationstrategies.SmsCommunicationStrategy;
+import be.xplore.notifyme.communication.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.communication.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.communication.communicationstrategies.SmsCommunicationStrategy;
 import be.xplore.notifyme.persistence.ICommunicationPreferenceRepo;
 import java.util.List;
 import javax.validation.ValidationException;
