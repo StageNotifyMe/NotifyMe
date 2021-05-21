@@ -1,4 +1,4 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.communication;
 
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.dto.CreateEventDto;

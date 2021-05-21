@@ -1,10 +1,10 @@
-package be.xplore.notifyme.services.conversion;
+package be.xplore.notifyme.communication.conversion;
 
-import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
-import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
-import be.xplore.notifyme.services.communicationstrategies.IEmailService;
-import be.xplore.notifyme.services.communicationstrategies.ISmsService;
-import be.xplore.notifyme.services.communicationstrategies.SmsCommunicationStrategy;
+import be.xplore.notifyme.communication.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.communication.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.communication.communicationstrategies.IEmailService;
+import be.xplore.notifyme.communication.communicationstrategies.ISmsService;
+import be.xplore.notifyme.communication.communicationstrategies.SmsCommunicationStrategy;
 import javax.persistence.AttributeConverter;
 import lombok.RequiredArgsConstructor;
 

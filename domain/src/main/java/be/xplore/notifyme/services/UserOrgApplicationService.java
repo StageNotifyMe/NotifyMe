@@ -1,4 +1,4 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.communication;
 
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
@@ -6,7 +6,7 @@ import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
-import be.xplore.notifyme.services.security.OrganisationSecurityService;
+import be.xplore.notifyme.communication.security.OrganisationSecurityService;
 import java.security.Principal;
 import java.util.List;
 import lombok.AllArgsConstructor;
