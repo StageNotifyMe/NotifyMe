@@ -3,7 +3,6 @@ package communication;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.communicationstrategies.ISmsService;
 import com.twilio.Twilio;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +26,7 @@ public class SmsCommunicationService implements ISmsService {
   public void send(Object phoneNumber, Message message) {
     Twilio.init(twilioAccountSid, twilioAuthToken);
     var phoneNo = (String) phoneNumber;
-    var msg=com.twilio.rest.api.v2010.account.Message.creator(
+    var msg = com.twilio.rest.api.v2010.account.Message.creator(
         new com.twilio.type.PhoneNumber(twilioPhoneNo),
         new com.twilio.type.PhoneNumber(phoneNo),
         buildSms(message))
