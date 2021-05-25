@@ -2,7 +2,8 @@ package be.xplore.notifyme.services.conversion;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
 import be.xplore.notifyme.services.communicationstrategies.IEmailService;
