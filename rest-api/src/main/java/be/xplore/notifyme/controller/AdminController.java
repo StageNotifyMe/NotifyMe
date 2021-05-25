@@ -4,7 +4,6 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
-import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.IOrganisationService;
 import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.IVenueService;
@@ -40,8 +39,6 @@ public class AdminController {
   private final IOrganisationService organisationService;
   private final IVenueService venueService;
   private final IUserService userService;
-  
-  private final INotificationService notificationService;
 
   /**
    * Test method for admin auth.
