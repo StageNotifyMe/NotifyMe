@@ -11,13 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-import be.xplore.notifyme.communication.CommunicationPreferenceService;
-import be.xplore.notifyme.communication.KeycloakCommunicationService;
-import be.xplore.notifyme.communication.NotificationService;
-import be.xplore.notifyme.communication.OrganisationService;
-import be.xplore.notifyme.communication.UserOrgApplicationService;
-import be.xplore.notifyme.communication.UserService;
-import be.xplore.notifyme.communication.communicationstrategies.EmailCommunicationStrategy;
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.domain.CommunicationPreference;
@@ -30,6 +23,13 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
+import be.xplore.notifyme.services.CommunicationPreferenceService;
+import be.xplore.notifyme.services.KeycloakCommunicationService;
+import be.xplore.notifyme.services.NotificationService;
+import be.xplore.notifyme.services.OrganisationService;
+import be.xplore.notifyme.services.UserOrgApplicationService;
+import be.xplore.notifyme.services.UserService;
+import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

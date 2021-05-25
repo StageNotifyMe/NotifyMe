@@ -40,7 +40,7 @@ public class AdminController {
   private final IOrganisationService organisationService;
   private final IVenueService venueService;
   private final IUserService userService;
-
+  
   private final INotificationService notificationService;
 
   /**
@@ -50,9 +50,6 @@ public class AdminController {
    */
   @GetMapping("/adminTest")
   public ResponseEntity<String> adminInfoTest() {
-
-    var message = notificationService.createMessage("TEST BERICHT", "Ik ben in je mailbox papa");
-    notificationService.notifyUser("janssensj", message.getId());
     return ResponseEntity.ok("Well hello there, admin!");
   }
 

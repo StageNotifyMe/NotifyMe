@@ -8,15 +8,15 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
-import be.xplore.notifyme.services.communicationstrategies.IEmailService;
-import be.xplore.notifyme.services.communicationstrategies.ISmsService;
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
+import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.IEmailService;
+import be.xplore.notifyme.services.communicationstrategies.ISmsService;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;

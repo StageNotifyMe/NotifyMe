@@ -8,11 +8,11 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import be.xplore.notifyme.services.security.OrganisationSecurityService;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUser;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.UnauthorizedException;
+import be.xplore.notifyme.services.security.OrganisationSecurityService;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

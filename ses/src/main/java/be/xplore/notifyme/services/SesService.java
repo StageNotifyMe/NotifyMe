@@ -20,7 +20,7 @@ public class SesService implements IEmailService {
 
   private final SesConfig sesConfig;
 
-  public Properties getProperties() {
+  private Properties getProperties() {
     var props = System.getProperties();
     props.put("mail.transport.protocol", "smtp");
     props.put("mail.smtp.port", sesConfig.getPort());
@@ -29,15 +29,15 @@ public class SesService implements IEmailService {
     return props;
   }
 
-  public Session getSession(Properties properties) {
+  private Session getSession(Properties properties) {
     return Session.getDefaultInstance(properties);
   }
 
-  public Transport getTransport(Session session) throws Exception {
+  private Transport getTransport(Session session) throws Exception {
     return session.getTransport();
   }
 
-  public MimeMessage createMessage(Session session, String to, String subject, String body)
+  private MimeMessage createMessage(Session session, String to, String subject, String body)
       throws Exception {
     var msg = new MimeMessage(session);
     msg.setFrom(new InternetAddress(sesConfig.getFrom(), sesConfig.getFromName()));
@@ -48,7 +48,8 @@ public class SesService implements IEmailService {
     return msg;
   }
 
-  public void sendMessage(MimeMessage message, Transport transport) throws MessagingException {
+
+  private void sendMessage(MimeMessage message, Transport transport) throws MessagingException {
     try {
       log.info("Trying to send message...");
       transport
