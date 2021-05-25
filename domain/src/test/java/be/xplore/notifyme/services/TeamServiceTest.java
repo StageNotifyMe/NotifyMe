@@ -30,15 +30,18 @@ class TeamServiceTest {
   private ITeamRepo teamRepo;
 
   private void setupTeamRepo() {
-    var dummyLine = new Line("note", 10);
+    final var dummyLine = new Line("note", 10);
     dummyLine.setId(1L);
-    var dummyOrgList = new ArrayList<Organisation>();
-    var dummyMemberSet = new HashSet<User>();
-    var dummyTeam = new Team(1L, dummyLine, dummyOrgList, dummyMemberSet);
-    var dummyOrg = new Organisation(1L, "organisation", new ArrayList<>());
-    var dummyUsr = new User("userId", "username");
+    final var dummyOrgList = new ArrayList<Organisation>();
+    final var dummyMemberSet = new HashSet<User>();
+    final var dummyTeam = new Team(1L, dummyLine, dummyOrgList, dummyMemberSet);
+    final var dummyOrg = new Organisation(1L, "organisation", new ArrayList<>());
+    final var dummyUsr = new User("userId", "username");
 
+    setUpRepoMockito(dummyTeam, dummyOrg, dummyUsr);
+  }
 
+  private void setUpRepoMockito(Team dummyTeam, Organisation dummyOrg, User dummyUsr) {
     when(teamRepo.findById(1L)).thenReturn(Optional.of(dummyTeam));
     when(teamRepo.create(1L, 1L)).thenReturn(dummyTeam);
     when(teamRepo.addOrganisation(1L, 1L)).thenReturn(addOrgToTeam(dummyTeam, dummyOrg));

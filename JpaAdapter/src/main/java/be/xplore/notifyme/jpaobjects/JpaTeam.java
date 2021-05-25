@@ -77,6 +77,12 @@ public class JpaTeam {
         .build();
   }
 
+  /**
+   * Constructor for creating a new team.
+   *
+   * @param jpaLine         line to couple the team with.
+   * @param jpaOrganisation organisation that delivers users for the team.
+   */
   public JpaTeam(JpaLine jpaLine, JpaOrganisation jpaOrganisation) {
     this.line = jpaLine;
     this.organisations = new ArrayList<>();
@@ -84,6 +90,11 @@ public class JpaTeam {
     this.teamMembers = new HashSet<>();
   }
 
+  /**
+   * Returns basic domain version including organisations.
+   *
+   * @return Team object including organisations.
+   */
   public Team toDomainBaseIncOrganisations() {
     return Team.builder()
         .id(this.id)
@@ -93,6 +104,11 @@ public class JpaTeam {
         .build();
   }
 
+  /**
+   * Gives basic domain object back including members.
+   *
+   * @return Team domain object.
+   */
   public Team toDomainBaseIncMembers() {
     return Team.builder()
         .id(this.id)
