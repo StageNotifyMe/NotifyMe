@@ -9,4 +9,12 @@ public interface ITeamRepo {
   Team save(Team team);
 
   Optional<Team> findById(long teamId);
+
+  void delete(long teamId);
+
+  Team create(long lineId, long organisationId);
+
+  Team addOrganisation(long teamId, long organisationId);
+
+  Team addUser(long teamId, String userId);
 }
