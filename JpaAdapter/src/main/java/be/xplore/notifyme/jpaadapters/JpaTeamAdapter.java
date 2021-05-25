@@ -29,7 +29,7 @@ public class JpaTeamAdapter implements ITeamRepo {
 
   @Override
   public Optional<Team> findById(long teamId) {
-    return jpaTeamRepository.findById(teamId).map(JpaTeam::toDomain);
+    return jpaTeamRepository.findById(teamId).map(JpaTeam::toDomainBaseIncOrganisations);
   }
 
   @Override

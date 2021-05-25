@@ -43,7 +43,7 @@ public class JpaTeam {
   public Team toDomain() {
     return Team.builder()
         .id(this.id)
-        .line(this.line.toDomain())
+        .line(this.line.toDomainBase())
         .teamMembers(
             this.teamMembers.stream().map(JpaUser::toDomainBase).collect(Collectors.toSet()))
         .organisations(
@@ -74,6 +74,7 @@ public class JpaTeam {
   public Team toDomainBase() {
     return Team.builder()
         .id(this.id)
+        .line(this.line.toDomainBase())
         .build();
   }
 

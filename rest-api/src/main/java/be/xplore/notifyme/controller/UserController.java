@@ -65,7 +65,8 @@ public class UserController {
         communicationPreferenceService
             .updateCommunicationPreference(dto.getCommunicationPreferenceId(), dto.isActive(),
                 dto.isDefault());
-    return ResponseEntity.status(HttpStatus.OK).body(updatedPreference);
+    var resultDto = new GetCommunicationPreferenceDto(updatedPreference);
+    return ResponseEntity.status(HttpStatus.OK).body(resultDto);
   }
 
   /**
@@ -122,7 +123,7 @@ public class UserController {
 
   @GetMapping(value = "/userInfo")
   public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username,
-      Principal principal) {
+                                            Principal principal) {
     return ResponseEntity.ok(userService.getUserInfo(username, principal));
   }
 
