@@ -26,6 +26,7 @@ public class JpaCommunicationPreference {
   private long id;
   private boolean isActive;
   private boolean isDefault;
+  private boolean isUrgent;
   @Convert(converter = CommunicationStrategyConverter.class)
   private ICommunicationStrategy communicationStrategy;
   @ManyToOne
@@ -37,9 +38,11 @@ public class JpaCommunicationPreference {
    * @param jpaUser   jpa representation of the user.
    * @param isActive  is the prefence active.
    * @param isDefault is the preference the default preference?
+   * @param isUrgent  is the preference the urgent preference?
    * @param strategy  the strategy to use to send notifications for this preference.
    */
   public JpaCommunicationPreference(JpaUser jpaUser, boolean isActive, boolean isDefault,
+      boolean isUrgent,
       ICommunicationStrategy strategy) {
     this.user = jpaUser;
     this.isDefault = isDefault;
@@ -57,6 +60,7 @@ public class JpaCommunicationPreference {
         .id(this.id)
         .isActive(this.isActive)
         .isDefault(this.isDefault)
+        .isUrgent(this.isUrgent)
         .communicationStrategy(this.communicationStrategy)
         .user(this.user.toDomainBase())
         .build();
@@ -71,6 +75,7 @@ public class JpaCommunicationPreference {
     this.id = communicationPreference.getId();
     this.isActive = communicationPreference.isActive();
     this.isDefault = communicationPreference.isDefault();
+    this.isUrgent = communicationPreference.isUrgent();
     this.communicationStrategy = communicationPreference.getCommunicationStrategy();
     this.user = new JpaUser(communicationPreference.getUser());
   }
@@ -86,6 +91,7 @@ public class JpaCommunicationPreference {
     this.id = communicationPreference.getId();
     this.isActive = communicationPreference.isActive();
     this.isDefault = communicationPreference.isDefault();
+    this.isUrgent = communicationPreference.isUrgent();
     this.communicationStrategy = communicationPreference.getCommunicationStrategy();
     this.user = jpaUser;
   }

@@ -17,6 +17,7 @@ public class CommunicationPreference {
   private User user;
   private boolean isActive = true;
   private boolean isDefault;
+  private boolean isUrgent;
   private ICommunicationStrategy communicationStrategy;
 
   public void sendNotification(Notification notification) {

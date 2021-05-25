@@ -45,10 +45,12 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
 
   @Override
   public CommunicationPreference create(String userId, boolean isActive, boolean isDefault,
+      boolean isUrgent,
       ICommunicationStrategy strategy) {
     var jpaUser = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId));
-    var jpaComPref = new JpaCommunicationPreference(jpaUser, isActive, isDefault, strategy);
+    var jpaComPref = new JpaCommunicationPreference(jpaUser, isActive, isDefault, isUrgent,
+        strategy);
 
     //removes old default if there is any
     var preferences = jpaCommunicationPreferenceRepository.findAllByUser(jpaUser);

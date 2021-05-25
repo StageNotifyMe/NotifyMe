@@ -64,7 +64,7 @@ public class UserController {
     var updatedPreference =
         communicationPreferenceService
             .updateCommunicationPreference(dto.getCommunicationPreferenceId(), dto.isActive(),
-                dto.isDefault());
+                dto.isDefault(), dto.isUrgent());
     return ResponseEntity.status(HttpStatus.OK).body(updatedPreference);
   }
 
@@ -81,6 +81,7 @@ public class UserController {
     var createdPreference = communicationPreferenceService
         .createCommunicationPreference(postCommunicationPreferenceDto.getUserId(),
             postCommunicationPreferenceDto.isActive(), postCommunicationPreferenceDto.isDefault(),
+            postCommunicationPreferenceDto.getIsUrgent(),
             postCommunicationPreferenceDto.getCommunicationStrategy());
     return ResponseEntity.status(HttpStatus.CREATED).body(createdPreference);
   }

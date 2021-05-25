@@ -18,9 +18,9 @@ public class CommunicationPreferenceService implements ICommunicationPreferenceS
 
   @Override
   public CommunicationPreference createCommunicationPreference(String userId, boolean isActive,
-      boolean isDefault, String strategy) {
+      boolean isDefault, boolean isUrgent, String strategy) {
     var strategyImpl = getStrategyImplementation(strategy);
-    return communicationPreferenceRepo.create(userId, isActive, isDefault, strategyImpl);
+    return communicationPreferenceRepo.create(userId, isActive, isDefault, isUrgent, strategyImpl);
   }
 
   @Override
@@ -31,7 +31,7 @@ public class CommunicationPreferenceService implements ICommunicationPreferenceS
   @Override
   public CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
       boolean isActive,
-      boolean isDefault) {
+      boolean isDefault, boolean isUrgent) {
     var communicationPreference = communicationPreferenceRepo.findById(communicationPreferenceId);
     if (!communicationPreference.isDefault() && !isDefault) {
       //toggle active state

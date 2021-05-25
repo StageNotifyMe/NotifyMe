@@ -10,9 +10,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PostCommunicationPreferenceDto {
+
   private String userId;
   private Boolean isActive;
   private Boolean isDefault;
+  private Boolean isUrgent;
   private String communicationStrategy;
 
   public boolean isActive() {
@@ -21,5 +23,9 @@ public class PostCommunicationPreferenceDto {
 
   public boolean isDefault() {
     return this.isDefault;
+  }
+
+  public boolean isUrgent() {
+    return this.isUrgent;
   }
 }
