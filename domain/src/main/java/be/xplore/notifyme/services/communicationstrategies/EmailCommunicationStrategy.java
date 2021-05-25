@@ -13,6 +13,7 @@ import org.keycloak.representations.account.UserRepresentation;
 @JsonSerialize
 public class EmailCommunicationStrategy implements
     ICommunicationStrategy {
+
   private final IEmailService emailService;
 
   @Override

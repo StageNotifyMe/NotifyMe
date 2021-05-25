@@ -107,6 +107,21 @@ class CommunicationPreferenceServiceTest {
 
   }
 
+  @Test
+  void updateCommunicationPreferenceNewDefaultChecksFail() {
+    var mockUser = mock(User.class);
+    CommunicationPreference comPref = new CommunicationPreference(1L, mockUser, true, false,
+        new EmailCommunicationStrategy(null));
+    CommunicationPreference comPrefB = new CommunicationPreference(2L, mockUser, false, true,
+        new EmailCommunicationStrategy(null));
+    when(communicationPreferenceRepo.findById(1L)).thenReturn(comPref);
+    when(communicationPreferenceRepo.findById(2L)).thenReturn(comPrefB);
+    this.mockMakeNewDefault();
+    assertThrows(ValidationException.class,
+        () -> communicationPreferenceService.updateCommunicationPreference(2L, true, true));
+
+  }
+
   private void mockMakeNewDefault() {
     when(communicationPreferenceRepo.makeNewdefault(any()))
         .thenAnswer(new Answer<CommunicationPreference>() {
