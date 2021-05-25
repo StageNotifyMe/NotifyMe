@@ -1,6 +1,8 @@
 package be.xplore.notifyme.services.communicationstrategies;
 
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -18,5 +20,10 @@ class EmailCommunicationStrategyTest {
   @Test
   void getName() {
     assertEquals("Email", emailCommunicationStrategy.getName());
+  }
+
+  @Test
+  void getEmailService() {
+    assertThat(emailCommunicationStrategy.getEmailService(), instanceOf(IEmailService.class));
   }
 }
