@@ -1,13 +1,13 @@
 package be.xplore.notifyme.controller;
 
-import be.xplore.notifyme.services.INotificationService;
-import be.xplore.notifyme.services.IOrganisationService;
-import be.xplore.notifyme.services.IUserService;
-import be.xplore.notifyme.services.IVenueService;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
+import be.xplore.notifyme.services.INotificationService;
+import be.xplore.notifyme.services.IOrganisationService;
+import be.xplore.notifyme.services.IUserService;
+import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +43,11 @@ public class AdminController {
 
   private final INotificationService notificationService;
 
+  /**
+   * Test method for admin auth.
+   *
+   * @return test string.
+   */
   @GetMapping("/adminTest")
   public ResponseEntity<String> adminInfoTest() {
 

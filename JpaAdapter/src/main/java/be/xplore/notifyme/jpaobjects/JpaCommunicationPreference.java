@@ -1,8 +1,8 @@
 package be.xplore.notifyme.jpaobjects;
 
+import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
 import be.xplore.notifyme.services.conversion.CommunicationStrategyConverter;
-import be.xplore.notifyme.domain.CommunicationPreference;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
