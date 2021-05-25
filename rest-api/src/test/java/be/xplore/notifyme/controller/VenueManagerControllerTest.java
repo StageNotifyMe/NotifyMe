@@ -19,10 +19,10 @@ import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
-import be.xplore.notifyme.service.EventService;
-import be.xplore.notifyme.service.FacilityService;
-import be.xplore.notifyme.service.LineService;
-import be.xplore.notifyme.service.VenueService;
+import be.xplore.notifyme.services.EventService;
+import be.xplore.notifyme.services.FacilityService;
+import be.xplore.notifyme.services.LineService;
+import be.xplore.notifyme.services.VenueService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,6 +45,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {RestConfig.class, KeycloakSecurityConfig.class})
 class VenueManagerControllerTest {
+
   @Autowired
   private VenueManagerController venueManagerController;
 

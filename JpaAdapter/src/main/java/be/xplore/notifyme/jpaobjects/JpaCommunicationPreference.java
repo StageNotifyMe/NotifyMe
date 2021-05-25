@@ -1,7 +1,8 @@
 package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
-import be.xplore.notifyme.domain.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.services.conversion.CommunicationStrategyConverter;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JpaCommunicationPreference {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -38,7 +40,7 @@ public class JpaCommunicationPreference {
    * @param strategy  the strategy to use to send notifications for this preference.
    */
   public JpaCommunicationPreference(JpaUser jpaUser, boolean isActive, boolean isDefault,
-                                    ICommunicationStrategy strategy) {
+      ICommunicationStrategy strategy) {
     this.user = jpaUser;
     this.isDefault = isDefault;
     this.isActive = isActive;
@@ -80,7 +82,7 @@ public class JpaCommunicationPreference {
    * @param jpaUser                 complete JpaUser object.
    */
   public JpaCommunicationPreference(CommunicationPreference communicationPreference,
-                                    JpaUser jpaUser) {
+      JpaUser jpaUser) {
     this.id = communicationPreference.getId();
     this.isActive = communicationPreference.isActive();
     this.isDefault = communicationPreference.isDefault();

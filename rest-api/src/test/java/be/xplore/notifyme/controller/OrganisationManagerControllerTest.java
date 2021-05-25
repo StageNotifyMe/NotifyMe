@@ -17,9 +17,9 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.exception.UnauthorizedException;
-import be.xplore.notifyme.service.UserOrgApplicationService;
-import be.xplore.notifyme.service.UserOrgService;
-import be.xplore.notifyme.service.UserService;
+import be.xplore.notifyme.services.UserOrgApplicationService;
+import be.xplore.notifyme.services.UserOrgService;
+import be.xplore.notifyme.services.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +40,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {RestConfig.class, KeycloakSecurityConfig.class})
 class OrganisationManagerControllerTest {
+
   private MockMvc mockMvc;
 
   @Autowired
@@ -116,7 +117,7 @@ class OrganisationManagerControllerTest {
     var org = new Organisation();
     org.setId(1L);
     org.setName("orgje");
-    when(userOrgService.getOrgInfoAsManager(anyLong(),any())).thenReturn(org);
+    when(userOrgService.getOrgInfoAsManager(anyLong(), any())).thenReturn(org);
     mockMvc.perform(get("/omanager/organisation?organisationId=1"))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }

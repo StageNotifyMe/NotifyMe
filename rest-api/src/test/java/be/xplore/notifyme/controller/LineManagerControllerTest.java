@@ -8,7 +8,7 @@ import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
-import be.xplore.notifyme.service.EventService;
+import be.xplore.notifyme.services.EventService;
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {RestConfig.class, KeycloakSecurityConfig.class})
 class LineManagerControllerTest {
+
   private MockMvc mockMvc;
 
   @Autowired

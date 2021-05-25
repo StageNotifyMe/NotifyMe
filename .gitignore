@@ -4,6 +4,8 @@
 .gradle/
 .idea/
 
+secrets.properties
+
 # Log file
 *.log
 
