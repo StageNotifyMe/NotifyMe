@@ -12,7 +12,7 @@ import org.keycloak.representations.account.UserRepresentation;
 @Setter
 @JsonSerialize
 public class EmailCommunicationStrategy implements
-   ICommunicationStrategy {
+    ICommunicationStrategy {
   private final IEmailService emailService;
 
   @Override

@@ -1,8 +1,8 @@
 package be.xplore.notifyme.services;
 
-import be.xplore.notifyme.services.communicationstrategies.ISmsService;
 import be.xplore.notifyme.config.SmsConfiguration;
 import be.xplore.notifyme.domain.Message;
+import be.xplore.notifyme.services.communicationstrategies.ISmsService;
 import com.twilio.Twilio;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,14 +1,14 @@
 package be.xplore.notifyme.controller;
 
-import be.xplore.notifyme.services.IEventService;
-import be.xplore.notifyme.services.IFacilityService;
-import be.xplore.notifyme.services.ILineService;
-import be.xplore.notifyme.services.IVenueService;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.dto.GetLineDto;
+import be.xplore.notifyme.services.IEventService;
+import be.xplore.notifyme.services.IFacilityService;
+import be.xplore.notifyme.services.ILineService;
+import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
 import java.util.LinkedList;
 import javax.annotation.security.RolesAllowed;

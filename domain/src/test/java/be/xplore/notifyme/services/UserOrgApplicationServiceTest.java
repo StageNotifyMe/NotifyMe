@@ -1,4 +1,4 @@
-package be.xplore.notifyme.communication;
+package be.xplore.notifyme.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,7 +19,7 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.exception.OrgApplicationNotFoundException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
-import be.xplore.notifyme.communication.security.OrganisationSecurityService;
+import be.xplore.notifyme.services.security.OrganisationSecurityService;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
