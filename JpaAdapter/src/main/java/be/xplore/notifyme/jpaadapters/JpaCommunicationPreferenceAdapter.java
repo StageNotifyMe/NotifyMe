@@ -45,8 +45,8 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
 
   @Override
   public CommunicationPreference create(String userId, boolean isActive, boolean isDefault,
-                                        boolean isUrgent,
-                                        ICommunicationStrategy strategy) {
+      boolean isUrgent,
+      ICommunicationStrategy strategy) {
     var jpaUser = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId));
     var jpaComPref = new JpaCommunicationPreference(jpaUser, isActive, false, false,
@@ -117,14 +117,10 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
         .findAllByUser_UserId(communicationPreference.getUser().getUserId())
         .stream().filter(JpaCommunicationPreference::isUrgent).findFirst().orElseThrow(
             () -> new JpaNotFoundException(
-                "Could not find urgent comunication preference for user with id " +
-                    communicationPreference.getUser().getUserId()));
+                "Could not find urgent comunication preference for user with id "
+                    + communicationPreference.getUser().getUserId()));
     currentUrgent.setUrgent(false);
-    var newUrgent = jpaCommunicationPreferenceRepository.findById(communicationPreference.getId())
-        .orElseThrow(() -> new JpaNotFoundException(
-            "Could not find communication preference for id " + communicationPreference.getId()));
-    newUrgent.setUrgent(true);
-    newUrgent.setActive(true);
+    var newUrgent = setNewUrgentPreference(currentUrgent);
     jpaCommunicationPreferenceRepository.save(currentUrgent);
     try {
       return jpaCommunicationPreferenceRepository.save(newUrgent).toDomainBase();
@@ -133,5 +129,21 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
       jpaCommunicationPreferenceRepository.save(currentUrgent);
       throw e;
     }
+  }
+
+  /**
+   * returns new urgent pref based on old urgent preference.
+   *
+   * @param communicationPreference old urgent com preference.
+   * @return newly set urgent preference.
+   */
+  private JpaCommunicationPreference setNewUrgentPreference(
+      JpaCommunicationPreference communicationPreference) {
+    var newUrgent = jpaCommunicationPreferenceRepository.findById(communicationPreference.getId())
+        .orElseThrow(() -> new JpaNotFoundException(
+            "Could not find communication preference for id " + communicationPreference.getId()));
+    newUrgent.setUrgent(true);
+    newUrgent.setActive(true);
+    return newUrgent;
   }
 }

@@ -1,6 +1,7 @@
 package be.xplore.notifyme.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -30,6 +31,7 @@ import be.xplore.notifyme.services.OrganisationService;
 import be.xplore.notifyme.services.UserOrgApplicationService;
 import be.xplore.notifyme.services.UserService;
 import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -162,18 +164,12 @@ class UserControllerTest {
 
   @Test
   @WithMockUser(username = "user", roles = {"user"})
-  void updateCommunicationPreference() throws Exception {
-
-    mockMvc.perform(put("/user/communicationpreference")
-        .header("Content-Type", "application/json")
-        .content(
-            "{\n\"communicationPreferenceId\": 1,\n\"isActive\": true,\n\"isDefault\": false\n}"))
-        .andExpect(MockMvcResultMatchers.status().isOk());
-  }
-
-  @Test
-  @WithMockUser(username = "user", roles = {"user"})
   void createCommunicationPreference() throws Exception {
+    when(communicationPreferenceService
+        .createCommunicationPreference(anyString(), anyBoolean(), anyBoolean(), anyBoolean(),
+            any())).thenReturn(
+        CommunicationPreference.builder().id(1).isActive(true).isDefault(true).isUrgent(true)
+            .build());
 
     mockMvc.perform(post("/user/communicationpreference")
         .header("Content-Type", "application/json")
@@ -181,9 +177,29 @@ class UserControllerTest {
             + "   \"userId\": \"05f6194f-15fe-4c7e-b5b3-642e051b0d6d\",\n"
             + "   \"isActive\": true,\n"
             + "   \"isDefault\": true,\n"
+            + "   \"isUrgent\": true,\n"
             + "   \"communicationStrategy\": \"smscommunicationstrategy\"\n"
             + "}"))
         .andExpect(MockMvcResultMatchers.status().isCreated());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void updateCommunicationPreference() throws Exception {
+    var comstrat = mock(ICommunicationStrategy.class);
+    when(comstrat.getName()).thenReturn("email");
+    when(communicationPreferenceService
+        .updateCommunicationPreference(anyLong(), anyBoolean(), anyBoolean(), anyBoolean()))
+        .thenReturn(
+            CommunicationPreference.builder().id(1).isActive(true).isDefault(true).isUrgent(true)
+                .communicationStrategy(comstrat)
+                .build());
+    mockMvc.perform(put("/user/communicationpreference")
+        .header("Content-Type", "application/json")
+        .content(
+            "{\n\"communicationPreferenceId\": 1,\n\"isActive\": true,\n\"isDefault\": false,\n"
+                + "\"isUrgent\": false }"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
   }
 
   @Test
@@ -203,7 +219,7 @@ class UserControllerTest {
     ).andExpect(MockMvcResultMatchers.status().isOk());
 
     var prefList = new ArrayList<CommunicationPreference>();
-    prefList.add(new CommunicationPreference(1L, new User(), true, true,
+    prefList.add(new CommunicationPreference(1L, new User(), true, true, false,
         new EmailCommunicationStrategy(null)));
     when(communicationPreferenceService.getAllCommunicationPreferencesForUser("userId"))
         .thenReturn(prefList);

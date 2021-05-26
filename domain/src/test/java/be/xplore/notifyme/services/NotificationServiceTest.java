@@ -81,6 +81,31 @@ class NotificationServiceTest {
     });
   }
 
+  @Test
+  void notifyUserUrgent() {
+    when(keycloakCommunicationService.getUserInfoUsername(anyString()))
+        .thenReturn(getDummyUserRep());
+    var mockComPref = mock(CommunicationPreference.class);
+    when(mockComPref.getCommunicationStrategy())
+        .thenReturn(new EmailCommunicationStrategy(emailService));
+    var notification =
+        new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
+            new User("userId", "username"));
+    when(notificationRepo.createUrgent(anyLong(), anyString())).thenReturn(notification);
+
+    when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
+      @Override
+      public Notification answer(InvocationOnMock invocation) throws Throwable {
+        Object[] args = invocation.getArguments();
+        return (Notification) args[0];
+      }
+    });
+
+    assertDoesNotThrow(() -> {
+      notificationService.notifyUserUrgent("userId", 1L);
+    });
+  }
+
 
   @Test
   void getNotificationsForUser() {

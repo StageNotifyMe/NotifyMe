@@ -173,7 +173,7 @@ class CommunicationPreferenceServiceTest {
             comPrefObj.setUser(mock(User.class));
             comPrefObj.setDefault((boolean) args[2]);
             comPrefObj.setActive((boolean) args[1]);
-            comPrefObj.setCommunicationStrategy((ICommunicationStrategy) args[3]);
+            comPrefObj.setCommunicationStrategy((ICommunicationStrategy) args[4]);
             return comPrefObj;
           }
         });
@@ -182,9 +182,10 @@ class CommunicationPreferenceServiceTest {
         .createCommunicationPreference("userId", true, true, false, "emailcommunicationstrategy")
         .getCommunicationStrategy().getClass());
     assertEquals(SmsCommunicationStrategy.class, communicationPreferenceService
-        .createCommunicationPreference("userId", true, true, false,"smscommunicationstrategy")
+        .createCommunicationPreference("userId", true, true, false, "smscommunicationstrategy")
         .getCommunicationStrategy().getClass());
     assertNull(communicationPreferenceService
-        .createCommunicationPreference("userId", true, true, false,"invalid").getCommunicationStrategy());
+        .createCommunicationPreference("userId", true, true, false, "invalid")
+        .getCommunicationStrategy());
   }
 }
