@@ -35,7 +35,7 @@ public class JpaLineAdapter implements ILineRepo {
   public List<Line> getAllByEventId(long eventId) {
     var jpaEvent = jpaEventRepository.findById(eventId)
         .orElseThrow(() -> new CrudException("Could not find event for id " + eventId));
-    return jpaLineRepository.getAllByEvent(jpaEvent).stream().map(JpaLine::toDomainBase)
+    return jpaLineRepository.getAllByEvent(jpaEvent).stream().map(JpaLine::toDomainBaseIncFacility)
         .collect(Collectors.toList());
   }
 

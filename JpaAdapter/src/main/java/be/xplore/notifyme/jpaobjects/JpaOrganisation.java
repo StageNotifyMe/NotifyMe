@@ -33,7 +33,7 @@ public class JpaOrganisation {
   private List<JpaOrganisationUser> users;
   @OneToMany(mappedBy = "appliedOrganisation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<JpaUserOrgApplication> appliedUsers;
-  @ManyToMany
+  @ManyToMany(mappedBy = "organisations")
   private List<JpaTeam> teams;
 
   /**

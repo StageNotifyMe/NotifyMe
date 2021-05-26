@@ -30,9 +30,9 @@ public class JpaTeam {
 
   @OneToOne
   private JpaLine line;
-  @ManyToMany(mappedBy = "teams")
+  @ManyToMany
   private List<JpaOrganisation> organisations;
-  @ManyToMany(mappedBy = "teams")
+  @ManyToMany
   private Set<JpaUser> teamMembers;
 
   /**
