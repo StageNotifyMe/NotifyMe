@@ -12,11 +12,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetCommunicationPreferenceDto {
+
   private long id;
   private String communicationStrategy;
   private boolean active;
   @JsonAlias("default")
   private boolean defaultt;
+  private boolean urgent;
 
   /**
    * Communication preference format for export to front end.
@@ -29,5 +31,6 @@ public class GetCommunicationPreferenceDto {
         communicationPreference.getCommunicationStrategy().getName();
     this.active = communicationPreference.isActive();
     this.defaultt = communicationPreference.isDefault();
+    this.urgent = communicationPreference.isUrgent();
   }
 }

@@ -4,6 +4,7 @@ import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.exceptions.JpaNotFoundException;
 import be.xplore.notifyme.jpaobjects.JpaCommunicationPreference;
 import be.xplore.notifyme.jpaobjects.JpaNotification;
+import be.xplore.notifyme.jpaobjects.JpaUser;
 import be.xplore.notifyme.jparepositories.JpaCommunicationPreferenceRepository;
 import be.xplore.notifyme.jparepositories.JpaMessageRepository;
 import be.xplore.notifyme.jparepositories.JpaNotificationRepository;
@@ -54,14 +55,44 @@ public class JpaNotificationAdapter implements INotificationRepo {
 
   @Override
   public Notification create(long messageId, String userId) {
+    return createNotification(messageId, userId, false);
+  }
+
+  @Override
+  public Notification createUrgent(long messageId, String userId) {
+    return createNotification(messageId, userId, true);
+  }
+
+  /**
+   * Creates a notification that can be either urgent or default.
+   *
+   * @return created notification.
+   */
+  private Notification createNotification(long messageId, String userId, boolean isUrgent) {
     var jpaMessage = jpaMessageRepository.findById(messageId)
         .orElseThrow(() -> new JpaNotFoundException("Could not find message for id " + messageId));
     var jpaUser = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId));
-    var defaultComPref = jpaCommunicationPreferenceRepository.findAllByUser(jpaUser).stream()
-        .filter(JpaCommunicationPreference::isDefault).findFirst().orElseThrow(
-            () -> new JpaNotFoundException("Could not find default communication preference"));
+    var defaultComPref = getCommunicationStrategyForUseCase(isUrgent, jpaUser);
     var notification = new JpaNotification(jpaMessage, jpaUser, defaultComPref);
     return jpaNotificationRepository.save(notification).toDomainBase();
   }
+
+  /**
+   * Gets communication strategy based on if notification is urgent or not.
+   *
+   * @return Corresponding com strategy.
+   */
+  private JpaCommunicationPreference getCommunicationStrategyForUseCase(boolean isUrgent,
+      JpaUser jpaUser) {
+    if (isUrgent) {
+      return jpaCommunicationPreferenceRepository.findAllByUser(jpaUser).stream()
+          .filter(JpaCommunicationPreference::isUrgent).findFirst().orElseThrow(
+              () -> new JpaNotFoundException("Could not find default communication preference"));
+    }
+    return jpaCommunicationPreferenceRepository.findAllByUser(jpaUser).stream()
+        .filter(JpaCommunicationPreference::isDefault).findFirst().orElseThrow(
+            () -> new JpaNotFoundException("Could not find default communication preference"));
+  }
 }
+
