@@ -14,6 +14,7 @@ public interface ICommunicationPreferenceRepo {
   CommunicationPreference findById(long communicationPreferenceId);
 
   CommunicationPreference create(String userId, boolean isActive, boolean isDefault,
+      boolean isUrgent,
       ICommunicationStrategy strategy);
 
   void delete(long communicationPreferenceId);
@@ -23,4 +24,6 @@ public interface ICommunicationPreferenceRepo {
   List<CommunicationPreference> getAllForUser(String userId);
 
   CommunicationPreference makeNewdefault(CommunicationPreference communicationPreference);
+
+  CommunicationPreference makeNewUrgent(CommunicationPreference communicationPreference);
 }

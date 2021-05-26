@@ -18,9 +18,9 @@ public class CommunicationPreferenceService implements ICommunicationPreferenceS
 
   @Override
   public CommunicationPreference createCommunicationPreference(String userId, boolean isActive,
-      boolean isDefault, String strategy) {
+      boolean isDefault, boolean isUrgent, String strategy) {
     var strategyImpl = getStrategyImplementation(strategy);
-    return communicationPreferenceRepo.create(userId, isActive, isDefault, strategyImpl);
+    return communicationPreferenceRepo.create(userId, isActive, isDefault, isUrgent, strategyImpl);
   }
 
   @Override
@@ -31,15 +31,19 @@ public class CommunicationPreferenceService implements ICommunicationPreferenceS
   @Override
   public CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
       boolean isActive,
-      boolean isDefault) {
+      boolean isDefault, boolean isUrgent) {
     var communicationPreference = communicationPreferenceRepo.findById(communicationPreferenceId);
-    if (!communicationPreference.isDefault() && !isDefault) {
+    if (!communicationPreference.isDefault() && !communicationPreference.isUrgent() && !isDefault
+        && !isUrgent) {
       //toggle active state
       communicationPreference.setActive(isActive);
       return communicationPreferenceRepo.save(communicationPreference);
-    } else if (!communicationPreference.isDefault() && isDefault) {
+    } else if (!communicationPreference.isDefault() && isDefault && !isUrgent) {
       //make new default
       return communicationPreferenceRepo.makeNewdefault(communicationPreference);
+    } else if (isUrgent) {
+      //make new urgent
+      return communicationPreferenceRepo.makeNewUrgent(communicationPreference);
     } else {
       throw new ValidationException("Cannot change default communication method");
     }

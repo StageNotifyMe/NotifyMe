@@ -70,9 +70,9 @@ public class JpaLine {
     return Line.builder()
         .id(this.id)
         .note(this.note)
-        .event(this.event.toDomainBase())
-        .facility(this.facility.toDomainBase())
-        .team(this.team.toDomainBase())
+        //.event(this.event.toDomainBase())
+        //.facility(this.facility.toDomainBase())
+        //.team(this.team.toDomainBase())
         .requiredStaff(this.requiredStaff)
         .build();
   }

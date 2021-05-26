@@ -10,9 +10,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateCommunicationPreferenceDto {
+
   private long communicationPreferenceId;
   private Boolean isActive;
   private Boolean isDefault;
+  private Boolean isUrgent;
 
   public boolean isActive() {
     return this.isActive;
@@ -20,5 +22,9 @@ public class UpdateCommunicationPreferenceDto {
 
   public boolean isDefault() {
     return this.isDefault;
+  }
+
+  public boolean isUrgent() {
+    return this.isUrgent;
   }
 }
