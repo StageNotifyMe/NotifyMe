@@ -45,14 +45,14 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
 
   @Override
   public CommunicationPreference create(String userId, boolean isActive, boolean isDefault,
-      boolean isUrgent,
-      ICommunicationStrategy strategy) {
+                                        boolean isUrgent,
+                                        ICommunicationStrategy strategy) {
     var jpaUser = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId));
-    var jpaComPref = new JpaCommunicationPreference(jpaUser, isActive, isDefault, isUrgent,
+    var jpaComPref = new JpaCommunicationPreference(jpaUser, isActive, false, false,
         strategy);
 
-    //removes old default if there is any
+    /*//removes old default if there is any
     var preferences = jpaCommunicationPreferenceRepository.findAllByUser(jpaUser);
     var currentDefault = preferences.stream()
         .filter(JpaCommunicationPreference::isDefault).findFirst();
@@ -60,7 +60,7 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
       var currentDefaultUpdated = currentDefault.get();
       currentDefaultUpdated.setDefault(false);
       jpaCommunicationPreferenceRepository.save(currentDefaultUpdated);
-    }
+    }*/
     return jpaCommunicationPreferenceRepository.save(jpaComPref).toDomainBase();
   }
 
@@ -109,5 +109,29 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
     newDefault.setActive(true);
     jpaCommunicationPreferenceRepository.save(currentDefault);
     return jpaCommunicationPreferenceRepository.save(newDefault).toDomainBase();
+  }
+
+  @Override
+  public CommunicationPreference makeNewUrgent(CommunicationPreference communicationPreference) {
+    var currentUrgent = jpaCommunicationPreferenceRepository
+        .findAllByUser_UserId(communicationPreference.getUser().getUserId())
+        .stream().filter(JpaCommunicationPreference::isUrgent).findFirst().orElseThrow(
+            () -> new JpaNotFoundException(
+                "Could not find urgent comunication preference for user with id " +
+                    communicationPreference.getUser().getUserId()));
+    currentUrgent.setUrgent(false);
+    var newUrgent = jpaCommunicationPreferenceRepository.findById(communicationPreference.getId())
+        .orElseThrow(() -> new JpaNotFoundException(
+            "Could not find communication preference for id " + communicationPreference.getId()));
+    newUrgent.setUrgent(true);
+    newUrgent.setActive(true);
+    jpaCommunicationPreferenceRepository.save(currentUrgent);
+    try {
+      return jpaCommunicationPreferenceRepository.save(newUrgent).toDomainBase();
+    } catch (Exception e) {
+      currentUrgent.setUrgent(true);
+      jpaCommunicationPreferenceRepository.save(currentUrgent);
+      throw e;
+    }
   }
 }

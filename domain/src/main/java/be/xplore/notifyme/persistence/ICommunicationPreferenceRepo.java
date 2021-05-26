@@ -24,4 +24,6 @@ public interface ICommunicationPreferenceRepo {
   List<CommunicationPreference> getAllForUser(String userId);
 
   CommunicationPreference makeNewdefault(CommunicationPreference communicationPreference);
+
+  CommunicationPreference makeNewUrgent(CommunicationPreference communicationPreference);
 }
