@@ -79,7 +79,7 @@ class CommunicationPreferenceServiceTest {
   @Test
   void updateCommunicationPreferenceIsDefault() {
     var mockUser = mock(User.class);
-    CommunicationPreference comPref = new CommunicationPreference(1L, mockUser, true, true, false,
+    CommunicationPreference comPref = new CommunicationPreference(1L, mockUser, true, true, true,
         new EmailCommunicationStrategy(null));
     when(communicationPreferenceRepo.findById(1L)).thenReturn(comPref);
 
