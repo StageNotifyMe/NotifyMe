@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Line;
@@ -49,7 +48,7 @@ class TeamServiceTest {
     when(teamRepo.create(1L, 1L)).thenReturn(dummyTeam);
     when(teamRepo.addOrganisation(1L, 1L)).thenReturn(addOrgToTeam(dummyTeam, dummyOrg));
     when(teamRepo.addUser(1L, "userId")).thenReturn(addUsrToTeam(dummyTeam, dummyUsr));
-    doThrow(CrudException.class).when(teamRepo).findById(999L);
+    when(teamRepo.findById(999L)).thenReturn(Optional.empty());
     doNothing().when(teamRepo).delete(1L);
   }
 
