@@ -79,7 +79,7 @@ class CommunicationPreferenceServiceTest {
   @Test
   void updateCommunicationPreferenceIsDefault() {
     var mockUser = mock(User.class);
-    CommunicationPreference comPref = new CommunicationPreference(1L, mockUser, true, true, false,
+    CommunicationPreference comPref = new CommunicationPreference(1L, mockUser, true, true, true,
         new EmailCommunicationStrategy(null));
     when(communicationPreferenceRepo.findById(1L)).thenReturn(comPref);
 
@@ -111,6 +111,58 @@ class CommunicationPreferenceServiceTest {
   }
 
   @Test
+  void updateCommunicationPreferenceNewUrgent() {
+    var mockUser = mock(User.class);
+    CommunicationPreference comPref = new CommunicationPreference(1L, mockUser, true, false, true,
+        new EmailCommunicationStrategy(null));
+    CommunicationPreference comPrefB = new CommunicationPreference(2L, mockUser, false, false,
+        false,
+        new EmailCommunicationStrategy(null));
+    when(communicationPreferenceRepo.findById(1L)).thenReturn(comPref);
+    when(communicationPreferenceRepo.findById(2L)).thenReturn(comPrefB);
+    this.mockMakeNewUrgent();
+    var newUrgentResult =
+        communicationPreferenceService.updateCommunicationPreference(2L, true, true, true);
+    assertEquals(2L, newUrgentResult.getId());
+    assertTrue(newUrgentResult.isActive());
+    assertTrue(newUrgentResult.isUrgent());
+  }
+
+  @Test
+  void updateCommunicationPreferenceNewUrgentNotDefault() {
+    var mockUser = mock(User.class);
+    CommunicationPreference comPref = new CommunicationPreference(1L, mockUser, true, false, true,
+        new EmailCommunicationStrategy(null));
+    CommunicationPreference comPrefB = new CommunicationPreference(2L, mockUser, false, false,
+        false,
+        new EmailCommunicationStrategy(null));
+    when(communicationPreferenceRepo.findById(1L)).thenReturn(comPref);
+    when(communicationPreferenceRepo.findById(2L)).thenReturn(comPrefB);
+    this.mockMakeNewUrgent();
+    var newUrgentResult =
+        communicationPreferenceService.updateCommunicationPreference(2L, true, false, true);
+    assertEquals(2L, newUrgentResult.getId());
+    assertTrue(newUrgentResult.isActive());
+    assertTrue(newUrgentResult.isUrgent());
+  }
+
+  @Test
+  void updateCommunicationPreferenceActive() {
+    var mockUser = mock(User.class);
+    CommunicationPreference comPref = new CommunicationPreference(1L, mockUser, false, false, false,
+        new EmailCommunicationStrategy(null));
+    CommunicationPreference comPrefSaved = new CommunicationPreference(1L, mockUser, true, false,
+        false,
+        new EmailCommunicationStrategy(null));
+    when(communicationPreferenceRepo.findById(1L)).thenReturn(comPref);
+    when(communicationPreferenceRepo.save(any())).thenReturn(comPrefSaved);
+    this.mockMakeNewUrgent();
+    var newActiveResult =
+        communicationPreferenceService.updateCommunicationPreference(1L, true, false, false);
+    assertTrue(newActiveResult.isActive());
+  }
+
+  @Test
   void updateCommunicationPreferenceNewDefaultChecksFail() {
     var mockUser = mock(User.class);
     CommunicationPreference comPref = new CommunicationPreference(1L, mockUser, true, false, false,
@@ -137,6 +189,24 @@ class CommunicationPreferenceServiceTest {
                     given.isDefault(), given.isUrgent(),
                     given.getCommunicationStrategy());
             comPref.setDefault(true);
+            comPref.setActive(true);
+            return comPref;
+          }
+        });
+  }
+
+  private void mockMakeNewUrgent() {
+    when(communicationPreferenceRepo.makeNewUrgent(any()))
+        .thenAnswer(new Answer<CommunicationPreference>() {
+          @Override
+          public CommunicationPreference answer(InvocationOnMock invocation) throws Throwable {
+            Object[] args = invocation.getArguments();
+            var given = (CommunicationPreference) args[0];
+            var comPref =
+                new CommunicationPreference(given.getId(), given.getUser(), given.isActive(),
+                    given.isDefault(), given.isUrgent(),
+                    given.getCommunicationStrategy());
+            comPref.setUrgent(true);
             comPref.setActive(true);
             return comPref;
           }
