@@ -78,6 +78,23 @@ public class JpaLine {
   }
 
   /**
+   * Converts a jpa-object to a domain variant with only primitive type attributes and facility.
+   *
+   * @return domain version of the object.
+   */
+  public Line toDomainBaseIncFacility() {
+    return Line.builder()
+        .id(this.id)
+        .note(this.note)
+        //.event(this.event.toDomainBase())
+        .facility(this.facility.toDomainBase())
+        //.team(this.team.toDomainBase())
+        .requiredStaff(this.requiredStaff)
+        .build();
+  }
+
+
+  /**
    * Constructor for conversion from domain object to jpa-object.
    *
    * @param line jpa version of the object.
