@@ -5,14 +5,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,6 +49,7 @@ class TeamServiceTest {
     when(teamRepo.create(1L, 1L)).thenReturn(dummyTeam);
     when(teamRepo.addOrganisation(1L, 1L)).thenReturn(addOrgToTeam(dummyTeam, dummyOrg));
     when(teamRepo.addUser(1L, "userId")).thenReturn(addUsrToTeam(dummyTeam, dummyUsr));
+    doThrow(CrudException.class).when(teamRepo).findById(999L);
     doNothing().when(teamRepo).delete(1L);
   }
 
@@ -106,5 +110,9 @@ class TeamServiceTest {
     var result = teamService.getTeam(1L);
     assertThat(result, instanceOf(Team.class));
     assertEquals(1L, result.getId());
+
+    assertThrows(CrudException.class, () -> {
+      teamService.getTeam(999L);
+    });
   }
 }
