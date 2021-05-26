@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/lmanager")
 @RequiredArgsConstructor
 public class LineManagerController {
+
   private final ITeamService teamService;
   private final IEventService eventService;
   private final ILineService lineService;
@@ -65,6 +66,12 @@ public class LineManagerController {
     return ResponseEntity.status(HttpStatus.CREATED).body(team);
   }
 
+  /**
+   * Updates a team.
+   *
+   * @param putTeamDto Dto team representation.
+   * @return The updated team.
+   */
   @PutMapping("/team")
   public ResponseEntity<Object> updateTeam(@RequestBody PutTeamDto putTeamDto) {
     Team team;
