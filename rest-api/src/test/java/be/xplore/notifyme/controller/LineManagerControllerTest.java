@@ -9,6 +9,7 @@ import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.services.IEventService;
+import be.xplore.notifyme.services.ILineService;
 import be.xplore.notifyme.services.ITeamService;
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,9 @@ class LineManagerControllerTest {
   @MockBean
   private IEventService eventService;
   @MockBean
-  private ITeamService iteamService;
+  private ITeamService teamService;
+  @MockBean
+  private ILineService lineService;
 
   @Test
   @WithMockUser(username = "test", roles = {"line_manager"})
