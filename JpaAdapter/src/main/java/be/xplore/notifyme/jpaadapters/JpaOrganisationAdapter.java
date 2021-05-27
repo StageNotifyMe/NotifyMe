@@ -2,13 +2,16 @@ package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exceptions.JpaNotFoundException;
 import be.xplore.notifyme.jpaobjects.JpaOrganisation;
 import be.xplore.notifyme.jpaobjects.JpaOrganisationUser;
 import be.xplore.notifyme.jpaobjects.JpaUserOrgApplication;
 import be.xplore.notifyme.jparepositories.JpaOrganisationRepository;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,7 +41,7 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
 
   @Override
   public Organisation changeApplicationStatus(String userId, Long organisationId,
-      OrgApplicationStatus applicationStatus) {
+                                              OrgApplicationStatus applicationStatus) {
     var jpaorg = jpaOrganisationRepository.findById(organisationId).orElseThrow();
     jpaorg.getAppliedUsers().stream()
         .filter(application -> application.getOrganisationUserKey().getUserId().equals(userId)
@@ -88,5 +91,24 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
     jpaUser.getAppliedOrganisations().add(new JpaUserOrgApplication(jpaOrg, jpaUser,
         OrgApplicationStatus.APPLIED));
     jpaUserRepository.save(jpaUser);
+  }
+
+  @Override
+  public List<User> getAllOrganisationManagers(Long organisationId) {
+    var jpaOrganisation = jpaOrganisationRepository.findById(organisationId).orElseThrow(
+        () -> new JpaNotFoundException("Could not find organisation for id " + organisationId));
+    var orgUsers = jpaUserRepository.findAllByOrganisationsContaining(jpaOrganisation);
+    var orgManagers = new ArrayList<User>();
+    for (User orgUser : orgUsers) {
+      var isManager = orgUser.getOrganisations().stream()
+          .filter(o -> o.getOrganisationUserKey().getOrganisationId() == organisationId).findFirst()
+          .orElseThrow(() -> new JpaNotFoundException(
+              "Could not find organisation " + organisationId + " in organisations of user "
+                  + orgUser.getUserId())).isOrganisationLeader();
+      if (isManager) {
+        orgManagers.add(orgUser);
+      }
+    }
+    return orgManagers;
   }
 }

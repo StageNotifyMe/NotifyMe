@@ -1,6 +1,7 @@
 package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
@@ -21,6 +22,7 @@ public class EventService implements IEventService {
   private final UserService userService;
   private final IEventRepo eventRepo;
   private final TokenService tokenService;
+  private final INotificationService notificationService;
 
   /**
    * Method to create an event from a createEventDTO (comes from API).
@@ -110,5 +112,26 @@ public class EventService implements IEventService {
       throw new SaveToDatabaseException("User is already line manager of this event!");
     }
     userService.grantUserRole(userId, "line_manager");
+  }
+
+  @Override
+  public Event updateEventStatus(long eventId, EventStatus eventStatus) {
+    var updatedEvent = eventRepo.updateEventStatus(eventId, eventStatus);
+    if (eventStatus == EventStatus.CANCELED) {
+      notifyForCanceledEvent(updatedEvent);
+    }
+    return updatedEvent;
+  }
+
+  private void notifyForCanceledEvent(Event updatedEvent) {
+    var message = notificationService.createCanceledEventMessage(updatedEvent);
+    //notify organisation managers
+    List<Long> organisationIds = eventRepo.getAllOrganisationIds(updatedEvent.getId());
+    notificationService.notifyOrganisationsManagers(organisationIds, message.getId());
+    //notify attending members
+    var attendingMembers = eventRepo.getAttendingMembers(updatedEvent.getId());
+    notificationService.notifyUsers(attendingMembers, message.getId());
+    //notify line managers
+    notificationService.notifyUsers(updatedEvent.getLineManagers(), message.getId());
   }
 }

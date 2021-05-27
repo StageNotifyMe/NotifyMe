@@ -1,6 +1,7 @@
 package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.EventStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,7 @@ public class JpaEvent {
   private String description;
   private String artist;
   private LocalDateTime dateTime;
+  private EventStatus eventStatus;
 
   @ManyToOne
   private JpaVenue venue;
@@ -70,6 +72,7 @@ public class JpaEvent {
         .description(this.description)
         .artist(this.artist)
         .dateTime(this.dateTime)
+        .eventStatus(this.eventStatus)
         .venue(this.venue.toDomainBase())
         .build();
   }
@@ -86,6 +89,7 @@ public class JpaEvent {
         .description(this.description)
         .artist(this.artist)
         .dateTime(this.dateTime)
+        .eventStatus(this.eventStatus)
         .lineManagers(
             this.lineManagers.stream().map(JpaUser::toDomainBase).collect(Collectors.toSet()))
         .build();
@@ -102,6 +106,7 @@ public class JpaEvent {
     this.description = event.getDescription();
     this.artist = event.getArtist();
     this.dateTime = event.getDateTime();
+    this.eventStatus = event.getEventStatus();
     this.venue = new JpaVenue(event.getVenue());
     this.lines = event.getLines().stream().map(JpaLine::new)
         .collect(Collectors.toList());
@@ -121,6 +126,7 @@ public class JpaEvent {
     this.description = event.getDescription();
     this.artist = event.getArtist();
     this.dateTime = event.getDateTime();
+    this.eventStatus = event.getEventStatus();
     this.venue = jpaVenue;
     this.lines = event.getLines().stream().map(JpaLine::new)
         .collect(Collectors.toList());
