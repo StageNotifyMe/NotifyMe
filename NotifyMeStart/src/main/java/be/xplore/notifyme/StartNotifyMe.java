@@ -9,7 +9,6 @@ import org.springframework.context.annotation.PropertySource;
  */
 @SpringBootApplication(scanBasePackages = "be.xplore.notifyme")
 @PropertySource("classpath:application.properties")
-@PropertySource("classpath:secrets.properties")
 public class StartNotifyMe {
 
   public static void main(String[] args) {
