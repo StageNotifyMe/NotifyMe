@@ -79,6 +79,17 @@ public class JpaTeam {
   }
 
   /**
+   * Converts jpa-object to domain object only including id.
+   *
+   * @return domain object.
+   */
+  public Team toDomainBaseOnlyId() {
+    return Team.builder()
+        .id(this.id)
+        .build();
+  }
+
+  /**
    * Constructor for creating a new team.
    *
    * @param jpaLine         line to couple the team with.
