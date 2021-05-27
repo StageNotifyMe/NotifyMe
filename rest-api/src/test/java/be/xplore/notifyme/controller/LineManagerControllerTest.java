@@ -180,4 +180,49 @@ class LineManagerControllerTest {
     mockMvc.perform(delete("/lmanager/team?teamId=1"))
         .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
+
+  @Test
+  @WithMockUser(username = "lmanager", roles = {"user", "line_manager"})
+  void getAllAvailableOrganisations() throws Exception {
+    mockGetAllAvailableOrganisations();
+
+    mockMvc.perform(get("/lmanager/team/organisations/available?teamId=1"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  private void mockGetAllAvailableOrganisations() {
+    //since an empty list is a valid return value in this scenario, I won't add dummy organisations
+    //to the test
+    var dummyList = new ArrayList<Organisation>();
+    when(teamService.getAllAvailableOrganisations(1L)).thenReturn(dummyList);
+  }
+
+  @Test
+  @WithMockUser(username = "lmanager", roles = {"user", "line_manager"})
+  void getTeamFromLine() throws Exception {
+    mockGetTeamFromLine();
+
+    mockMvc.perform(get("/lmanager/line/team?lineId=1"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().json("1"));
+
+  }
+
+  private void mockGetTeamFromLine() {
+    var dummyLine = new Line("note", 5);
+    var dummyTeam = new Team();
+    dummyTeam.setId(1L);
+    dummyLine.setTeam(dummyTeam);
+    when(lineService.getLine(1L)).thenReturn(dummyLine);
+  }
+
+  @Test
+  @WithMockUser(username = "lmanager", roles = {"user", "line_manager"})
+  void deleteOrgFromTeam() throws Exception {
+    doNothing().when(teamService).deleteOrganisationFromTeam(1L, 1L);
+
+    mockMvc.perform(delete("/lmanager/team/organisation?teamId=1&organisationId=1"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
 }

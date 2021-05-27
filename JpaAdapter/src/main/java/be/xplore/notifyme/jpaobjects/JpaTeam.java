@@ -78,6 +78,11 @@ public class JpaTeam {
         .build();
   }
 
+  /**
+   * Converts jpa-object to domain object only including id.
+   *
+   * @return domain object.
+   */
   public Team toDomainBaseOnlyId() {
     return Team.builder()
         .id(this.id)

@@ -89,8 +89,8 @@ public class JpaTeamAdapter implements ITeamRepo {
     var jpaOrg =
         jpaTeam.getOrganisations().stream().filter(o -> o.getId() == organisationId).findFirst()
             .orElseThrow(() -> new JpaNotFoundException(
-                "Could not find organisation with id " + organisationId + " in team with id " +
-                    teamId));
+                "Could not find organisation with id " + organisationId + " in team with id "
+                    + teamId));
     jpaTeam.getOrganisations().remove(jpaOrg);
     jpaTeamRepository.save(jpaTeam);
   }
