@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateEventDto;
@@ -48,6 +49,8 @@ class EventServiceTest {
   private UserService userService;
   @MockBean
   private TokenService tokenService;
+  @MockBean
+  private NotificationService notificationService;
   @MockBean
   private IEventRepo eventRepo;
   @MockBean
@@ -203,7 +206,7 @@ class EventServiceTest {
 
   private final Event testEvent =
       new Event(1, "Evenement", "een evenement", "een artiest",
-          LocalDateTime.now(), getTestVenue(), new LinkedList<>(), new HashSet<>());
+          LocalDateTime.now(), EventStatus.OK, getTestVenue(), new LinkedList<>(), new HashSet<>());
 
   private Event getTestEventWithLineManager() {
     var testEvent =

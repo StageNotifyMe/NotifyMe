@@ -41,6 +41,8 @@ class NotificationServiceTest {
   IEmailService emailService;
   @MockBean
   ISmsService smsService;
+  @MockBean
+  private OrganisationService organisationService;
 
   @Test
   void createMessage() {

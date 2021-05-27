@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.User;
@@ -47,7 +48,7 @@ class LineServiceTest {
 
   private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
   private final Event event =
-      new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), new Venue(),
+      new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), EventStatus.OK, new Venue(),
           new LinkedList<>(), new HashSet<>());
   private final Facility facility =
       new Facility(1L, "descriptie", "locatie", 1, 20, new Venue(), new LinkedList<>());
