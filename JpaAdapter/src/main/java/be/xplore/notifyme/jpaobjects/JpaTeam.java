@@ -78,6 +78,12 @@ public class JpaTeam {
         .build();
   }
 
+  public Team toDomainBaseOnlyId() {
+    return Team.builder()
+        .id(this.id)
+        .build();
+  }
+
   /**
    * Constructor for creating a new team.
    *

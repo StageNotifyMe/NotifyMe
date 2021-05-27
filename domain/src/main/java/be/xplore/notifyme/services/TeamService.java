@@ -1,8 +1,10 @@
 package be.xplore.notifyme.services;
 
+import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,5 +43,13 @@ public class TeamService implements ITeamService {
     );
   }
 
+  @Override
+  public List<Organisation> getAllAvailableOrganisations(long teamId) {
+    return teamRepo.getAvailableOrganisations(teamId);
+  }
 
+  @Override
+  public void deleteOrganisationFromTeam(long teamId, long organisationId) {
+    teamRepo.deleteOrganisationFromTeam(teamId, organisationId);
+  }
 }

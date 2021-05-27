@@ -54,10 +54,22 @@ public class LineManagerController {
     return ResponseEntity.ok(dtoLines);
   }
 
+  @GetMapping("/team/organisations/available")
+  public ResponseEntity<Object> getAllAvailableOrganisations(@RequestParam long teamId) {
+    var organisations = teamService.getAllAvailableOrganisations(teamId);
+    return ResponseEntity.ok(organisations);
+  }
+
   @GetMapping("/team")
   public ResponseEntity<Object> getTeam(@RequestParam long teamId) {
     var team = teamService.getTeam(teamId);
     return ResponseEntity.ok(team);
+  }
+
+  @GetMapping("/line/team")
+  public ResponseEntity<Object> getTeamFromLine(@RequestParam long lineId) {
+    var teamId = lineService.getLine(lineId).getTeam().getId();
+    return ResponseEntity.ok(teamId);
   }
 
   @PostMapping("/team")
@@ -88,5 +100,12 @@ public class LineManagerController {
   public ResponseEntity<Object> deleteTeam(@RequestParam long teamId) {
     teamService.deleteTeam(teamId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
+  @DeleteMapping("/team/organisation")
+  public ResponseEntity<Object> deleteOrgFromTeam(@RequestParam long teamId,
+                                                  @RequestParam long organisationId) {
+    teamService.deleteOrganisationFromTeam(teamId, organisationId);
+    return ResponseEntity.noContent().build();
   }
 }

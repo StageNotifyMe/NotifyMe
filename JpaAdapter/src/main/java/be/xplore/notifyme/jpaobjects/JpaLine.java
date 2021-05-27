@@ -72,7 +72,7 @@ public class JpaLine {
         .note(this.note)
         //.event(this.event.toDomainBase())
         //.facility(this.facility.toDomainBase())
-        //.team(this.team.toDomainBase())
+        .team(this.team.toDomainBaseOnlyId())
         .requiredStaff(this.requiredStaff)
         .build();
   }

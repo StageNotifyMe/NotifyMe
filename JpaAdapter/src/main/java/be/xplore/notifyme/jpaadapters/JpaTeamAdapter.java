@@ -1,14 +1,18 @@
 package be.xplore.notifyme.jpaadapters;
 
+import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.exceptions.JpaNotFoundException;
+import be.xplore.notifyme.jpaobjects.JpaOrganisation;
 import be.xplore.notifyme.jpaobjects.JpaTeam;
 import be.xplore.notifyme.jparepositories.JpaLineRepository;
 import be.xplore.notifyme.jparepositories.JpaOrganisationRepository;
 import be.xplore.notifyme.jparepositories.JpaTeamRepository;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.ITeamRepo;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -68,5 +72,26 @@ public class JpaTeamAdapter implements ITeamRepo {
         .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId));
     jpaTeam.getTeamMembers().add(jpaUser);
     return jpaTeamRepository.save(jpaTeam).toDomainBaseIncMembers();
+  }
+
+  @Override
+  public List<Organisation> getAvailableOrganisations(long teamId) {
+    var jpaTeam = jpaTeamRepository.findById(teamId)
+        .orElseThrow(() -> new JpaNotFoundException("Could not find team for id " + teamId));
+    return jpaOrganisationRepository.findAllByTeamsNotContaining(jpaTeam).stream().map(
+        JpaOrganisation::toDomainBase).collect(Collectors.toList());
+  }
+
+  @Override
+  public void deleteOrganisationFromTeam(long teamId, long organisationId) {
+    var jpaTeam = jpaTeamRepository.findById(teamId)
+        .orElseThrow(() -> new JpaNotFoundException("Could not find team for id " + teamId));
+    var jpaOrg =
+        jpaTeam.getOrganisations().stream().filter(o -> o.getId() == organisationId).findFirst()
+            .orElseThrow(() -> new JpaNotFoundException(
+                "Could not find organisation with id " + organisationId + " in team with id " +
+                    teamId));
+    jpaTeam.getOrganisations().remove(jpaOrg);
+    jpaTeamRepository.save(jpaTeam);
   }
 }

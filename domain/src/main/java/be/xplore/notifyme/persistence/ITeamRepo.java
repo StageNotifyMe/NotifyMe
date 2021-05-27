@@ -1,6 +1,8 @@
 package be.xplore.notifyme.persistence;
 
+import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +19,8 @@ public interface ITeamRepo {
   Team addOrganisation(long teamId, long organisationId);
 
   Team addUser(long teamId, String userId);
+
+  List<Organisation> getAvailableOrganisations(long teamId);
+
+  void deleteOrganisationFromTeam(long teamId, long organisationId);
 }
