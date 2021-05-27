@@ -101,7 +101,8 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
     var orgManagers = new ArrayList<User>();
     for (User orgUser : orgUsers) {
       var isManager = orgUser.getOrganisations().stream()
-          .filter(o -> o.getOrganisationUserKey().getOrganisationId() == organisationId).findFirst()
+          .filter(o -> o.getOrganisationUserKey().getOrganisationId().equals(organisationId))
+          .findFirst()
           .orElseThrow(() -> new JpaNotFoundException(
               "Could not find organisation " + organisationId + " in organisations of user "
                   + orgUser.getUserId())).isOrganisationLeader();

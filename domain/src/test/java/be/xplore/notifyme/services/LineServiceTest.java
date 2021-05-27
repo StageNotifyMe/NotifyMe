@@ -35,20 +35,18 @@ class LineServiceTest {
   @Autowired
   private LineService lineService;
   @MockBean
-  @Autowired
   private EventService eventService;
   @MockBean
-  @Autowired
   private FacilityService facilityService;
   @MockBean
   private ILineRepo lineRepo;
   @MockBean
-  @Autowired
   private UserService userService;
 
   private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
   private final Event event =
-      new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), EventStatus.OK, new Venue(),
+      new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), EventStatus.OK,
+          new Venue(),
           new LinkedList<>(), new HashSet<>());
   private final Facility facility =
       new Facility(1L, "descriptie", "locatie", 1, 20, new Venue(), new LinkedList<>());
@@ -61,7 +59,7 @@ class LineServiceTest {
     when(lineRepo.create(any(Line.class), anyLong(), anyLong())).thenReturn(line);
 
     var result = lineService.createLine(createLineDto, principal);
-    assertEquals(line,result);
+    assertEquals(line, result);
   }
 
   @Test
