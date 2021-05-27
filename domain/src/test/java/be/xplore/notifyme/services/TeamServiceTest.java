@@ -18,6 +18,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,16 +41,19 @@ class TeamServiceTest {
     final var dummyOrg = new Organisation(1L, "organisation", new ArrayList<>());
     final var dummyUsr = new User("userId", "username");
 
-    setUpRepoMockito(dummyTeam, dummyOrg, dummyUsr);
+    setUpRepoMockito(dummyTeam, dummyOrg, dummyUsr, dummyOrgList);
   }
 
-  private void setUpRepoMockito(Team dummyTeam, Organisation dummyOrg, User dummyUsr) {
+  private void setUpRepoMockito(Team dummyTeam, Organisation dummyOrg, User dummyUsr,
+                                List<Organisation> dummyOrglist) {
     when(teamRepo.findById(1L)).thenReturn(Optional.of(dummyTeam));
     when(teamRepo.create(1L, 1L)).thenReturn(dummyTeam);
     when(teamRepo.addOrganisation(1L, 1L)).thenReturn(addOrgToTeam(dummyTeam, dummyOrg));
     when(teamRepo.addUser(1L, "userId")).thenReturn(addUsrToTeam(dummyTeam, dummyUsr));
     when(teamRepo.findById(999L)).thenReturn(Optional.empty());
+    when(teamRepo.getAvailableOrganisations(1L)).thenReturn(dummyOrglist);
     doNothing().when(teamRepo).delete(1L);
+    doNothing().when(teamRepo).deleteOrganisationFromTeam(1L, 1L);
   }
 
   private Team addOrgToTeam(Team team, Organisation org) {
@@ -112,6 +116,23 @@ class TeamServiceTest {
 
     assertThrows(CrudException.class, () -> {
       teamService.getTeam(999L);
+    });
+  }
+
+  @Test
+  void getAllAvailableOrganisations() {
+    setupTeamRepo();
+
+    var result = teamService.getAllAvailableOrganisations(1L);
+    assertTrue(result.stream().anyMatch(o -> o.getId() == 1L));
+  }
+
+  @Test
+  void deleteOrganisationFromTeam() {
+    setupTeamRepo();
+
+    assertDoesNotThrow(() -> {
+      teamService.deleteOrganisationFromTeam(1L, 1L);
     });
   }
 }
