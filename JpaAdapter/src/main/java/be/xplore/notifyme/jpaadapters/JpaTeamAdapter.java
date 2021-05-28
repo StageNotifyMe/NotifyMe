@@ -24,7 +24,7 @@ public class JpaTeamAdapter implements ITeamRepo {
   private final JpaOrganisationRepository jpaOrganisationRepository;
   private final JpaUserRepository jpaUserRepository;
 
-  private final String couldNotFindTeam = "Could not find team for id ";
+  private static final String TEAM_NOT_FOUND_MESSAGE = "Could not find team for id ";
 
   @Override
   public Team save(Team team) {
@@ -39,7 +39,7 @@ public class JpaTeamAdapter implements ITeamRepo {
   @Override
   public void delete(long teamId) {
     var team = jpaTeamRepository.findById(teamId)
-        .orElseThrow(() -> new JpaNotFoundException(couldNotFindTeam + teamId));
+        .orElseThrow(() -> new JpaNotFoundException(TEAM_NOT_FOUND_MESSAGE + teamId));
     jpaTeamRepository.delete(team);
   }
 
@@ -56,7 +56,7 @@ public class JpaTeamAdapter implements ITeamRepo {
   @Override
   public Team addOrganisation(long teamId, long organisationId) {
     var jpaTeam = jpaTeamRepository.findById(teamId)
-        .orElseThrow(() -> new JpaNotFoundException(couldNotFindTeam + teamId));
+        .orElseThrow(() -> new JpaNotFoundException(TEAM_NOT_FOUND_MESSAGE + teamId));
     var jpaOrg = jpaOrganisationRepository.findById(organisationId)
         .orElseThrow(
             () -> new JpaNotFoundException("Could not find organisation for id " + organisationId));
@@ -67,7 +67,7 @@ public class JpaTeamAdapter implements ITeamRepo {
   @Override
   public Team addUser(long teamId, String userId) {
     var jpaTeam = jpaTeamRepository.findById(teamId)
-        .orElseThrow(() -> new JpaNotFoundException(couldNotFindTeam + teamId));
+        .orElseThrow(() -> new JpaNotFoundException(TEAM_NOT_FOUND_MESSAGE + teamId));
     var jpaUser = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId));
     jpaTeam.getTeamMembers().add(jpaUser);
@@ -77,7 +77,7 @@ public class JpaTeamAdapter implements ITeamRepo {
   @Override
   public List<Organisation> getAvailableOrganisations(long teamId) {
     var jpaTeam = jpaTeamRepository.findById(teamId)
-        .orElseThrow(() -> new JpaNotFoundException("Could not find team for id " + teamId));
+        .orElseThrow(() -> new JpaNotFoundException(TEAM_NOT_FOUND_MESSAGE + teamId));
     return jpaOrganisationRepository.findAllByTeamsNotContaining(jpaTeam).stream().map(
         JpaOrganisation::toDomainBase).collect(Collectors.toList());
   }
@@ -85,7 +85,7 @@ public class JpaTeamAdapter implements ITeamRepo {
   @Override
   public void deleteOrganisationFromTeam(long teamId, long organisationId) {
     var jpaTeam = jpaTeamRepository.findById(teamId)
-        .orElseThrow(() -> new JpaNotFoundException("Could not find team for id " + teamId));
+        .orElseThrow(() -> new JpaNotFoundException(TEAM_NOT_FOUND_MESSAGE + teamId));
     var jpaOrg =
         jpaTeam.getOrganisations().stream().filter(o -> o.getId() == organisationId).findFirst()
             .orElseThrow(() -> new JpaNotFoundException(

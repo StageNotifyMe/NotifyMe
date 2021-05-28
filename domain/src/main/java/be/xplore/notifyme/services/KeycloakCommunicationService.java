@@ -49,6 +49,7 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
   @Value("${userservice.clients.url}")
   private String clientUri;
   final RestTemplate restTemplate;
+  @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
   @Qualifier("xformRequest")
   @Autowired
   HttpHeaders httpXformHeader;

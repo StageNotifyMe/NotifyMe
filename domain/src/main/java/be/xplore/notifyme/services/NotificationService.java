@@ -62,21 +62,6 @@ public class NotificationService implements INotificationService {
     return messageRepo.save(message);
   }
 
-  /*@Override
-  public void notifyOrganisationsManagers(List<Long> organisationIds, long messageId) {
-    List<User> managers = new ArrayList<>();
-    for (Long organisationId : organisationIds) {
-      managers.addAll(organisationService.getOrganisationManagers(organisationId));
-    }
-    for (User manager : managers) {
-      var notification = notificationRepo.create(messageId, manager.getUserId());
-      var userInfo = keycloakCommunicationService.getUserInfoUsername(manager.getUserName());
-      notification.setCommunicationAddresAndUsedStrategy(userInfo);
-      notificationRepo.save(notification);
-      notification.send();
-    }
-  }*/
-
   @Override
   public void notifyOrganisationManagers(long eventId, long messageId) {
     List<User> orgManagers = organisationService.getOrganisationManagersForEvent(eventId);

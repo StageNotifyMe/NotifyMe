@@ -5,9 +5,9 @@ import org.keycloak.representations.account.UserRepresentation;
 
 public interface ICommunicationStrategy {
 
-  public void send(Notification notification);
+  void send(Notification notification);
 
-  public String getCommunicationAddress(UserRepresentation userRepresentation);
+  String getCommunicationAddress(UserRepresentation userRepresentation);
 
-  public String getName();
+  String getName();
 }
