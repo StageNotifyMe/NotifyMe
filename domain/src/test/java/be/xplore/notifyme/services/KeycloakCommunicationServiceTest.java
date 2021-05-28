@@ -100,6 +100,30 @@ class KeycloakCommunicationServiceTest {
   }
 
   @Test
+  void registerSuccessEmptyPhoneNo() {
+    userRegistrationDto.setPhoneNumber("");
+
+    var arrayList = getTestUserRepresentation();
+    final Type listType = new TypeToken<List<UserRepresentation>>() {
+    }.getType();
+
+    when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
+    when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("someResponseToken"));
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("[{id:\"test-id\"}]"));
+
+    when(gson.fromJson(anyString(), eq(AdminTokenResponseDto.class)))
+        .thenReturn(new AdminTokenResponseDto("a", 10, 10, "Access", 5, "scopes"));
+    when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
+
+    when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
+
+    assertDoesNotThrow(() -> keycloakCommunicationService.register(userRegistrationDto));
+  }
+
+  @Test
   void registerSuccessWithPhoneNo() {
     var arrayList = getTestUserRepresentationWithPhoneNo();
     final Type listType = new TypeToken<List<UserRepresentation>>() {
