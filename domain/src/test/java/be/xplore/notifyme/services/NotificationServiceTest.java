@@ -217,7 +217,7 @@ class NotificationServiceTest {
   private void mockCreateNotification(Message message, User user, CommunicationPreference comPref) {
     var notification =
         new Notification(1L, "address", comPref, "emailservice", message,
-            user);
+            user,false);
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
   }
 
