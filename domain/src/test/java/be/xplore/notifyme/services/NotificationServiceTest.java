@@ -189,16 +189,6 @@ class NotificationServiceTest {
     return emailComStrat;
   }
 
-
-/*  private void mockGetOrganisationManagers(User orgManager1, User orgManager2) {
-    var org1managers = new ArrayList<User>();
-    org1managers.add(orgManager1);
-    var org2managers = new ArrayList<User>();
-    org2managers.add(orgManager2);
-    when(organisationService.getOrganisationManagers(1L)).thenReturn(org1managers);
-    when(organisationService.getOrganisationManagers(2L)).thenReturn(org2managers);
-  }*/
-
   private void mockCreateNotification(Message message, User user, CommunicationPreference comPref) {
     var notification =
         new Notification(1L, "address", comPref, "emailservice", message,
@@ -245,6 +235,7 @@ class NotificationServiceTest {
 
     assertDoesNotThrow(() -> {
       notificationService.notifyUsers(users, 1L);
+      notificationService.notifyUsers(null, 1L);
     });
   }
 
