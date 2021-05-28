@@ -456,6 +456,16 @@ class KeycloakCommunicationServiceTest {
   }
 
   @Test
+  void checkNonVerifiedPhoneNoNoCode() {
+    mockGetUserInfoRest();
+    mockGetAdminAccesstoken();
+    var arrayList = getTestUserRepresentationWithPhoneNoWithoutVerifyCode();
+    when(gson.fromJson(anyString(), eq(UserRepresentation.class))).thenReturn(arrayList.get(0));
+    assertThrows(ChannelNotVerifiedException.class,
+        () -> keycloakCommunicationService.checkPhoneVerification("randomUserId"));
+  }
+
+  @Test
   void getUserInfoByIdSuccessful() {
     this.mockGetAdminAccesstoken();
     this.mockGetUserInfoRest();
