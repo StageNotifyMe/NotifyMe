@@ -117,8 +117,7 @@ public class UserService implements IUserService {
    */
   private void getUserInfoAndSendVerificationEmail(String username) {
     var userInfo = keycloakCommunicationService.getUserInfoUsername(username);
-    //TODO: terug aan zetten!
-    //keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
+    keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
     createUserInDatabase(userInfo.getId(), username);
     createDefaultCommunicationPreference(userInfo.getId());
   }

@@ -13,20 +13,22 @@ import org.keycloak.representations.account.UserRepresentation;
 @NoArgsConstructor
 @Builder
 public class Notification {
+
   private long id;
   private String communicationAddress;
   private CommunicationPreference communicationPreference;
   private String usedCommunicationStrategy;
   private Message message;
   private User receiver;
+  private boolean hidden;
 
   public void send() {
     this.getCommunicationPreference().getCommunicationStrategy().send(this);
   }
 
   /**
-   * Uses instance of User in this object in combination with a UserRepresentation object
-   * to set the communicationaddress and used strategy.
+   * Uses instance of User in this object in combination with a UserRepresentation object to set the
+   * communicationaddress and used strategy.
    *
    * @param userInfo UserRepresentation object.
    */

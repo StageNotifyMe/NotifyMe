@@ -142,6 +142,13 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
+  @GetMapping(value = "activatePhone")
+  public ResponseEntity<String> activatePhone(@RequestParam(name = "username") String username,
+      @RequestParam(name = "code") String code) {
+    keycloakCommunicationService.verifyPhoneNo(username, code);
+    return ResponseEntity.ok("Your number is now ready to receive notifications through text.");
+  }
+
   /**
    * Gets a list of organisationApplications for the calling user.
    *

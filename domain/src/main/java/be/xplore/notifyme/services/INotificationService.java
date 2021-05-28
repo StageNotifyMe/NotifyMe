@@ -13,4 +13,6 @@ public interface INotificationService {
   Message createMessage(String title, String text);
 
   List<Notification> getNotificationsForUser(String userId);
+
+  void notifyUserHidden(String username, long messageId);
 }

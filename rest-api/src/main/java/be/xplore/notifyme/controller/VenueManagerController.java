@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/vmanager")
-@RolesAllowed("venue_manager")
+@RolesAllowed({"venue_manager","admin"})
 @RequiredArgsConstructor
 @Validated
 public class VenueManagerController {

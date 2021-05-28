@@ -37,7 +37,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootTest(classes = {KeycloakCommunicationService.class})
+@SpringBootTest(classes = {KeycloakCommunicationService.class,CodeGeneratorService.class})
 @Import(RestConfig.class)
 class KeycloakCommunicationServiceTest {
 
@@ -45,6 +45,10 @@ class KeycloakCommunicationServiceTest {
   private KeycloakCommunicationService keycloakCommunicationService;
   @MockBean
   private RestTemplate restTemplate;
+  @Autowired
+  private CodeGeneratorService codeGeneratorService;
+  @MockBean
+  private ISmsVerificationSenderService ismsVerificationSenderService;
   @MockBean
   private Gson gson;
 
@@ -162,7 +166,6 @@ class KeycloakCommunicationServiceTest {
     when(gson.fromJson("LIST", listType)).thenReturn(mockList);
     when(mockList.get(anyInt())).thenReturn(mockUserRep);
 
-
     assertEquals(mockUserRep, keycloakCommunicationService.getUserInfoUsername("user"));
   }
 
@@ -205,7 +208,6 @@ class KeycloakCommunicationServiceTest {
     when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
     when(gson.fromJson("LIST", listType)).thenReturn(mockList);
-
 
     assertEquals(mockList, keycloakCommunicationService.getAllUserInfoRest("token"));
   }
@@ -283,7 +285,7 @@ class KeycloakCommunicationServiceTest {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     when(gson.fromJson("RoleArray", RoleRepresentation[].class))
-        .thenReturn(new RoleRepresentation[] {getTestRoleRepresentation()});
+        .thenReturn(new RoleRepresentation[]{getTestRoleRepresentation()});
   }
 
   @Test
@@ -354,7 +356,7 @@ class KeycloakCommunicationServiceTest {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     when(gson.fromJson("clientArray", RelevantClientInfoDto[].class))
-        .thenReturn(new RelevantClientInfoDto[] {getTestRelevantClientInfo()});
+        .thenReturn(new RelevantClientInfoDto[]{getTestRelevantClientInfo()});
   }
 
   private RelevantClientInfoDto getTestRelevantClientInfo() {

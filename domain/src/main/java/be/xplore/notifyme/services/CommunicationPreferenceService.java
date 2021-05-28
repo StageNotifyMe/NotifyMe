@@ -15,11 +15,15 @@ import org.springframework.stereotype.Service;
 public class CommunicationPreferenceService implements ICommunicationPreferenceService {
 
   private final ICommunicationPreferenceRepo communicationPreferenceRepo;
+  private final KeycloakCommunicationService keycloakCommunicationService;
 
   @Override
   public CommunicationPreference createCommunicationPreference(String userId, boolean isActive,
       boolean isDefault, boolean isUrgent, String strategy) {
     var strategyImpl = getStrategyImplementation(strategy);
+    if (strategyImpl instanceof SmsCommunicationStrategy) {
+      keycloakCommunicationService.checkPhoneVerification(userId);
+    }
     return communicationPreferenceRepo.create(userId, isActive, isDefault, isUrgent, strategyImpl);
   }
 

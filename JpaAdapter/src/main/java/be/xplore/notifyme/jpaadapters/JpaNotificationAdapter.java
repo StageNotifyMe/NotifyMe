@@ -49,7 +49,7 @@ public class JpaNotificationAdapter implements INotificationRepo {
 
   @Override
   public List<Notification> findByUser(String userId) {
-    return jpaNotificationRepository.findByReceiver_UserId(userId).stream()
+    return jpaNotificationRepository.findByReceiver_UserIdAndHiddenIsFalse(userId).stream()
         .map(JpaNotification::toDomainBase).collect(Collectors.toList());
   }
 
