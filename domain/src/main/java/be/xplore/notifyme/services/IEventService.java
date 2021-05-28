@@ -1,6 +1,7 @@
 package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.dto.CreateEventDto;
 import java.security.Principal;
 import java.util.List;
@@ -16,4 +17,6 @@ public interface IEventService {
   List<Event> getAllEventsForLineManager(String userId);
 
   void promoteToLineManager(String userId, long eventId);
+
+  Event updateEventStatus(long eventId, EventStatus eventStatus);
 }

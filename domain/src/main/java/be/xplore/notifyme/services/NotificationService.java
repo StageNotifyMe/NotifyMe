@@ -1,9 +1,12 @@
 package be.xplore.notifyme.services;
 
+import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
+import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ public class NotificationService implements INotificationService {
   private final INotificationRepo notificationRepo;
   private final IMessageRepo messageRepo;
   private final KeycloakCommunicationService keycloakCommunicationService;
+  private final IOrganisationService organisationService;
 
   @Override
   public Message createMessage(String title, String text) {
@@ -56,5 +60,35 @@ public class NotificationService implements INotificationService {
   @Override
   public List<Notification> getNotificationsForUser(String userId) {
     return notificationRepo.findByUser(userId);
+  }
+
+  @Override
+  public Message createCanceledEventMessage(Event updatedEvent) {
+    var message = new Message("Event has been canceled", "An event has been canceled, details:"
+        + "\nEventId: " + updatedEvent.getId()
+        + "\nTitle: " + updatedEvent.getTitle()
+        + "\nDescription: " + updatedEvent.getDescription()
+        + "\nArtist: " + updatedEvent.getArtist()
+        + "\nDate and time: " + updatedEvent.getDateTime().toString());
+    return messageRepo.save(message);
+  }
+
+  @Override
+  public void notifyOrganisationManagers(long eventId, long messageId) {
+    List<User> orgManagers = organisationService.getOrganisationManagersForEvent(eventId);
+    notifyUsers(orgManagers, messageId);
+  }
+
+  @Override
+  public void notifyUsers(Collection<User> users, long messageId) {
+    if (users != null) {
+      for (User user : users) {
+        var notification = notificationRepo.create(messageId, user.getUserId());
+        var userInfo = keycloakCommunicationService.getUserInfoUsername(user.getUserName());
+        notification.setCommunicationAddresAndUsedStrategy(userInfo);
+        notificationRepo.save(notification);
+        notification.send();
+      }
+    }
   }
 }

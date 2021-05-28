@@ -24,6 +24,9 @@ public class JpaNotificationAdapter implements INotificationRepo {
   private final JpaUserRepository jpaUserRepository;
   private final JpaCommunicationPreferenceRepository jpaCommunicationPreferenceRepository;
 
+  private static final String DEFAULT_COMPREF_NOT_FOUND_MESSAGE =
+      "Could not find default communication preference";
+
   @Override
   public Notification save(Notification notification) {
     if (notification.getReceiver() != null) {
@@ -32,7 +35,7 @@ public class JpaNotificationAdapter implements INotificationRepo {
               "Could not find user for id " + notification.getReceiver().getUserId())));
       var defaultComPref = jpaCommunicationPreferenceRepository.findAllByUser(jpaUser).stream()
           .filter(JpaCommunicationPreference::isDefault).findFirst().orElseThrow(
-              () -> new JpaNotFoundException("Could not find default communication preference"));
+              () -> new JpaNotFoundException(DEFAULT_COMPREF_NOT_FOUND_MESSAGE));
       return jpaNotificationRepository
           .save(new JpaNotification(notification, jpaUser, defaultComPref))
           .toDomainBase();
@@ -84,15 +87,15 @@ public class JpaNotificationAdapter implements INotificationRepo {
    * @return Corresponding com strategy.
    */
   private JpaCommunicationPreference getCommunicationStrategyForUseCase(boolean isUrgent,
-      JpaUser jpaUser) {
+                                                                        JpaUser jpaUser) {
     if (isUrgent) {
       return jpaCommunicationPreferenceRepository.findAllByUser(jpaUser).stream()
           .filter(JpaCommunicationPreference::isUrgent).findFirst().orElseThrow(
-              () -> new JpaNotFoundException("Could not find default communication preference"));
+              () -> new JpaNotFoundException(DEFAULT_COMPREF_NOT_FOUND_MESSAGE));
     }
     return jpaCommunicationPreferenceRepository.findAllByUser(jpaUser).stream()
         .filter(JpaCommunicationPreference::isDefault).findFirst().orElseThrow(
-            () -> new JpaNotFoundException("Could not find default communication preference"));
+            () -> new JpaNotFoundException(DEFAULT_COMPREF_NOT_FOUND_MESSAGE));
   }
 }
 

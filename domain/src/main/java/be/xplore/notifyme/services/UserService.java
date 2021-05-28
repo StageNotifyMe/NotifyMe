@@ -170,7 +170,6 @@ public class UserService implements IUserService {
    * @return an updated user.
    */
   @Override
-  //TODO: denk niet dat deze manier van werken nog kan met hexa
   public User updateUser(User user) {
     try {
       return userRepo.save(user);

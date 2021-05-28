@@ -2,6 +2,7 @@ package be.xplore.notifyme.persistence;
 
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.domain.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -25,4 +26,6 @@ public interface IOrganisationRepo {
       OrgApplicationStatus applicationStatus);
 
   void applyToOrganisation(long orgId, String userId);
+
+  List<User> getAllOrganisationManagersForEvent(Long eventId);
 }

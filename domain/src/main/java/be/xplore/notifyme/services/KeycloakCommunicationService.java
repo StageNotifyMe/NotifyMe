@@ -52,6 +52,7 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
   @Value("${notifyme.link}")
   private String notifymeLink;
   final RestTemplate restTemplate;
+  @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
   @Qualifier("xformRequest")
   @Autowired
   HttpHeaders httpXformHeader;
