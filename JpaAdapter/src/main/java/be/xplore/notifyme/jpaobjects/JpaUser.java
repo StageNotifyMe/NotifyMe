@@ -33,7 +33,7 @@ public class JpaUser {
   private List<JpaUserOrgApplication> appliedOrganisations;
   @ManyToMany(cascade = CascadeType.ALL, mappedBy = "managers")
   private List<JpaVenue> venues;
-  @ManyToMany
+  @ManyToMany(mappedBy = "teamMembers")
   private Set<JpaTeam> teams;
   @ManyToMany(cascade = CascadeType.ALL, mappedBy = "lineManagers")
   private List<JpaEvent> events;

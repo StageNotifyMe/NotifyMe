@@ -30,9 +30,9 @@ public class JpaTeam {
 
   @OneToOne
   private JpaLine line;
-  @ManyToMany(mappedBy = "teams")
+  @ManyToMany
   private List<JpaOrganisation> organisations;
-  @ManyToMany(mappedBy = "teams")
+  @ManyToMany
   private Set<JpaUser> teamMembers;
 
   /**
@@ -75,6 +75,17 @@ public class JpaTeam {
     return Team.builder()
         .id(this.id)
         .line(this.line.toDomainBase())
+        .build();
+  }
+
+  /**
+   * Converts jpa-object to domain object only including id.
+   *
+   * @return domain object.
+   */
+  public Team toDomainBaseOnlyId() {
+    return Team.builder()
+        .id(this.id)
         .build();
   }
 
