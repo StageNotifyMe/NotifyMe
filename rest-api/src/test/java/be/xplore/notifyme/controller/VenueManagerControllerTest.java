@@ -8,10 +8,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.User;
@@ -24,12 +26,16 @@ import be.xplore.notifyme.services.FacilityService;
 import be.xplore.notifyme.services.LineService;
 import be.xplore.notifyme.services.VenueService;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -316,5 +322,24 @@ class VenueManagerControllerTest {
         .andExpect(MockMvcResultMatchers.content().json((
             "[{userId:\"userid\"}]"
         )));
+  }
+
+  @Test
+  @WithMockUser(username = "vmanager", roles = {"venue_manager"})
+  void updateEventStatus() throws Exception {
+    when(eventService.updateEventStatus(anyLong(), any())).thenAnswer(new Answer<Event>() {
+      @Override
+      public Event answer(InvocationOnMock invocation) throws Throwable {
+        var args = invocation.getArguments();
+        return new Event((long) args[0], "title", "description", "artist", LocalDateTime.now(),
+            (EventStatus) args[1], new Venue(), new LinkedList<>(), new HashSet<>());
+      }
+    });
+
+    mockMvc.perform(put("/vmanager/event/status").contentType(MediaType.APPLICATION_JSON)
+        .content("{\"eventId\":1,\n\"eventStatus\":\"CANCELED\"\n}"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content()
+            .json("{\"id\":1,\n\"eventStatus\":\"CANCELED\"\n}"));
   }
 }

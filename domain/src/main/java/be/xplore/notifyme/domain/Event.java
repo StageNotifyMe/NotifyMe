@@ -24,6 +24,7 @@ public class Event {
   private String description;
   private String artist;
   private LocalDateTime dateTime;
+  private EventStatus eventStatus;
 
   private Venue venue;
   private List<Line> lines = new ArrayList<>();
@@ -47,6 +48,7 @@ public class Event {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         .withZone(ZoneId.of("Europe/Brussels"));
     this.dateTime = LocalDateTime.parse(isoDateTimeString, formatter);
+    this.eventStatus = EventStatus.OK;
 
   }
 }

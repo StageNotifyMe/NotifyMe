@@ -2,6 +2,7 @@ package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
 import java.security.Principal;
@@ -112,7 +113,12 @@ public class OrganisationService implements IOrganisationService {
    */
   @Override
   public Organisation changeApplicationStatus(String userId, Long oranisationId,
-      OrgApplicationStatus applicationStatus) {
+                                              OrgApplicationStatus applicationStatus) {
     return organisationRepo.changeApplicationStatus(userId, oranisationId, applicationStatus);
+  }
+
+  @Override
+  public List<User> getOrganisationManagersForEvent(long eventId) {
+    return organisationRepo.getAllOrganisationManagersForEvent(eventId);
   }
 }

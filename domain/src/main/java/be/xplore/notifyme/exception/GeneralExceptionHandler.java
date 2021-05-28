@@ -39,7 +39,7 @@ public class GeneralExceptionHandler {
   protected ResponseEntity<Object> handleNpeException(RuntimeException ex) {
     log.error(ex.getMessage());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Server could not handle request correctly.");
+        .body("The server encountered a nullpointer exception: " + ex.getMessage());
   }
 
   @ExceptionHandler(value = {OrgApplicationNotFoundException.class})
