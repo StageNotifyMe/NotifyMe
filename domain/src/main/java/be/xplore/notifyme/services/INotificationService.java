@@ -19,7 +19,7 @@ public interface INotificationService {
 
   Message createCanceledEventMessage(Event updatedEvent);
 
-  void notifyOrganisationsManagers(List<Long> organisationIds, long messageId);
+  void notifyOrganisationManagers(long eventId, long messageId);
 
   void notifyUsers(Collection<User> users, long messageId);
 }

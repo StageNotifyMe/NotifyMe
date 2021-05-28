@@ -126,8 +126,8 @@ public class EventService implements IEventService {
   private void notifyForCanceledEvent(Event updatedEvent) {
     var message = notificationService.createCanceledEventMessage(updatedEvent);
     //notify organisation managers
-    List<Long> organisationIds = eventRepo.getAllOrganisationIds(updatedEvent.getId());
-    notificationService.notifyOrganisationsManagers(organisationIds, message.getId());
+    //List<Long> organisationIds = eventRepo.getAllOrganisationIds(updatedEvent.getId());
+    notificationService.notifyOrganisationManagers(updatedEvent.getId(), message.getId());
     //notify attending members
     var attendingMembers = eventRepo.getAttendingMembers(updatedEvent.getId());
     notificationService.notifyUsers(attendingMembers, message.getId());

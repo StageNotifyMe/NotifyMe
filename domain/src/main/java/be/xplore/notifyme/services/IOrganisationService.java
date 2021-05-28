@@ -25,5 +25,5 @@ public interface IOrganisationService {
   Organisation changeApplicationStatus(String userId, Long oranisationId,
       OrgApplicationStatus applicationStatus);
 
-  List<User> getOrganisationManagers(Long organisationId);
+  List<User> getOrganisationManagersForEvent(long eventId);
 }

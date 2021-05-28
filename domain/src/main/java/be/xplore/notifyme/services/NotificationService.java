@@ -6,7 +6,6 @@ import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +62,7 @@ public class NotificationService implements INotificationService {
     return messageRepo.save(message);
   }
 
-  @Override
+  /*@Override
   public void notifyOrganisationsManagers(List<Long> organisationIds, long messageId) {
     List<User> managers = new ArrayList<>();
     for (Long organisationId : organisationIds) {
@@ -76,16 +75,24 @@ public class NotificationService implements INotificationService {
       notificationRepo.save(notification);
       notification.send();
     }
+  }*/
+
+  @Override
+  public void notifyOrganisationManagers(long eventId, long messageId) {
+    List<User> orgManagers = organisationService.getOrganisationManagersForEvent(eventId);
+    notifyUsers(orgManagers, messageId);
   }
 
   @Override
   public void notifyUsers(Collection<User> users, long messageId) {
-    for (User user : users) {
-      var notification = notificationRepo.create(messageId, user.getUserId());
-      var userInfo = keycloakCommunicationService.getUserInfoUsername(user.getUserName());
-      notification.setCommunicationAddresAndUsedStrategy(userInfo);
-      notificationRepo.save(notification);
-      notification.send();
+    if (users != null) {
+      for (User user : users) {
+        var notification = notificationRepo.create(messageId, user.getUserId());
+        var userInfo = keycloakCommunicationService.getUserInfoUsername(user.getUserName());
+        notification.setCommunicationAddresAndUsedStrategy(userInfo);
+        notificationRepo.save(notification);
+        notification.send();
+      }
     }
   }
 }

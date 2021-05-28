@@ -7,6 +7,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exceptions.JpaNotFoundException;
 import be.xplore.notifyme.jpaobjects.JpaOrganisation;
 import be.xplore.notifyme.jpaobjects.JpaOrganisationUser;
+import be.xplore.notifyme.jpaobjects.JpaUser;
 import be.xplore.notifyme.jpaobjects.JpaUserOrgApplication;
 import be.xplore.notifyme.jparepositories.JpaOrganisationRepository;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
@@ -95,11 +96,11 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
 
   @Override
   public List<User> getAllOrganisationManagers(Long organisationId) {
-    var jpaOrganisation = jpaOrganisationRepository.findById(organisationId).orElseThrow(
+    /*var jpaOrganisation = jpaOrganisationRepository.findById(organisationId).orElseThrow(
         () -> new JpaNotFoundException("Could not find organisation for id " + organisationId));
     var orgUsers = jpaUserRepository.findAllByOrganisationsContaining(jpaOrganisation);
-    var orgManagers = new ArrayList<User>();
-    for (User orgUser : orgUsers) {
+    var orgManagers = new ArrayList<JpaUser>();
+    for (JpaUser orgUser : orgUsers) {
       var isManager = orgUser.getOrganisations().stream()
           .filter(o -> o.getOrganisationUserKey().getOrganisationId().equals(organisationId))
           .findFirst()
@@ -110,6 +111,19 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
         orgManagers.add(orgUser);
       }
     }
-    return orgManagers;
+    return orgManagers.stream().map(JpaUser::toDomainBase).collect(Collectors.toList());*/
+    return null;
+  }
+
+  @Override
+  public List<User> getAllOrganisationManagersForEvent(Long eventId) {
+    var jpaUserIds = jpaUserRepository.findByEvent(eventId);
+    var jpaUsers = new ArrayList<JpaUser>();
+    for (String jpaUserId : jpaUserIds) {
+      var jpaUser = jpaUserRepository.findById(jpaUserId)
+          .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + jpaUserId));
+      jpaUsers.add(jpaUser);
+    }
+    return jpaUsers.stream().map(JpaUser::toDomainBase).collect(Collectors.toList());
   }
 }

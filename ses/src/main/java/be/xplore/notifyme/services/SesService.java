@@ -64,6 +64,7 @@ public class SesService implements IEmailService {
   }
 
   private String wrapInHtml(String message) {
+    message = message.replaceAll("\n", "<br>");
     return String.format("<p>%s</p>", message);
   }
 

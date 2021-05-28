@@ -167,14 +167,14 @@ class NotificationServiceTest {
     orgIdList.add(1L);
     orgIdList.add(2L);
     assertDoesNotThrow(() -> {
-      notificationService.notifyOrganisationsManagers(orgIdList, 1L);
+      notificationService.notifyOrganisationManagers(1L, 1L);
     });
   }
 
   private void mockNotifyOrgManagers() {
     var orgManager1 = new User("org1-man", "orgMan1");
     var orgManager2 = new User("org2-man", "orgMan2");
-    this.mockGetOrganisationManagers(orgManager1, orgManager2);
+    //this.mockGetOrganisationManagers(orgManager1, orgManager2);
     var message = new Message(1L, "title", "text");
     var comPref = new CommunicationPreference(1L, orgManager1, true, true, true,
         mockEmailCommunicationStrategy());
@@ -190,14 +190,14 @@ class NotificationServiceTest {
   }
 
 
-  private void mockGetOrganisationManagers(User orgManager1, User orgManager2) {
+/*  private void mockGetOrganisationManagers(User orgManager1, User orgManager2) {
     var org1managers = new ArrayList<User>();
     org1managers.add(orgManager1);
     var org2managers = new ArrayList<User>();
     org2managers.add(orgManager2);
     when(organisationService.getOrganisationManagers(1L)).thenReturn(org1managers);
     when(organisationService.getOrganisationManagers(2L)).thenReturn(org2managers);
-  }
+  }*/
 
   private void mockCreateNotification(Message message, User user, CommunicationPreference comPref) {
     var notification =
