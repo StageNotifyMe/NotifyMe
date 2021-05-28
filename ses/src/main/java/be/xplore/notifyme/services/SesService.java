@@ -2,9 +2,11 @@ package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.config.SesConfig;
 import be.xplore.notifyme.services.communicationstrategies.IEmailService;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -33,12 +35,12 @@ public class SesService implements IEmailService {
     return Session.getDefaultInstance(properties);
   }
 
-  private Transport getTransport(Session session) throws Exception {
+  private Transport getTransport(Session session) throws NoSuchProviderException {
     return session.getTransport();
   }
 
   private MimeMessage createMessage(Session session, String to, String subject, String body)
-      throws Exception {
+      throws UnsupportedEncodingException, MessagingException {
     var msg = new MimeMessage(session);
     msg.setFrom(new InternetAddress(sesConfig.getFrom(), sesConfig.getFromName()));
     msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
@@ -49,8 +51,8 @@ public class SesService implements IEmailService {
   }
 
 
-  private void sendMessage(MimeMessage message, Transport transport) throws MessagingException {
-    try {
+  private void sendMessage(MimeMessage message, Transport transport) {
+    try (transport) {
       log.info("Trying to send message...");
       transport
           .connect(sesConfig.getHost(), sesConfig.getSmtpUsername(), sesConfig.getSmtpPassword());
@@ -58,8 +60,6 @@ public class SesService implements IEmailService {
       log.info("Message successfully sent!");
     } catch (MessagingException e) {
       log.error(e.getMessage());
-    } finally {
-      transport.close();
     }
   }
 

@@ -7,13 +7,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface INotificationRepo {
 
-  public Notification save(Notification notification);
+  Notification save(Notification notification);
 
-  public Notification findById(long notificationId);
+  Notification findById(long notificationId);
 
-  public Notification create(long messageId, String userId);
+  Notification create(long messageId, String userId);
 
-  public Notification createUrgent(long messageId, String userId);
+  Notification createUrgent(long messageId, String userId);
 
-  public List<Notification> findByUser(String userId);
+  List<Notification> findByUser(String userId);
 }
