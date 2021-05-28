@@ -24,7 +24,9 @@ import be.xplore.notifyme.services.communicationstrategies.IEmailService;
 import be.xplore.notifyme.services.communicationstrategies.ISmsService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
 import org.mockito.invocation.InvocationOnMock;
@@ -50,6 +52,11 @@ class NotificationServiceTest {
   ISmsService smsService;
   @MockBean
   private OrganisationService organisationService;
+
+  @BeforeEach
+  private void setUp() {
+    mockSave();
+  }
 
   @Test
   void createMessage() {
@@ -174,7 +181,6 @@ class NotificationServiceTest {
     this.mockCreateNotification(message, orgManager1, comPref);
     this.mockCreateNotification(message, orgManager2, comPref);
     this.mockGetUserInfoUsername();
-    this.mockSave();
   }
 
   private EmailCommunicationStrategy mockEmailCommunicationStrategy() {
@@ -230,5 +236,26 @@ class NotificationServiceTest {
 
   @Test
   void notifyUsers() {
+    var user1 = new User("user1", "username1");
+    var user2 = new User("user2", "username2");
+    var users = new ArrayList<User>();
+    users.add(user1);
+    users.add(user2);
+    mockNotifyUsers(users);
+
+    assertDoesNotThrow(() -> {
+      notificationService.notifyUsers(users, 1L);
+    });
+  }
+
+  private void mockNotifyUsers(Collection<User> users) {
+    var message = new Message(1L, "title", "text");
+    long iter = 1L;
+    for (User user : users) {
+      var comPref = new CommunicationPreference(iter++, user, true, true, true,
+          mockEmailCommunicationStrategy());
+      mockCreateNotification(message, user, comPref);
+    }
+    mockGetUserInfoUsername();
   }
 }
