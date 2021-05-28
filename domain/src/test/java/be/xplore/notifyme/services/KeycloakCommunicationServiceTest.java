@@ -78,6 +78,7 @@ class KeycloakCommunicationServiceTest {
 
   @Test
   void registerSuccess() {
+    userRegistrationDto.setPhoneNumber(null);
     var arrayList = getTestUserRepresentation();
     final Type listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
@@ -537,6 +538,8 @@ class KeycloakCommunicationServiceTest {
     userRepresentation.setAttributes(new HashMap<>());
     userRepresentation.getAttributes().put("phone_number", List.of("+11233883838"));
     userRepresentation.getAttributes().put("phone_number_verified", List.of("false"));
+    userRepresentation.getAttributes().put("phone_number_verification_code", List.of());
+
     ArrayList<UserRepresentation> arrayList = new ArrayList<>();
     arrayList.add(userRepresentation);
     return arrayList;
