@@ -3,6 +3,7 @@ package be.xplore.notifyme.services;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -105,7 +106,7 @@ class OrganisationServiceTest {
   }
 
   private void setupPromotionMocking(Principal principal, UserRepresentation userRepresentation,
-      User user) {
+                                     User user) {
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
     when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
@@ -186,6 +187,16 @@ class OrganisationServiceTest {
     when(organisationRepo.changeApplicationStatus(anyString(), anyLong(), any())).thenReturn(org);
     assertEquals(org,
         organisationService.changeApplicationStatus("iets", 1L, OrgApplicationStatus.APPLIED));
+  }
+
+  @Test
+  void getOrganisationManagers() {
+    var orgManagers = new ArrayList<User>();
+    orgManagers.add(new User("userId", "userName"));
+    when(organisationRepo.getAllOrganisationManagers(anyLong())).thenReturn(orgManagers);
+
+    var result = organisationService.getOrganisationManagers(1L);
+    assertTrue(result.stream().anyMatch(u -> u.getUserId().equals("userId")));
   }
 
 }
