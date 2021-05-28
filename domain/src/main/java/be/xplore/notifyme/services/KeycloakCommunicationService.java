@@ -6,6 +6,7 @@ import be.xplore.notifyme.dto.GiveClientRoleDto;
 import be.xplore.notifyme.dto.RelevantClientInfoDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
+import be.xplore.notifyme.exception.ChannelNotVerifiedException;
 import be.xplore.notifyme.exception.CrudException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -48,12 +49,17 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
   private String registerUri;
   @Value("${userservice.clients.url}")
   private String clientUri;
+  @Value("${notifyme.link}")
+  private String notifymeLink;
   final RestTemplate restTemplate;
   @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
   @Qualifier("xformRequest")
   @Autowired
   HttpHeaders httpXformHeader;
   private final Gson gson;
+  private final CodeGeneratorService codeGeneratorService;
+  private final ISmsVerificationSenderService ismsVerificationSenderService;
+  private String requestVerificationCode = "";
 
 
   /**
@@ -89,6 +95,12 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
     if (restResponse.getStatusCode() != HttpStatus.CREATED) {
       throw new CrudException("Could not create new user in database");
     }
+    if (userRegistrationDto.getPhoneNumber() != null
+        && !userRegistrationDto.getPhoneNumber().equals("")) {
+      sendSmsVerificationCode(requestVerificationCode, userRegistrationDto.getUsername(),
+          userRegistrationDto.getPhoneNumber());
+    }
+
   }
 
   private HttpEntity<String> createHttpEntityForUserRegistry(
@@ -112,7 +124,42 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
     var phoneNumber = new ArrayList<String>();
     phoneNumber.add(userRegistrationDto.getPhoneNumber());
     attributes.put("phone_number", phoneNumber);
+    attributes.put("phone_number_verified", List.of("false"));
+    requestVerificationCode = codeGeneratorService.generatePhoneVerificationCode();
+    attributes.put("phone_number_verification_code",
+        List.of(requestVerificationCode));
     return attributes;
+  }
+
+  private void sendSmsVerificationCode(String code, String username, String phoneNo) {
+    ismsVerificationSenderService.send("Please verify your phone no.",
+        "You should verify your phone No. to use it in the notifyme application."
+            + "\n follow this link to activate your phone: "
+            + notifymeLink + "user/activatePhone?username=" + username + "&code=" + code, phoneNo);
+  }
+
+  @Override
+  public void verifyPhoneNo(String username, String code) {
+    var userRep = getUserInfoUsername(username);
+    var foundCode = userRep.getAttributes().get("phone_number_verification_code").stream()
+        .filter(ur -> ur.equals(code)).findFirst();
+    if (foundCode.isPresent()) {
+      userRep.getAttributes().replace("phone_number_verified", List.of("true"));
+      var entity = createJsonHttpEntity(getAdminAccesstoken(), userRep);
+      restTemplate.put(registerUri + "/" + userRep.getId(), entity, String.class);
+    } else {
+      throw new ChannelNotVerifiedException(
+          "Could not verify phone no because the given code did not match the saved code.");
+    }
+  }
+
+  @Override
+  public void checkPhoneVerification(String userId) {
+    var userRep = getUserInfoId(userId);
+    var foundVerified = userRep.getAttributes().get("phone_number_verified").stream().findFirst();
+    if (!(foundVerified.isPresent() && foundVerified.get().equals("true"))) {
+      throw new ChannelNotVerifiedException("Phone no was not verified.");
+    }
   }
 
   /**
@@ -147,6 +194,22 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
       throw new CrudException("Result from GET on userinfo was null");
     }
     return result.get(0);
+  }
+
+  /**
+   * Gets Keycloak Userrepresentation with all of a user's info based on the username.
+   *
+   * @param userId The userId of the user you want to get information from.
+   * @return Keycloak Userrepresentation.
+   */
+  @Override
+  public UserRepresentation getUserInfoId(String userId) {
+    var userinfoReturn = getUserInfoRestById(getAdminAccesstoken(), userId);
+    var result = gson.fromJson(userinfoReturn, UserRepresentation.class);
+    if (result == null) {
+      throw new CrudException("Result from GET on userinfo was null");
+    }
+    return result;
   }
 
   /**
@@ -197,6 +260,17 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
     var restReturn = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
     if (restReturn.getStatusCode() != HttpStatus.OK) {
       throw new CrudException("Could not retrieve user for username " + username);
+    }
+    return restReturn.getBody();
+  }
+
+  @Override
+  public String getUserInfoRestById(String accessToken, String userId) {
+    HttpEntity<String> request = createJsonHttpEntity(accessToken);
+    var uri = String.format("%s/%s", registerUri, userId);
+    var restReturn = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+    if (restReturn.getStatusCode() != HttpStatus.OK) {
+      throw new CrudException("Could not retrieve user for userId " + userId);
     }
     return restReturn.getBody();
   }
@@ -265,7 +339,7 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
   public void giveUserRole(String userId, RoleRepresentation roleToGive, String idOfClient) {
     var uri = registerUri + String.format("/%s/role-mappings/clients/%s", userId, idOfClient);
     var role = new GiveClientRoleDto(roleToGive.getId(), roleToGive.getName(), true);
-    var body = new GiveClientRoleDto[] {role};
+    var body = new GiveClientRoleDto[]{role};
     var entity = createJsonHttpEntity(getAdminAccesstoken(), body);
     var restResult = restTemplate.postForEntity(uri, entity, String.class);
     if (restResult.getStatusCode() != HttpStatus.NO_CONTENT) {

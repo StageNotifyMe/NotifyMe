@@ -37,11 +37,22 @@ public class NotificationService implements INotificationService {
     notification.send();
   }
 
+
   @Override
   public void notifyUserUrgent(String username, long messageId) {
     var userInfo = keycloakCommunicationService.getUserInfoUsername(username);
     var notification = notificationRepo.createUrgent(messageId, userInfo.getId());
     notification.setCommunicationAddresAndUsedStrategy(userInfo);
+    notificationRepo.save(notification);
+    notification.send();
+  }
+
+  @Override
+  public void notifyUserHidden(String username, long messageId) {
+    var userInfo = keycloakCommunicationService.getUserInfoUsername(username);
+    var notification = notificationRepo.create(messageId, userInfo.getId());
+    notification.setCommunicationAddresAndUsedStrategy(userInfo);
+    notification.setHidden(true);
     notificationRepo.save(notification);
     notification.send();
   }

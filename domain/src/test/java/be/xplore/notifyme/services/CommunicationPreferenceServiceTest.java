@@ -36,6 +36,8 @@ class CommunicationPreferenceServiceTest {
   CommunicationPreferenceService communicationPreferenceService;
   @MockBean
   ICommunicationPreferenceRepo communicationPreferenceRepo;
+  @MockBean
+  KeycloakCommunicationService keycloakCommunicationService;
   private CommunicationPreference mockComPref = mock(CommunicationPreference.class);
 
   @Test

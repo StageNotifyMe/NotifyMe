@@ -31,7 +31,8 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     super.configure(http);
     http.authorizeRequests().antMatchers("/admin/**").hasRole("admin")
         .antMatchers("/user/**").permitAll()
-        .antMatchers("/vmanager/**").hasRole("venue_manager")
+        //.antMatchers("/vmanager/**").hasAnyRole("ROLE_admin","venue_manager")
+        .antMatchers("/vmanager/**").hasRole("admin")
         .antMatchers("/lmanager/**").hasRole("line_manager")
         .antMatchers("/omanager/**").hasRole("organisation_manager")
         .anyRequest().permitAll();

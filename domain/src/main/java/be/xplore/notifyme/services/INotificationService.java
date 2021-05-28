@@ -22,4 +22,6 @@ public interface INotificationService {
   void notifyOrganisationManagers(long eventId, long messageId);
 
   void notifyUsers(Collection<User> users, long messageId);
+
+  void notifyUserHidden(String username, long messageId);
 }

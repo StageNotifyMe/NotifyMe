@@ -248,4 +248,12 @@ class UserControllerTest {
     ).andExpect(MockMvcResultMatchers.status().isOk());
   }
 
+  @Test
+  void activatePhoneNo() throws Exception {
+    mockMvc.perform(get("/user/activatePhone?username=testUser&code=12345abcde")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+
 }
