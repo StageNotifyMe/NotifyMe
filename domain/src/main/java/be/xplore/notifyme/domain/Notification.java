@@ -19,6 +19,7 @@ public class Notification {
   private String usedCommunicationStrategy;
   private Message message;
   private User receiver;
+  private String sender;
 
   public void send() {
     this.getCommunicationPreference().getCommunicationStrategy().send(this);

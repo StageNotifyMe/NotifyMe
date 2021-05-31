@@ -26,4 +26,6 @@ public interface IOrganisationService {
       OrgApplicationStatus applicationStatus);
 
   List<User> getOrganisationManagersForEvent(long eventId);
+
+  List<User> getOrganisationManagers(long organisationId);
 }

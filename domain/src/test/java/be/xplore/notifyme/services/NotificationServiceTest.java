@@ -167,7 +167,7 @@ class NotificationServiceTest {
     orgIdList.add(1L);
     orgIdList.add(2L);
     assertDoesNotThrow(() -> {
-      notificationService.notifyOrganisationManagers(1L, 1L);
+      notificationService.notifyOrganisationManagersForCancelEvent(1L, 1L);
     });
   }
 

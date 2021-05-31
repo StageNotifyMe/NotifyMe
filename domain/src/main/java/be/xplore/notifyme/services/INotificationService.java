@@ -19,7 +19,10 @@ public interface INotificationService {
 
   Message createCanceledEventMessage(Event updatedEvent);
 
-  void notifyOrganisationManagers(long eventId, long messageId);
+  void notifyOrganisationManagersForCancelEvent(long eventId, long messageId);
 
   void notifyUsers(Collection<User> users, long messageId);
+
+  void notifyOrganisationManagers(long organisationId, String sender, String
+      title, String text);
 }
