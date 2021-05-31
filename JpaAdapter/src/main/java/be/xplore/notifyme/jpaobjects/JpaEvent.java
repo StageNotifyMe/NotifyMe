@@ -37,7 +37,7 @@ public class JpaEvent {
 
   @ManyToOne
   private JpaVenue venue;
-  @OneToMany
+  @OneToMany(mappedBy = "event")
   private List<JpaLine> lines;
   @ManyToMany(cascade = CascadeType.ALL)
   private Set<JpaUser> lineManagers;

@@ -69,6 +69,7 @@ public class LineManagerController {
     return ResponseEntity.ok(team);
   }
 
+
   @GetMapping("/line/team")
   public ResponseEntity<Object> getTeamFromLine(@RequestParam long lineId) {
     var teamId = lineService.getLine(lineId).getTeam().getId();

@@ -1,11 +1,9 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.EventStatus;
-import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.dto.CreateLineDto;
-import be.xplore.notifyme.dto.GetLineDto;
 import be.xplore.notifyme.dto.event.PutEventDto;
 import be.xplore.notifyme.services.IEventService;
 import be.xplore.notifyme.services.IFacilityService;
@@ -13,7 +11,6 @@ import be.xplore.notifyme.services.ILineService;
 import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
-import java.util.LinkedList;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -44,7 +41,7 @@ public class VenueManagerController {
 
   @PostMapping("/event")
   public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto,
-      Principal principal) {
+                                            Principal principal) {
     var result = eventService.createEvent(createEventDto, principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(result);
   }
@@ -69,23 +66,6 @@ public class VenueManagerController {
     return ResponseEntity.ok(updatedEvent);
   }
 
-
-  /**
-   * Gets all of the lines for a certain event.
-   *
-   * @param eventId the unique id of the event.
-   * @return the lines related to this event.
-   */
-  @GetMapping("/lines")
-  public ResponseEntity<Object> getAllLinesForEvent(@RequestParam long eventId) {
-    var lines = lineService.getAllLinesByEvent(eventId);
-    var dtoLines = new LinkedList<GetLineDto>();
-    for (Line line : lines) {
-      dtoLines.add(new GetLineDto(line));
-    }
-    return ResponseEntity.ok(dtoLines);
-  }
-
   @GetMapping("/venues")
   public ResponseEntity<Object> getAllVenuesForUser(@RequestParam @NotBlank String userId) {
     return ResponseEntity.ok(venueService.getVenuesForUser(userId));
@@ -99,7 +79,7 @@ public class VenueManagerController {
 
   @PostMapping("/line")
   public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto,
-      Principal principal) {
+                                           Principal principal) {
     var line = lineService.createLine(createLineDto, principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(line);
   }
@@ -119,7 +99,7 @@ public class VenueManagerController {
 
   @PostMapping("/promoteToLineManager")
   public ResponseEntity<Object> promoteUserToLineManager(@RequestParam String userId,
-      @RequestParam long eventId) {
+                                                         @RequestParam long eventId) {
     eventService.promoteToLineManager(userId, eventId);
     return ResponseEntity.noContent().build();
   }
