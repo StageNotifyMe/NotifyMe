@@ -139,7 +139,7 @@ public class UserService implements IUserService {
 
   private void createDefaultCommunicationPreference(String userId) {
     communicationPreferenceService
-        .createCommunicationPreference(userId, true, true, false, "emailcommunicationstrategy");
+        .createCommunicationPreference(userId, true, true, true, "emailcommunicationstrategy");
   }
 
   private void createUserInDatabase(String id, String username) {

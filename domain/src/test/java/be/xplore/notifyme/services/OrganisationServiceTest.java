@@ -189,15 +189,29 @@ class OrganisationServiceTest {
         organisationService.changeApplicationStatus("iets", 1L, OrgApplicationStatus.APPLIED));
   }
 
-
-  @Test
-  void getOrganisationManagersForEvent() {
+  private List<User> getDummyUserList() {
     List<User> userList = new ArrayList<>();
     User user = new User("userId", "userName");
     userList.add(user);
+    return userList;
+  }
+
+
+  @Test
+  void getOrganisationManagersForEvent() {
+    var userList = getDummyUserList();
     when(organisationRepo.getAllOrganisationManagersForEvent(1L)).thenReturn(userList);
 
     var result = organisationService.getOrganisationManagersForEvent(1L);
-    assertTrue(result.stream().anyMatch(u -> u.getUserId().equals(user.getUserId())));
+    assertTrue(result.stream().anyMatch(u -> u.getUserId().equals(userList.get(0).getUserId())));
+  }
+
+  @Test
+  void getOrganisationManagers() {
+    var userList = getDummyUserList();
+    when(organisationRepo.getAllOrganisationManagers(1L)).thenReturn(userList);
+
+    var result = organisationService.getOrganisationManagers(1L);
+    assertTrue(result.stream().anyMatch(u -> u.getUserId().equals(userList.get(0).getUserId())));
   }
 }

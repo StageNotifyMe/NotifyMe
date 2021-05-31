@@ -3,10 +3,12 @@ package be.xplore.notifyme.controller;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.dto.GetLineDto;
+import be.xplore.notifyme.dto.notification.PostOrgNotificationDto;
 import be.xplore.notifyme.dto.team.PostTeamDto;
 import be.xplore.notifyme.dto.team.PutTeamDto;
 import be.xplore.notifyme.services.IEventService;
 import be.xplore.notifyme.services.ILineService;
+import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.ITeamService;
 import java.util.LinkedList;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class LineManagerController {
   private final ITeamService teamService;
   private final IEventService eventService;
   private final ILineService lineService;
+  private final INotificationService notificationService;
 
   @GetMapping("/events")
   public ResponseEntity<Object> getAllEventsForLineManager(@RequestParam String userId) {
@@ -76,6 +79,22 @@ public class LineManagerController {
   public ResponseEntity<Object> createTeam(@RequestBody PostTeamDto postTeamDto) {
     var team = teamService.createTeam(postTeamDto.getLineId(), postTeamDto.getOrganisationId());
     return ResponseEntity.status(HttpStatus.CREATED).body(team);
+  }
+
+  /**
+   * HTTP POST: used to send a notification from a line manager to the managers of an organisation.
+   *
+   * @param postOrgNotificationDto DTO containing related information.
+   * @return 204 - no content.
+   */
+  @PostMapping("/notify/organisation")
+  public ResponseEntity<Object> createNotificationForOmanager(
+      @RequestBody PostOrgNotificationDto postOrgNotificationDto) {
+
+    notificationService.notifyOrganisationManagers(postOrgNotificationDto.getReceivingOrgId(),
+        postOrgNotificationDto.getSenderId(), postOrgNotificationDto.getTitle(),
+        postOrgNotificationDto.getText());
+    return ResponseEntity.noContent().build();
   }
 
   /**

@@ -54,7 +54,7 @@ public class JpaCommunicationPreferenceAdapter implements ICommunicationPreferen
                                         ICommunicationStrategy strategy) {
     var jpaUser = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new JpaNotFoundException(USER_NOTFOUND_MESSAGE + userId));
-    var jpaComPref = new JpaCommunicationPreference(jpaUser, isActive, false, false,
+    var jpaComPref = new JpaCommunicationPreference(jpaUser, isActive, isDefault, isUrgent,
         strategy);
     return jpaCommunicationPreferenceRepository.save(jpaComPref).toDomainBase();
   }

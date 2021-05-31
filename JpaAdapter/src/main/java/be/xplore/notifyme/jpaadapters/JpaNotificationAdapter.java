@@ -11,6 +11,7 @@ import be.xplore.notifyme.jparepositories.JpaNotificationRepository;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.INotificationRepo;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -58,12 +59,17 @@ public class JpaNotificationAdapter implements INotificationRepo {
 
   @Override
   public Notification create(long messageId, String userId) {
-    return createNotification(messageId, userId, false);
+    return createNotification(messageId, userId, false, null);
+  }
+
+  @Override
+  public Notification create(long messageId, String userId, String sender) {
+    return createNotification(messageId, userId, false, sender);
   }
 
   @Override
   public Notification createUrgent(long messageId, String userId) {
-    return createNotification(messageId, userId, true);
+    return createNotification(messageId, userId, true, null);
   }
 
   /**
@@ -71,13 +77,15 @@ public class JpaNotificationAdapter implements INotificationRepo {
    *
    * @return created notification.
    */
-  private Notification createNotification(long messageId, String userId, boolean isUrgent) {
+  private Notification createNotification(long messageId, String userId, boolean isUrgent,
+                                          String sender) {
     var jpaMessage = jpaMessageRepository.findById(messageId)
         .orElseThrow(() -> new JpaNotFoundException("Could not find message for id " + messageId));
     var jpaUser = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId));
     var defaultComPref = getCommunicationStrategyForUseCase(isUrgent, jpaUser);
     var notification = new JpaNotification(jpaMessage, jpaUser, defaultComPref);
+    notification.setSender(Objects.requireNonNullElse(sender, "SYSTEM"));
     return jpaNotificationRepository.save(notification).toDomainBase();
   }
 
