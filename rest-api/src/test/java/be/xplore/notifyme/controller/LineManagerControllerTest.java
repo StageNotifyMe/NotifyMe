@@ -19,6 +19,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.services.IEventService;
 import be.xplore.notifyme.services.ILineService;
+import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.ITeamService;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,6 +45,9 @@ class LineManagerControllerTest {
 
   @Autowired
   private LineManagerController lineManagerController;
+
+  @MockBean
+  private INotificationService notificationService;
 
   @BeforeEach
   public void setup() {

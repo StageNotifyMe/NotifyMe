@@ -96,23 +96,17 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
 
   @Override
   public List<User> getAllOrganisationManagers(Long organisationId) {
-    /*var jpaOrganisation = jpaOrganisationRepository.findById(organisationId).orElseThrow(
-        () -> new JpaNotFoundException("Could not find organisation for id " + organisationId));
-    var orgUsers = jpaUserRepository.findAllByOrganisationsContaining(jpaOrganisation);
-    var orgManagers = new ArrayList<JpaUser>();
-    for (JpaUser orgUser : orgUsers) {
-      var isManager = orgUser.getOrganisations().stream()
-          .filter(o -> o.getOrganisationUserKey().getOrganisationId().equals(organisationId))
-          .findFirst()
-          .orElseThrow(() -> new JpaNotFoundException(
-              "Could not find organisation " + organisationId + " in organisations of user "
-                  + orgUser.getUserId())).isOrganisationLeader();
-      if (isManager) {
-        orgManagers.add(orgUser);
-      }
+    /*return jpaUserRepository.getAllOrgManagersFromOrgId(organisationId).stream()
+        .map(JpaUser::toDomainBase).collect(
+            Collectors.toList());*/
+    var userIds = jpaUserRepository.getAllOrgManagersFromOrgId(organisationId);
+    var users = new ArrayList<User>();
+    for (String userId : userIds) {
+      users.add(jpaUserRepository.findById(userId)
+          .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId
+          )).toDomainBase());
     }
-    return orgManagers.stream().map(JpaUser::toDomainBase).collect(Collectors.toList());*/
-    return null;
+    return users;
   }
 
   @Override

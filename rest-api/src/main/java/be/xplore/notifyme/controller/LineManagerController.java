@@ -3,7 +3,7 @@ package be.xplore.notifyme.controller;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.dto.GetLineDto;
-import be.xplore.notifyme.dto.notification.PostOrgNotification;
+import be.xplore.notifyme.dto.notification.PostOrgNotificationDto;
 import be.xplore.notifyme.dto.team.PostTeamDto;
 import be.xplore.notifyme.dto.team.PutTeamDto;
 import be.xplore.notifyme.services.IEventService;
@@ -81,13 +81,19 @@ public class LineManagerController {
     return ResponseEntity.status(HttpStatus.CREATED).body(team);
   }
 
+  /**
+   * HTTP POST: used to send a notification from a line manager to the managers of an organisation.
+   *
+   * @param postOrgNotificationDto DTO containing related information.
+   * @return 204 - no content.
+   */
   @PostMapping("/notify/organisation")
   public ResponseEntity<Object> createNotificationForOmanager(
-      @RequestBody PostOrgNotification postOrgNotification) {
+      @RequestBody PostOrgNotificationDto postOrgNotificationDto) {
 
-    notificationService.notifyOrganisationManagers(postOrgNotification.getReceivingOrgId(),
-        postOrgNotification.getSenderId(), postOrgNotification.getTitle(),
-        postOrgNotification.getText());
+    notificationService.notifyOrganisationManagers(postOrgNotificationDto.getReceivingOrgId(),
+        postOrgNotificationDto.getSenderId(), postOrgNotificationDto.getTitle(),
+        postOrgNotificationDto.getText());
     return ResponseEntity.noContent().build();
   }
 

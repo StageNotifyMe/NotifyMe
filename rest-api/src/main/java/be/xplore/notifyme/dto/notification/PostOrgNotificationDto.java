@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostOrgNotification {
+public class PostOrgNotificationDto {
   private String senderId;
   private long receivingOrgId;
   private String title;
