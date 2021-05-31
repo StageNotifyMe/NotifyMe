@@ -97,6 +97,21 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
   }
 
   @Override
+  public List<User> getAllOrganisationManagers(Long organisationId) {
+    return jpaUserRepository.getAllOrgManagersFromOrgId(organisationId).stream()
+        .map(JpaUser::toDomainBase).collect(
+            Collectors.toList());
+    /*var userIds = jpaUserRepository.getAllOrgManagersFromOrgId(organisationId);
+    var users = new ArrayList<User>();
+    for (String userId : userIds) {
+      users.add(jpaUserRepository.findById(userId)
+          .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + userId
+          )).toDomainBase());
+    }
+    return users;*/
+  }
+
+  @Override
   public List<User> getAllOrganisationManagersForEvent(Long eventId) {
     var jpaUserIds = jpaUserRepository.findByEvent(eventId);
     var jpaUsers = new ArrayList<JpaUser>();

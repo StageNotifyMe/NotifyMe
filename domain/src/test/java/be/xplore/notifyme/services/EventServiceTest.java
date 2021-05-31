@@ -253,7 +253,8 @@ class EventServiceTest {
       }
     });
     this.mockGetAllOrganisationIds(2);
-    doNothing().when(notificationService).notifyOrganisationManagers(anyLong(), anyLong());
+    doNothing().when(notificationService)
+        .notifyOrganisationManagersForCancelEvent(anyLong(), anyLong());
     this.mockGetAttendingMembers(4);
     doNothing().when(notificationService).notifyUsers(anyList(), anyLong());
   }

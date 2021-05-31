@@ -121,4 +121,9 @@ public class OrganisationService implements IOrganisationService {
   public List<User> getOrganisationManagersForEvent(long eventId) {
     return organisationRepo.getAllOrganisationManagersForEvent(eventId);
   }
+
+  @Override
+  public List<User> getOrganisationManagers(long organisationId) {
+    return organisationRepo.getAllOrganisationManagers(organisationId);
+  }
 }

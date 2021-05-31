@@ -31,6 +31,7 @@ public class JpaNotification {
   private JpaMessage message;
   @OneToOne(cascade = CascadeType.ALL)
   private JpaUser receiver;
+  private String sender;
   boolean hidden;
 
   /**
@@ -63,6 +64,7 @@ public class JpaNotification {
     this.usedCommunicationStrategy = notification.getUsedCommunicationStrategy();
     this.message = new JpaMessage(notification.getMessage());
     this.receiver = jpaUser;
+    this.sender = notification.getSender();
   }
 
   /**
@@ -78,6 +80,7 @@ public class JpaNotification {
         .receiver(this.receiver.toDomainBase())
         .communicationPreference(this.communicationPreference.toDomainBase())
         .message(this.message.toDomainBase())
+        .sender(this.sender)
         .build();
   }
 
@@ -94,5 +97,6 @@ public class JpaNotification {
     this.usedCommunicationStrategy = notification.getUsedCommunicationStrategy();
     this.message = new JpaMessage(notification.getMessage());
     this.receiver = new JpaUser(notification.getReceiver());
+    this.sender = notification.getSender();
   }
 }

@@ -81,7 +81,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"), false);
+            new User("userId", "username"), null, false);
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -106,7 +106,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"),false);
+            new User("userId", "username"), null, false);
     when(notificationRepo.createUrgent(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -131,7 +131,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"),true);
+            new User("userId", "username"), null, false);
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -186,17 +186,17 @@ class NotificationServiceTest {
 
   @Test
   void notifyOrganisationsManagers() {
-    mockNotifyOrgManagers();
+    mockNotifyOrgManagersFromEvent();
 
     var orgIdList = new ArrayList<Long>();
     orgIdList.add(1L);
     orgIdList.add(2L);
     assertDoesNotThrow(() -> {
-      notificationService.notifyOrganisationManagers(1L, 1L);
+      notificationService.notifyOrganisationManagersForCancelEvent(1L, 1L);
     });
   }
 
-  private void mockNotifyOrgManagers() {
+  private void mockNotifyOrgManagersFromEvent() {
     var orgManager1 = new User("org1-man", "orgMan1");
     var orgManager2 = new User("org2-man", "orgMan2");
     //this.mockGetOrganisationManagers(orgManager1, orgManager2);
@@ -217,7 +217,7 @@ class NotificationServiceTest {
   private void mockCreateNotification(Message message, User user, CommunicationPreference comPref) {
     var notification =
         new Notification(1L, "address", comPref, "emailservice", message,
-            user,false);
+            user, null, false);
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
   }
 
@@ -273,5 +273,31 @@ class NotificationServiceTest {
       mockCreateNotification(message, user, comPref);
     }
     mockGetUserInfoUsername();
+  }
+
+  @Test
+  void notifyOrganisationManagers() {
+    mockNotifyOrgManagers();
+
+    assertDoesNotThrow(() -> {
+      notificationService.notifyOrganisationManagers(1L, "userId", "title", "text");
+    });
+  }
+
+  private void mockNotifyOrgManagers() {
+    var message = new Message(1L, "title", "text");
+
+    when(messageRepo.save(any())).thenReturn(message);
+    var users = new ArrayList<User>();
+    users.add(new User("userId", "username"));
+    mockGetUserInfoUsername();
+    when(organisationService.getOrganisationManagers(1L)).thenReturn(users);
+    var comPref = new CommunicationPreference(1L, users.get(0), true, true, true,
+        mockEmailCommunicationStrategy());
+    mockCreateNotification(message, users.get(0), comPref);
+    when(notificationRepo.create(anyLong(), anyString(), anyString())).thenReturn(
+        new Notification(1L, "mail@mailadres.com", comPref, "emailcommunicationstrategy", message,
+            users.get(0), "userId", false));
+    mockEmailCommunicationStrategy();
   }
 }

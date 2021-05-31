@@ -20,6 +20,7 @@ public class Notification {
   private String usedCommunicationStrategy;
   private Message message;
   private User receiver;
+  private String sender;
   private boolean hidden;
 
   public void send() {

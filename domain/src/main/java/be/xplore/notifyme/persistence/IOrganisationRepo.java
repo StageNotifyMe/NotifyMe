@@ -27,5 +27,7 @@ public interface IOrganisationRepo {
 
   void applyToOrganisation(long orgId, String userId);
 
+  public List<User> getAllOrganisationManagers(Long organisationId);
+
   List<User> getAllOrganisationManagersForEvent(Long eventId);
 }

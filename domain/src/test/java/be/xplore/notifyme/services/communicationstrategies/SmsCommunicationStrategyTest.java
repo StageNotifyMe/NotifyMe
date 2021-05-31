@@ -46,7 +46,7 @@ class SmsCommunicationStrategyTest {
     var user = mock(User.class);
     var notification =
         new Notification(1L, "+32123456789", comPref, "smscommunicationstrategy", message, user,
-            false);
+            null,false);
 
     doNothing().when(smsService).send("+32123456789", message);
 
