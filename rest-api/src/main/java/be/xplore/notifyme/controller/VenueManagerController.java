@@ -10,13 +10,15 @@ import be.xplore.notifyme.dto.event.PutEventDto;
 import be.xplore.notifyme.services.IEventService;
 import be.xplore.notifyme.services.IFacilityService;
 import be.xplore.notifyme.services.ILineService;
+import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
 import java.util.LinkedList;
-import javax.annotation.security.RolesAllowed;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/vmanager")
-@RolesAllowed({"venue_manager","admin"})
 @RequiredArgsConstructor
 @Validated
 public class VenueManagerController {
@@ -39,10 +40,11 @@ public class VenueManagerController {
   private final IVenueService venueService;
   private final IFacilityService facilityService;
   private final ILineService lineService;
+  private final IUserService userService;
 
   @PostMapping("/event")
   public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto,
-                                            Principal principal) {
+      Principal principal) {
     var result = eventService.createEvent(createEventDto, principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(result);
   }
@@ -97,7 +99,7 @@ public class VenueManagerController {
 
   @PostMapping("/line")
   public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto,
-                                           Principal principal) {
+      Principal principal) {
     var line = lineService.createLine(createLineDto, principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(line);
   }
@@ -117,7 +119,7 @@ public class VenueManagerController {
 
   @PostMapping("/promoteToLineManager")
   public ResponseEntity<Object> promoteUserToLineManager(@RequestParam String userId,
-                                                         @RequestParam long eventId) {
+      @RequestParam long eventId) {
     eventService.promoteToLineManager(userId, eventId);
     return ResponseEntity.noContent().build();
   }
@@ -126,5 +128,17 @@ public class VenueManagerController {
   public ResponseEntity<Object> getLineManagersForEvent(@RequestParam long eventId) {
     var result = eventService.getEvent(eventId).getLineManagers();
     return ResponseEntity.ok(result);
+  }
+
+  /**
+   * Gets a list of all keycloak users.
+   *
+   * @return a list of keycloak user representations in dto format.
+   */
+  @GetMapping("/users")
+  public ResponseEntity<List<UserRepresentation>> getUsers() {
+    var userRepresentations = userService
+        .getAllUserInfo();
+    return ResponseEntity.ok(userRepresentations);
   }
 }

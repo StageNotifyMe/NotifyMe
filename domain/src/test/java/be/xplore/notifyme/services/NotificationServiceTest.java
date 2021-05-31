@@ -106,7 +106,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"),false);
+            new User("userId", "username"), false);
     when(notificationRepo.createUrgent(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -131,7 +131,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"),true);
+            new User("userId", "username"), true);
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -217,7 +217,7 @@ class NotificationServiceTest {
   private void mockCreateNotification(Message message, User user, CommunicationPreference comPref) {
     var notification =
         new Notification(1L, "address", comPref, "emailservice", message,
-            user,false);
+            user, false);
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
   }
 

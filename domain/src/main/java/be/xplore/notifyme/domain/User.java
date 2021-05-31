@@ -27,6 +27,7 @@ public class User {
   private List<UserOrgApplication> appliedOrganisations = new ArrayList<>();
   private List<Venue> venues = new ArrayList<>();
   private Set<Team> teams = new HashSet<>();
+  private Set<TeamApplication> teamApplications = new HashSet<>();
   private List<Event> events = new ArrayList<>();
   private List<Notification> notifications = new ArrayList<>();
   private List<CommunicationPreference> communicationPreferences;
@@ -44,6 +45,7 @@ public class User {
     this.appliedOrganisations = new ArrayList<>();
     this.venues = new ArrayList<>();
     this.teams = new HashSet<>();
+    this.teamApplications=new HashSet<>();
     this.events = new ArrayList<>();
   }
 }

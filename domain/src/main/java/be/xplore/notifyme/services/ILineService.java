@@ -12,4 +12,6 @@ public interface ILineService {
   Line getLine(long lineId);
 
   Line createLine(CreateLineDto createLineDto, Principal principal);
+
+  List<Line> getAvailableLinesForUser(String userId);
 }

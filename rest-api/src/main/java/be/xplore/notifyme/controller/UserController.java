@@ -1,6 +1,7 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
+import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.dto.ApplicationOrgNameDto;
 import be.xplore.notifyme.dto.NotificationDto;
 import be.xplore.notifyme.dto.OrganisationsLimitedInfoDto;
@@ -8,6 +9,7 @@ import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.communicationpreference.GetCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.PostCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.UpdateCommunicationPreferenceDto;
+import be.xplore.notifyme.persistence.ILineRepo;
 import be.xplore.notifyme.services.ICommunicationPreferenceService;
 import be.xplore.notifyme.services.IKeycloakCommunicationService;
 import be.xplore.notifyme.services.IOrganisationService;
@@ -41,6 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final IUserService userService;
+  private final ILineRepo lineRepo;
   private final IOrganisationService organisationService;
   private final IUserOrgApplicationService userOrgApplicationService;
   private final IKeycloakCommunicationService keycloakCommunicationService;
@@ -177,5 +180,18 @@ public class UserController {
     var notificationsDto = new ArrayList<NotificationDto>();
     notifications.forEach(n -> notificationsDto.add(new NotificationDto(n)));
     return ResponseEntity.ok(notificationsDto);
+  }
+
+  /**
+   * Gets a list of lines the calling user can apply to.
+   *
+   * @param principal injected by securitycontext.
+   * @return Response entity containing the list of notifications of the user.
+   */
+  @GetMapping(value = "lines")
+  public ResponseEntity<List<Line>> getAvailableLines(Principal principal) {
+    return ResponseEntity
+        .ok(lineRepo
+            .getAvailableLinesForUser(userService.getUserFromPrincipal(principal).getUserId()));
   }
 }

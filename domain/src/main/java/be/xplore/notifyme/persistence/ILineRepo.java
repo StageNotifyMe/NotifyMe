@@ -15,4 +15,7 @@ public interface ILineRepo {
   List<Line> getAllByEventId(long eventId);
 
   Line create(Line line, long eventId, long facilityId);
+
+  List<Line> getAvailableLinesForUser(String userId);
+
 }

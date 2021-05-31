@@ -96,6 +96,21 @@ public class JpaLine {
         .requiredStaff(this.requiredStaff)
         .build();
   }
+  /**
+   * Converts a jpa-object to a domain variant with only primitive type attributes and event.
+   *
+   * @return domain version of the object.
+   */
+  public Line toDomainBaseIncEvent() {
+    return Line.builder()
+        .id(this.id)
+        .note(this.note)
+        .event(this.event.toDomainBase())
+        //.facility(this.facility.toDomainBase())
+        //.team(this.team.toDomainBase())
+        .requiredStaff(this.requiredStaff)
+        .build();
+  }
 
 
   /**

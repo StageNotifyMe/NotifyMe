@@ -28,7 +28,7 @@ public class JpaTeam {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @OneToOne
+  @OneToOne(mappedBy = "team")
   private JpaLine line;
   @ManyToMany
   private List<JpaOrganisation> organisations;
