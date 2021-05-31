@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaVenueRepository extends JpaRepository<JpaVenue, Long> {
 
-  public List<JpaVenue> getAllByManagersIsContaining(JpaUser user);
+  List<JpaVenue> getAllByManagersIsContaining(JpaUser user);
 }

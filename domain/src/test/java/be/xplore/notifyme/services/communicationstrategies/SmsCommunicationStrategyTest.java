@@ -23,6 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {SmsCommunicationStrategy.class})
 class SmsCommunicationStrategyTest {
+
   @Autowired
   private SmsCommunicationStrategy smsCommunicationStrategy;
   @MockBean
@@ -45,7 +46,7 @@ class SmsCommunicationStrategyTest {
     var user = mock(User.class);
     var notification =
         new Notification(1L, "+32123456789", comPref, "smscommunicationstrategy", message, user,
-            null);
+            null,false);
 
     doNothing().when(smsService).send("+32123456789", message);
 

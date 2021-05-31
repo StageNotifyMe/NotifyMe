@@ -29,6 +29,7 @@ public class JpaEventAdapter implements IEventRepo {
   private final JpaUserRepository jpaUserRepository;
   private final JpaVenueRepository jpaVenueRepository;
 
+  private static final String EVENT_NOT_FOUND_MESSAGE = "Could not find event for id ";
 
   @Override
   public Event save(Event event) {
@@ -67,7 +68,7 @@ public class JpaEventAdapter implements IEventRepo {
   @Override
   public Event updateEventStatus(long eventId, EventStatus eventStatus) {
     var jpaEvent = jpaEventRepository.findById(eventId)
-        .orElseThrow(() -> new JpaNotFoundException("Could not find event for id " + eventId));
+        .orElseThrow(() -> new JpaNotFoundException(EVENT_NOT_FOUND_MESSAGE + eventId));
     jpaEvent.setEventStatus(eventStatus);
     return jpaEventRepository.save(jpaEvent).toDomainBase();
   }
@@ -75,7 +76,7 @@ public class JpaEventAdapter implements IEventRepo {
   @Override
   public List<Long> getAllOrganisationIds(long eventId) {
     var jpaEvent = jpaEventRepository.findById(eventId)
-        .orElseThrow(() -> new JpaNotFoundException("Could not find event for id " + eventId));
+        .orElseThrow(() -> new JpaNotFoundException(EVENT_NOT_FOUND_MESSAGE + eventId));
     List<Long> orgIds = new ArrayList<>();
     for (JpaLine line : jpaEvent.getLines()) {
       for (JpaOrganisation organisation : line.getTeam().getOrganisations()) {
@@ -89,7 +90,7 @@ public class JpaEventAdapter implements IEventRepo {
   @Override
   public List<User> getAttendingMembers(long eventId) {
     var jpaEvent = jpaEventRepository.findById(eventId)
-        .orElseThrow(() -> new JpaNotFoundException("Could not find event for id " + eventId));
+        .orElseThrow(() -> new JpaNotFoundException(EVENT_NOT_FOUND_MESSAGE + eventId));
     var attendingMembers = new ArrayList<JpaUser>();
     for (JpaLine line : jpaEvent.getLines()) {
       attendingMembers.addAll(line.getTeam().getTeamMembers());

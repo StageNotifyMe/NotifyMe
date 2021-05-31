@@ -81,7 +81,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"), null);
+            new User("userId", "username"), null, false);
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -106,7 +106,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"), null);
+            new User("userId", "username"), null, false);
     when(notificationRepo.createUrgent(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -119,6 +119,31 @@ class NotificationServiceTest {
 
     assertDoesNotThrow(() -> {
       notificationService.notifyUserUrgent("userId", 1L);
+    });
+  }
+
+  @Test
+  void notifyUserHidden() {
+    when(keycloakCommunicationService.getUserInfoUsername(anyString()))
+        .thenReturn(getDummyUserRep());
+    var mockComPref = mock(CommunicationPreference.class);
+    when(mockComPref.getCommunicationStrategy())
+        .thenReturn(new EmailCommunicationStrategy(emailService));
+    var notification =
+        new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
+            new User("userId", "username"), null, false);
+    when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
+
+    when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
+      @Override
+      public Notification answer(InvocationOnMock invocation) throws Throwable {
+        Object[] args = invocation.getArguments();
+        return (Notification) args[0];
+      }
+    });
+
+    assertDoesNotThrow(() -> {
+      notificationService.notifyUserHidden("userId", 1L);
     });
   }
 
@@ -192,7 +217,7 @@ class NotificationServiceTest {
   private void mockCreateNotification(Message message, User user, CommunicationPreference comPref) {
     var notification =
         new Notification(1L, "address", comPref, "emailservice", message,
-            user, null);
+            user, null, false);
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
   }
 

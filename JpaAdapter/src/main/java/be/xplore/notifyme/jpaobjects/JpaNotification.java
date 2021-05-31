@@ -19,6 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JpaNotification {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -31,16 +32,17 @@ public class JpaNotification {
   @OneToOne(cascade = CascadeType.ALL)
   private JpaUser receiver;
   private String sender;
+  boolean hidden;
 
   /**
-   * Constructor used to create a new notification and
-   * wire message, user and communicationPreference correctly.
+   * Constructor used to create a new notification and wire message, user and
+   * communicationPreference correctly.
    *
    * @param jpaMessage jpa version of the message.
    * @param jpaUser    jpa version of the receiver.
    */
   public JpaNotification(JpaMessage jpaMessage, JpaUser jpaUser,
-                         JpaCommunicationPreference jpaCommunicationPreference) {
+      JpaCommunicationPreference jpaCommunicationPreference) {
     this.message = jpaMessage;
     this.receiver = jpaUser;
     this.communicationPreference = jpaCommunicationPreference;
@@ -55,7 +57,7 @@ public class JpaNotification {
    * @param jpaUser      already converted version of notification.getReceiver.
    */
   public JpaNotification(Notification notification, JpaUser jpaUser,
-                         JpaCommunicationPreference jpaCommunicationPreference) {
+      JpaCommunicationPreference jpaCommunicationPreference) {
     this.id = notification.getId();
     this.communicationAddress = notification.getCommunicationAddress();
     this.communicationPreference = jpaCommunicationPreference;

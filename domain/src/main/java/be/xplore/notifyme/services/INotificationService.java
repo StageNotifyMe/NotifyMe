@@ -23,6 +23,8 @@ public interface INotificationService {
 
   void notifyUsers(Collection<User> users, long messageId);
 
+  void notifyUserHidden(String username, long messageId);
+
   void notifyOrganisationManagers(long organisationId, String sender, String
       title, String text);
 }

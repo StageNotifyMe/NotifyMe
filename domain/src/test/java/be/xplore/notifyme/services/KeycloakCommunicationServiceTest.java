@@ -17,11 +17,13 @@ import be.xplore.notifyme.dto.AdminTokenResponseDto;
 import be.xplore.notifyme.dto.RelevantClientInfoDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
+import be.xplore.notifyme.exception.ChannelNotVerifiedException;
 import be.xplore.notifyme.exception.CrudException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
@@ -37,7 +39,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootTest(classes = {KeycloakCommunicationService.class})
+@SpringBootTest(classes = {KeycloakCommunicationService.class, CodeGeneratorService.class})
 @Import(RestConfig.class)
 class KeycloakCommunicationServiceTest {
 
@@ -45,6 +47,10 @@ class KeycloakCommunicationServiceTest {
   private KeycloakCommunicationService keycloakCommunicationService;
   @MockBean
   private RestTemplate restTemplate;
+  @Autowired
+  private CodeGeneratorService codeGeneratorService;
+  @MockBean
+  private ISmsVerificationSenderService ismsVerificationSenderService;
   @MockBean
   private Gson gson;
 
@@ -72,7 +78,54 @@ class KeycloakCommunicationServiceTest {
 
   @Test
   void registerSuccess() {
+    userRegistrationDto.setPhoneNumber(null);
     var arrayList = getTestUserRepresentation();
+    final Type listType = new TypeToken<List<UserRepresentation>>() {
+    }.getType();
+
+    when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
+    when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("someResponseToken"));
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("[{id:\"test-id\"}]"));
+
+    when(gson.fromJson(anyString(), eq(AdminTokenResponseDto.class)))
+        .thenReturn(new AdminTokenResponseDto("a", 10, 10, "Access", 5, "scopes"));
+    when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
+
+    when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
+
+    assertDoesNotThrow(() -> keycloakCommunicationService.register(userRegistrationDto));
+  }
+
+  @Test
+  void registerSuccessEmptyPhoneNo() {
+    userRegistrationDto.setPhoneNumber("");
+
+    var arrayList = getTestUserRepresentation();
+    final Type listType = new TypeToken<List<UserRepresentation>>() {
+    }.getType();
+
+    when(restTemplate.postForEntity(anyString(), any(), eq(Void.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
+    when(restTemplate.postForEntity(anyString(), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("someResponseToken"));
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body("[{id:\"test-id\"}]"));
+
+    when(gson.fromJson(anyString(), eq(AdminTokenResponseDto.class)))
+        .thenReturn(new AdminTokenResponseDto("a", 10, 10, "Access", 5, "scopes"));
+    when(gson.toJson(UserRepresentationDto.class)).thenReturn("User representation Json");
+
+    when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
+
+    assertDoesNotThrow(() -> keycloakCommunicationService.register(userRegistrationDto));
+  }
+
+  @Test
+  void registerSuccessWithPhoneNo() {
+    var arrayList = getTestUserRepresentationWithPhoneNo();
     final Type listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
 
@@ -123,6 +176,26 @@ class KeycloakCommunicationServiceTest {
   }
 
   @Test
+  void getUserInfoRestByIdSuccessful() {
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
+        eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).build());
+    assertDoesNotThrow(() -> {
+      keycloakCommunicationService.getUserInfoRestById("token", "id");
+
+    });
+  }
+
+  @Test
+  void getUserInfoRestByIdNotSuccessful() {
+    when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
+        eq(String.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    assertThrows(CrudException.class,() ->
+        keycloakCommunicationService.getUserInfoRestById("token","id"));
+  }
+
+  @Test
   void getUserInfoRestFail() {
     final UserRegistrationDto userRegistrationDto =
         new UserRegistrationDto("user", "userlastname", "user@user.be", "+32123456789", "user.user",
@@ -161,7 +234,6 @@ class KeycloakCommunicationServiceTest {
 
     when(gson.fromJson("LIST", listType)).thenReturn(mockList);
     when(mockList.get(anyInt())).thenReturn(mockUserRep);
-
 
     assertEquals(mockUserRep, keycloakCommunicationService.getUserInfoUsername("user"));
   }
@@ -205,7 +277,6 @@ class KeycloakCommunicationServiceTest {
     when(mockResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
     when(mockResponseEntity.getBody()).thenReturn("LIST");
     when(gson.fromJson("LIST", listType)).thenReturn(mockList);
-
 
     assertEquals(mockList, keycloakCommunicationService.getAllUserInfoRest("token"));
   }
@@ -283,7 +354,7 @@ class KeycloakCommunicationServiceTest {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     when(gson.fromJson("RoleArray", RoleRepresentation[].class))
-        .thenReturn(new RoleRepresentation[] {getTestRoleRepresentation()});
+        .thenReturn(new RoleRepresentation[]{getTestRoleRepresentation()});
   }
 
   @Test
@@ -341,6 +412,81 @@ class KeycloakCommunicationServiceTest {
     assertThrows(CrudException.class, () -> keycloakCommunicationService.getClient("invalidId"));
   }
 
+  @Test
+  void verifyPhoneNo() {
+    mockGetUserInfoRest();
+    mockGetAdminAccesstoken();
+    final Type listType = new TypeToken<List<UserRepresentation>>() {
+    }.getType();
+    var arrayList = getTestUserRepresentationWithPhoneNo();
+    when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
+    assertDoesNotThrow(() -> keycloakCommunicationService.verifyPhoneNo("testUser", "testcode"));
+  }
+
+  @Test
+  void verifyPhoneNoNoVerificationCodeFound() {
+    mockGetUserInfoRest();
+    mockGetAdminAccesstoken();
+    final Type listType = new TypeToken<List<UserRepresentation>>() {
+    }.getType();
+    var arrayList = getTestUserRepresentationWithPhoneNoWithoutVerifyCode();
+    when(gson.fromJson(anyString(), eq(listType))).thenReturn(arrayList);
+    assertThrows(RuntimeException.class, () -> {
+      keycloakCommunicationService.verifyPhoneNo("testUser", "testcode");
+    });
+  }
+
+  @Test
+  void checkVerifiedPhoneNo() {
+    mockGetUserInfoRest();
+    mockGetAdminAccesstoken();
+    var arrayList = getTestUserRepresentationWithPhoneNoVerified();
+    when(gson.fromJson(anyString(), eq(UserRepresentation.class))).thenReturn(arrayList.get(0));
+    assertDoesNotThrow(() -> keycloakCommunicationService.checkPhoneVerification("randomUserId"));
+  }
+
+  @Test
+  void checkNonVerifiedPhoneNo() {
+    mockGetUserInfoRest();
+    mockGetAdminAccesstoken();
+    var arrayList = getTestUserRepresentationWithPhoneNo();
+    when(gson.fromJson(anyString(), eq(UserRepresentation.class))).thenReturn(arrayList.get(0));
+    assertThrows(ChannelNotVerifiedException.class,
+        () -> keycloakCommunicationService.checkPhoneVerification("randomUserId"));
+  }
+
+  @Test
+  void checkNonVerifiedPhoneNoNoCode() {
+    mockGetUserInfoRest();
+    mockGetAdminAccesstoken();
+    var arrayList = getTestUserRepresentationWithPhoneNoWithoutVerifyCode();
+    when(gson.fromJson(anyString(), eq(UserRepresentation.class))).thenReturn(arrayList.get(0));
+    assertThrows(ChannelNotVerifiedException.class,
+        () -> keycloakCommunicationService.checkPhoneVerification("randomUserId"));
+  }
+
+  @Test
+  void getUserInfoByIdSuccessful() {
+    this.mockGetAdminAccesstoken();
+    this.mockGetUserInfoRest();
+    final var mockUser = mock(UserRepresentation.class);
+
+    when(gson.fromJson("LIST", UserRepresentation.class)).thenReturn(mockUser);
+
+    assertEquals(mockUser, keycloakCommunicationService.getUserInfoId("user"));
+  }
+
+  @Test
+  void getUserInfoByIdNotSuccessful() {
+    this.mockGetAdminAccesstoken();
+    this.mockGetUserInfoRest();
+    final var mockUser = mock(UserRepresentation.class);
+
+    when(gson.fromJson("LIST", UserRepresentation.class)).thenReturn(null);
+
+    assertThrows(CrudException.class, () -> keycloakCommunicationService.getUserInfoId("user"));
+  }
+
   private void mockGetAllClients(boolean isSuccessful) {
     final ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
     this.mockGetAdminAccesstoken();
@@ -354,7 +500,7 @@ class KeycloakCommunicationServiceTest {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     when(gson.fromJson("clientArray", RelevantClientInfoDto[].class))
-        .thenReturn(new RelevantClientInfoDto[] {getTestRelevantClientInfo()});
+        .thenReturn(new RelevantClientInfoDto[]{getTestRelevantClientInfo()});
   }
 
   private RelevantClientInfoDto getTestRelevantClientInfo() {
@@ -392,6 +538,43 @@ class KeycloakCommunicationServiceTest {
     ArrayList<UserRepresentation> arrayList = new ArrayList<>();
     UserRepresentation userRepresentation = new UserRepresentation();
     userRepresentation.setId("test-id");
+    arrayList.add(userRepresentation);
+    return arrayList;
+  }
+
+  private ArrayList<UserRepresentation> getTestUserRepresentationWithPhoneNo() {
+    UserRepresentation userRepresentation = new UserRepresentation();
+    userRepresentation.setId("test-id");
+    userRepresentation.setAttributes(new HashMap<>());
+    userRepresentation.getAttributes().put("phone_number", List.of("+11233883838"));
+    userRepresentation.getAttributes().put("phone_number_verified", List.of("false"));
+    userRepresentation.getAttributes().put("phone_number_verification_code", List.of("testcode"));
+    ArrayList<UserRepresentation> arrayList = new ArrayList<>();
+    arrayList.add(userRepresentation);
+    return arrayList;
+  }
+
+  private ArrayList<UserRepresentation> getTestUserRepresentationWithPhoneNoVerified() {
+    UserRepresentation userRepresentation = new UserRepresentation();
+    userRepresentation.setId("test-id");
+    userRepresentation.setAttributes(new HashMap<>());
+    userRepresentation.getAttributes().put("phone_number", List.of("+11233883838"));
+    userRepresentation.getAttributes().put("phone_number_verified", List.of("true"));
+    userRepresentation.getAttributes().put("phone_number_verification_code", List.of("testcode"));
+    ArrayList<UserRepresentation> arrayList = new ArrayList<>();
+    arrayList.add(userRepresentation);
+    return arrayList;
+  }
+
+  private ArrayList<UserRepresentation> getTestUserRepresentationWithPhoneNoWithoutVerifyCode() {
+    UserRepresentation userRepresentation = new UserRepresentation();
+    userRepresentation.setId("test-id");
+    userRepresentation.setAttributes(new HashMap<>());
+    userRepresentation.getAttributes().put("phone_number", List.of("+11233883838"));
+    userRepresentation.getAttributes().put("phone_number_verified", List.of("false"));
+    userRepresentation.getAttributes().put("phone_number_verification_code", List.of());
+
+    ArrayList<UserRepresentation> arrayList = new ArrayList<>();
     arrayList.add(userRepresentation);
     return arrayList;
   }

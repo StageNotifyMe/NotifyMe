@@ -117,8 +117,7 @@ public class UserService implements IUserService {
    */
   private void getUserInfoAndSendVerificationEmail(String username) {
     var userInfo = keycloakCommunicationService.getUserInfoUsername(username);
-    //TODO: terug aan zetten!
-    //keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
+    keycloakCommunicationService.sendEmailVerificationRequest(userInfo.getId());
     createUserInDatabase(userInfo.getId(), username);
     createDefaultCommunicationPreference(userInfo.getId());
   }
@@ -171,7 +170,6 @@ public class UserService implements IUserService {
    * @return an updated user.
    */
   @Override
-  //TODO: denk niet dat deze manier van werken nog kan met hexa
   public User updateUser(User user) {
     try {
       return userRepo.save(user);

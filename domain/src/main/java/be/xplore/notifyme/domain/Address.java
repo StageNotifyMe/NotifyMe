@@ -8,15 +8,11 @@ import lombok.Setter;
 /**
  * Object representation of an address (location in the world).
  */
-//@Entity
 @Builder
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class Address {
-  /*  @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;*/
   private String streetAndNumber;
   private String postalCode;
   private String village;

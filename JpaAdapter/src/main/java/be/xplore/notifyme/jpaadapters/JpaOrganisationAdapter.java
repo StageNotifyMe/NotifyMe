@@ -26,6 +26,8 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
   private final JpaOrganisationRepository jpaOrganisationRepository;
   private final JpaUserRepository jpaUserRepository;
 
+  private static final String USER_NOT_FOUND_MESSAGE = "Could not find user for id ";
+
 
   @Override
   public Organisation save(Organisation organisation) {
@@ -78,7 +80,7 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
     var jpaOrg = jpaOrganisationRepository.findById(organisationId).orElseThrow(
         () -> new CrudException("Could not find organisation for id " + organisationId));
     var jpaUser = jpaUserRepository.findById(userId)
-        .orElseThrow(() -> new CrudException("Could not find user for id " + userId));
+        .orElseThrow(() -> new CrudException(USER_NOT_FOUND_MESSAGE + userId));
     jpaOrg.getUsers().add(new JpaOrganisationUser(jpaUser, jpaOrg, true));
     return jpaOrganisationRepository.save(jpaOrg).toDomainBase();
   }
@@ -88,7 +90,7 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
     var jpaOrg = jpaOrganisationRepository.findById(orgId)
         .orElseThrow(() -> new CrudException("Could not find org for id " + orgId));
     var jpaUser = jpaUserRepository.findById(userId)
-        .orElseThrow(() -> new CrudException("Could not find user for id " + userId));
+        .orElseThrow(() -> new CrudException(USER_NOT_FOUND_MESSAGE + userId));
     jpaUser.getAppliedOrganisations().add(new JpaUserOrgApplication(jpaOrg, jpaUser,
         OrgApplicationStatus.APPLIED));
     jpaUserRepository.save(jpaUser);
@@ -115,7 +117,7 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
     var jpaUsers = new ArrayList<JpaUser>();
     for (String jpaUserId : jpaUserIds) {
       var jpaUser = jpaUserRepository.findById(jpaUserId)
-          .orElseThrow(() -> new JpaNotFoundException("Could not find user for id " + jpaUserId));
+          .orElseThrow(() -> new JpaNotFoundException(USER_NOT_FOUND_MESSAGE + jpaUserId));
       jpaUsers.add(jpaUser);
     }
     return jpaUsers.stream().map(JpaUser::toDomainBase).collect(Collectors.toList());
