@@ -274,4 +274,13 @@ class NotificationServiceTest {
     }
     mockGetUserInfoUsername();
   }
+
+  @Test
+  void notifyOrganisationManagers() {
+    mockNotifyOrgManagers();
+
+    assertDoesNotThrow(()->{
+      notificationService.notifyOrganisationManagers(1L,"userId","title","text");
+    });
+  }
 }

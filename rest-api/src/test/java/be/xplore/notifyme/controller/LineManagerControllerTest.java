@@ -229,4 +229,19 @@ class LineManagerControllerTest {
         .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 
+  @Test
+  @WithMockUser(username = "lmanager", roles = {"user", "line_manager"})
+  void createNotificationForOmanager() throws Exception {
+    doNothing().when(notificationService).notifyOrganisationManagers(1L, "userId", "title", "text");
+
+    mockMvc.perform(post("/lmanager/notify/organisation").contentType(MediaType.APPLICATION_JSON)
+        .content("{\n"
+            + "\t\"senderId\":\"userId\",\n"
+            + "\t\"receivingOrgId\":1,\n"
+            + "\t\"title\":\"title\",\n"
+            + "\t\"text\":\"text\"\n"
+            + "}"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
 }

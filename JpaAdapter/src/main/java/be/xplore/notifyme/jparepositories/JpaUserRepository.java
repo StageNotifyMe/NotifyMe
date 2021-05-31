@@ -8,14 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-/*@NamedNativeQueries({
-    @NamedNativeQuery(name = "findAllOrgManagersByOrganisationId",
-        query = "SELECT ju "
-            + "FROM jpa_user ju "
-            + "         JOIN jpa_organisation_user jou on ju.user_id = jou.user_id "
-            + "         JOIN jpa_organisation jo on jou.organisation_id = jo.id "
-            + "WHERE jo.id = :organisationId AND jou.is_organisation_leader=true", resultClass = JpaUser.class)
-})*/
 public interface JpaUserRepository extends JpaRepository<JpaUser, String> {
   @Query(nativeQuery = true, value = "select ju.user_id from jpa_user ju "
       + "join jpa_organisation_user jou on ju.user_id = jou.user_id "
@@ -33,11 +25,4 @@ public interface JpaUserRepository extends JpaRepository<JpaUser, String> {
       + "JOIN juo.organisation jo "
       + "WHERE jo.id = :organisationId AND juo.isOrganisationLeader=true")
   List<JpaUser> getAllOrgManagersFromOrgId(long organisationId);
-
-  /*@Query(value = "SELECT ju.user_id "
-      + "FROM jpa_user ju "
-      + "JOIN jpa_organisation_user jou on ju.user_id = jou.user_id "
-      + "JOIN jpa_organisation jo on jou.organisation_id = jo.id "
-      + "WHERE jo.id = :organisationId AND jou.is_organisation_leader=true", nativeQuery = true)
-  List<String> getAllOrgManagersFromOrgId(@Param("organisationId") long organisationId);*/
 }

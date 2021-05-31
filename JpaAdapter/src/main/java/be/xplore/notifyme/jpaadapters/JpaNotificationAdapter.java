@@ -63,13 +63,13 @@ public class JpaNotificationAdapter implements INotificationRepo {
   }
 
   @Override
-  public Notification createUrgent(long messageId, String userId) {
-    return createNotification(messageId, userId, true, null);
+  public Notification create(long messageId, String userId, String sender) {
+    return createNotification(messageId, userId, false, sender);
   }
 
   @Override
-  public Notification create(long messageId, String userId, String sender) {
-    return createNotification(messageId, userId, false, sender);
+  public Notification createUrgent(long messageId, String userId) {
+    return createNotification(messageId, userId, true, null);
   }
 
   /**
