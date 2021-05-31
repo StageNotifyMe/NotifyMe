@@ -27,17 +27,17 @@ public interface JpaUserRepository extends JpaRepository<JpaUser, String> {
       + "where je.id = :eventId and is_organisation_leader = true")
   public List<String> findByEvent(@Param("eventId") long eventId);
 
-  /*@Query(value = "SELECT ju "
-      + "FROM jpa_user ju "
-      + "JOIN jpa_organisation_user jou on ju.user_id = jou.user_id "
-      + "JOIN jpa_organisation jo on jou.organisation_id = jo.id "
-      + "WHERE jo.id = :organisationId AND jou.is_organisation_leader=true", nativeQuery = true)
-  List<JpaUser> getAllOrgManagersFromOrgId(@Param("organisationId") long organisationId);*/
+  @Query(value = "SELECT ju "
+      + "FROM JpaUser ju "
+      + "JOIN ju.organisations juo "
+      + "JOIN juo.organisation jo "
+      + "WHERE jo.id = :organisationId AND juo.isOrganisationLeader=true")
+  List<JpaUser> getAllOrgManagersFromOrgId(long organisationId);
 
-  @Query(value = "SELECT ju.user_id "
+  /*@Query(value = "SELECT ju.user_id "
       + "FROM jpa_user ju "
       + "JOIN jpa_organisation_user jou on ju.user_id = jou.user_id "
       + "JOIN jpa_organisation jo on jou.organisation_id = jo.id "
       + "WHERE jo.id = :organisationId AND jou.is_organisation_leader=true", nativeQuery = true)
-  List<String> getAllOrgManagersFromOrgId(@Param("organisationId") long organisationId);
+  List<String> getAllOrgManagersFromOrgId(@Param("organisationId") long organisationId);*/
 }
