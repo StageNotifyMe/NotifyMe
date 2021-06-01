@@ -2,7 +2,6 @@ package be.xplore.notifyme.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -22,6 +21,10 @@ import be.xplore.notifyme.persistence.INotificationRepo;
 import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
 import be.xplore.notifyme.services.communicationstrategies.IEmailService;
 import be.xplore.notifyme.services.communicationstrategies.ISmsService;
+import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
+import be.xplore.notifyme.services.systemmessages.PickLanguageService;
+import be.xplore.notifyme.services.systemmessages.SystemMessages;
+import be.xplore.notifyme.services.systemmessages.SystemMessagesEn;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +55,10 @@ class NotificationServiceTest {
   ISmsService smsService;
   @MockBean
   private OrganisationService organisationService;
+  @MockBean
+  private PickLanguageService pickLanguageService;
+  @MockBean
+  private IUserService userService;
 
   @BeforeEach
   private void setUp() {
@@ -166,7 +173,7 @@ class NotificationServiceTest {
     return userRep;
   }
 
-  @Test
+  /*@Test
   void createCanceledEventMessage() {
     var event = new Event(1L, "title", "description", "artist", LocalDateTime.now(), EventStatus.OK,
         new Venue(), new ArrayList<>(), new HashSet<>());
@@ -182,7 +189,7 @@ class NotificationServiceTest {
     assertTrue(message.getText().contains("EventId: 1"));
     assertTrue(message.getText().contains("Title: title"));
     assertTrue(message.getText().contains("Description: description"));
-  }
+  }*/
 
   @Test
   void notifyOrganisationsManagers() {
@@ -191,8 +198,12 @@ class NotificationServiceTest {
     var orgIdList = new ArrayList<Long>();
     orgIdList.add(1L);
     orgIdList.add(2L);
+    var event = new Event(1L, "title", "description", "artist", LocalDateTime.now(), EventStatus.OK,
+        new Venue(), new ArrayList<>(), new HashSet<>());
+
     assertDoesNotThrow(() -> {
-      notificationService.notifyOrganisationManagersForCancelEvent(1L, 1L);
+      notificationService
+          .notifyOrganisationManagersForCancelEvent(event, SystemMessages.CANCEL_EVENT);
     });
   }
 
@@ -299,5 +310,47 @@ class NotificationServiceTest {
         new Notification(1L, "mail@mailadres.com", comPref, "emailcommunicationstrategy", message,
             users.get(0), "userId", false));
     mockEmailCommunicationStrategy();
+  }
+
+  @Test
+  void createAndSendSystemNotification() {
+    mockCreateAndSendSystemNotification();
+    assertDoesNotThrow(() -> {
+      notificationService.createAndSendSystemNotification("userId", SystemMessages.CANCEL_EVENT,
+          new Object[] {Event.builder().id(1L).build()});
+    });
+  }
+
+  private void mockCreateAndSendSystemNotification() {
+    final var messageServiceEn = mock(SystemMessagesEn.class);
+    final var message = Message.builder().id(1L).text("text").title("title").build();
+    final var user = User.builder().userId("userId").userName("username").preferedLanguage(
+        AvailableLanguages.EN).build();
+    final var comPref = CommunicationPreference.builder().id(1L)
+        .communicationStrategy(mockEmailCommunicationStrategy()).isActive(true).isDefault(true)
+        .isUrgent(true).user(user).build();
+    when(userService.getUser(anyString()))
+        .thenReturn(user);
+    when(pickLanguageService.getLanguageService(AvailableLanguages.EN))
+        .thenReturn(messageServiceEn);
+    when(messageServiceEn.getSystemMessage(any(), any()))
+        .thenReturn(message);
+    mockSave();
+    mockCreateNotification(message, user, comPref);
+  }
+
+  @Test
+  void testNotifyUsersSystemMessage() {
+    mockCreateAndSendSystemNotification();
+    var userList = new ArrayList<User>();
+    userList.add(User.builder().userId("userId").build());
+    assertDoesNotThrow(() -> {
+      notificationService.notifyUsers(userList, SystemMessages.CANCEL_EVENT,
+          new Object[] {Event.builder().id(1L).build()});
+    });
+    assertDoesNotThrow(() -> {
+      notificationService.notifyUsers(null, SystemMessages.CANCEL_EVENT,
+          new Object[] {Event.builder().id(1L).build()});
+    });
   }
 }

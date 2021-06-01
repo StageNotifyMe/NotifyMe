@@ -1,5 +1,6 @@
 package be.xplore.notifyme.domain;
 
+import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ public class User {
 
   private String userId;
   private String userName;
+  private AvailableLanguages preferedLanguage = AvailableLanguages.EN;
 
   @JsonManagedReference
   private List<OrganisationUser> organisations = new ArrayList<>();

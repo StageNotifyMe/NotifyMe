@@ -17,7 +17,6 @@ import static org.mockito.Mockito.when;
 import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.EventStatus;
-import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.dto.CreateEventDto;
@@ -244,17 +243,11 @@ class EventServiceTest {
             (EventStatus) args[1], new Venue(), new LinkedList<>(), new HashSet<>());
       }
     });
-    when(notificationService.createCanceledEventMessage(any())).thenAnswer(new Answer<Message>() {
-      @Override
-      public Message answer(InvocationOnMock invocation) throws Throwable {
-        var args = invocation.getArguments();
-        return new Message(1L, String.format("event %d canceled", ((Event) args[0]).getId()),
-            "text");
-      }
-    });
+    doNothing()
+        .when(notificationService).createAndSendSystemNotification(anyString(), any(), any());
     this.mockGetAllOrganisationIds(2);
     doNothing().when(notificationService)
-        .notifyOrganisationManagersForCancelEvent(anyLong(), anyLong());
+        .notifyOrganisationManagersForCancelEvent(any(),any());
     this.mockGetAttendingMembers(4);
     doNothing().when(notificationService).notifyUsers(anyList(), anyLong());
   }
