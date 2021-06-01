@@ -65,6 +65,13 @@ public class NotificationService implements INotificationService {
     return notificationRepo.findByUser(userId);
   }
 
+  /**
+   * Creates a system notification in the approriate language.
+   *
+   * @param userId      user for whom the notification is intended.
+   * @param messageName identifier for the system message.
+   * @param attribute   any attributes needed to create the message.
+   */
   public void createAndSendSystemNotification(String userId, String messageName,
                                               Object[] attribute) {
     var user = userService.getUser(userId);

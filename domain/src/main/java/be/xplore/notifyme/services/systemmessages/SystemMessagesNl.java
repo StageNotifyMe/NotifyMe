@@ -22,8 +22,9 @@ public class SystemMessagesNl implements ILanguagePreferenceService {
 
   @Override
   public Message getCancelEvent(Event event) {
-    var text = String.format(cancelEventText, event.getId(), event.getTitle(), event.getDescription(),
-        event.getArtist(), event.getDateTime().toString());
+    var text =
+        String.format(cancelEventText, event.getId(), event.getTitle(), event.getDescription(),
+            event.getArtist(), event.getDateTime().toString());
     var title = String.format(cancelEventTitle, event.getTitle());
     return new Message(title, text);
   }
