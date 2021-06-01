@@ -41,6 +41,8 @@ public class JpaUser {
   private List<JpaNotification> notifications;
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
   private List<JpaCommunicationPreference> communicationPreferences;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "appliedUser")
+  private List<JpaTeamApplication> teamApplications;
 
   /**
    * Converts a jpa-object to a domain variant.

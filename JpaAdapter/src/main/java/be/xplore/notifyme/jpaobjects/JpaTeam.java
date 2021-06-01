@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,12 +29,14 @@ public class JpaTeam {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @OneToOne(mappedBy = "team")
+  @OneToOne
   private JpaLine line;
   @ManyToMany
   private List<JpaOrganisation> organisations;
   @ManyToMany
   private Set<JpaUser> teamMembers;
+  @OneToMany(mappedBy = "appliedTeam")
+  private List<JpaTeamApplication> userApplications;
 
   /**
    * Converts a jpa-object to a domain variant.

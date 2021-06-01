@@ -30,7 +30,7 @@ public class JpaLine {
   private JpaFacility facility;
   @ManyToOne(cascade = CascadeType.ALL)
   private JpaEvent event;
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.ALL,mappedBy = "line")
   private JpaTeam team;
 
   /**
@@ -74,7 +74,7 @@ public class JpaLine {
     return Line.builder()
         .id(this.id)
         .note(this.note)
-        //.event(this.event.toDomainBase())
+        .event(this.event.toDomainBase())
         //.facility(this.facility.toDomainBase())
         .team(this.team.toDomainBaseOnlyId())
         .requiredStaff(this.requiredStaff)
@@ -106,8 +106,8 @@ public class JpaLine {
         .id(this.id)
         .note(this.note)
         .event(this.event.toDomainBase())
-        //.facility(this.facility.toDomainBase())
-        //.team(this.team.toDomainBase())
+        .facility(this.facility.toDomainBase())
+        .team(this.team.toDomainBase())
         .requiredStaff(this.requiredStaff)
         .build();
   }

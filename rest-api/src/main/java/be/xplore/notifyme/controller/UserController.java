@@ -9,10 +9,11 @@ import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.communicationpreference.GetCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.PostCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.UpdateCommunicationPreferenceDto;
-import be.xplore.notifyme.persistence.ILineRepo;
 import be.xplore.notifyme.services.ICommunicationPreferenceService;
 import be.xplore.notifyme.services.IKeycloakCommunicationService;
+import be.xplore.notifyme.services.ILineService;
 import be.xplore.notifyme.services.IOrganisationService;
+import be.xplore.notifyme.services.ITeamApplicationService;
 import be.xplore.notifyme.services.IUserOrgApplicationService;
 import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.NotificationService;
@@ -43,12 +44,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final IUserService userService;
-  private final ILineRepo lineRepo;
+  private final ILineService lineService;
   private final IOrganisationService organisationService;
   private final IUserOrgApplicationService userOrgApplicationService;
   private final IKeycloakCommunicationService keycloakCommunicationService;
   private final ICommunicationPreferenceService communicationPreferenceService;
   private final NotificationService notificationService;
+  private final ITeamApplicationService teamApplicationService;
 
   @GetMapping(value = "/token")
   public ResponseEntity<String> getAccessTokenForUser(String username, String password) {
@@ -191,7 +193,20 @@ public class UserController {
   @GetMapping(value = "lines")
   public ResponseEntity<List<Line>> getAvailableLines(Principal principal) {
     return ResponseEntity
-        .ok(lineRepo
+        .ok(lineService
             .getAvailableLinesForUser(userService.getUserFromPrincipal(principal).getUserId()));
+  }
+
+  /**
+   * Sends out a user application for a team.
+   *
+   * @param principal injected by securitycontext.
+   * @return Response entity containing the list of notifications of the user.
+   */
+  @PostMapping(value = "teamApplication")
+  public ResponseEntity<Void> applyForTeam(@RequestParam(name = "teamId") Long teamId,
+      Principal principal) {
+    teamApplicationService.applyForEventLine(teamId, principal);
+    return ResponseEntity.ok().build();
   }
 }

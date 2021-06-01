@@ -2,9 +2,12 @@ package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
+import be.xplore.notifyme.domain.TeamApplicationStatus;
+import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exceptions.JpaNotFoundException;
 import be.xplore.notifyme.jpaobjects.JpaOrganisation;
 import be.xplore.notifyme.jpaobjects.JpaTeam;
+import be.xplore.notifyme.jpaobjects.JpaTeamApplication;
 import be.xplore.notifyme.jparepositories.JpaLineRepository;
 import be.xplore.notifyme.jparepositories.JpaOrganisationRepository;
 import be.xplore.notifyme.jparepositories.JpaTeamRepository;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class JpaTeamAdapter implements ITeamRepo {
+
   private final JpaTeamRepository jpaTeamRepository;
   private final JpaLineRepository jpaLineRepository;
   private final JpaOrganisationRepository jpaOrganisationRepository;
@@ -93,5 +97,21 @@ public class JpaTeamAdapter implements ITeamRepo {
                     + teamId));
     jpaTeam.getOrganisations().remove(jpaOrg);
     jpaTeamRepository.save(jpaTeam);
+  }
+
+  @Override
+  public void applyToTeam(long teamId, String userId) {
+    var jpaTeam = jpaTeamRepository.findById(teamId)
+        .orElseThrow(() -> new JpaNotFoundException("Could not find team with id: " + teamId));
+    var jpaUser = jpaUserRepository.findById(userId)
+        .orElseThrow(() -> new JpaNotFoundException("Could not find user with id: " + userId));
+    jpaTeam.getUserApplications().add(new JpaTeamApplication(jpaTeam, jpaUser,
+        TeamApplicationStatus.APPLIED));
+    jpaTeamRepository.save(jpaTeam);
+  }
+
+  @Override
+  public List<User> getUserApplicationsForOrganisation(long teamId, long organisationId) {
+    return null;
   }
 }
