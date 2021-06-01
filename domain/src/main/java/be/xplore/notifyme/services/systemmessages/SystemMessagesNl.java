@@ -15,6 +15,11 @@ public class SystemMessagesNl implements ILanguagePreferenceService {
   private String cancelEventTitle;
   private String cancelEventText;
 
+  private String userApplicationTitle;
+  private String userApplicationText;
+  private String userApplicationApprovedTitle;
+  private String userApplicationApprovedText;
+
   @Override
   public AvailableLanguages getLanguagePreference() {
     return AvailableLanguages.NL;
@@ -27,5 +32,17 @@ public class SystemMessagesNl implements ILanguagePreferenceService {
             event.getArtist(), event.getDateTime().toString());
     var title = String.format(cancelEventTitle, event.getTitle());
     return new Message(title, text);
+  }
+
+  @Override
+  public Message getUserApplication(String userName, String organisationName) {
+    var text = String.format(userApplicationText, userName, organisationName);
+    return new Message(userApplicationTitle, text);
+  }
+
+  @Override
+  public Message getUserApplicationApproved(String organisationName) {
+    var text = String.format(userApplicationApprovedText, organisationName);
+    return new Message(userApplicationApprovedTitle, text);
   }
 }
