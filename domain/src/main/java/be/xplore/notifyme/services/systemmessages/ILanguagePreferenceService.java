@@ -15,6 +15,10 @@ public interface ILanguagePreferenceService {
 
   /**
    * Returns the correct message based on the identifier.
+   * Expected contents of attributes:
+   * - CANCEL_EVENT: Event object.
+   * - USER_APPLICATION: String userName, String organisationName.
+   * - APPLICATION_APPROVED: String organisationName.
    *
    * @param messageIdentifier identifier.
    * @param attributes        attributes needed to construct the message.
