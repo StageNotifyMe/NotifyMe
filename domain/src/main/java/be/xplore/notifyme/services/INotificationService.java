@@ -4,7 +4,6 @@ import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,9 +17,6 @@ public interface INotificationService {
 
   List<Notification> getNotificationsForUser(String userId);
 
-  /*Message createCanceledEventMessage(Event updatedEvent,
-                                     AvailableLanguages preferedLanguage);*/
-
   void notifyOrganisationManagersForCancelEvent(Event eventId, String messageName);
 
   void notifyUsers(Collection<User> users, long messageId);
@@ -31,8 +27,6 @@ public interface INotificationService {
 
   void notifyOrganisationManagers(long organisationId, String sender, String
       title, String text);
-
-  Message testMessage(AvailableLanguages languageCode);
 
   void createAndSendSystemNotification(String userId, String messageName, Object[] attribute);
 }

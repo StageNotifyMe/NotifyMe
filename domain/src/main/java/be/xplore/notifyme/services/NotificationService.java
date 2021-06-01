@@ -1,19 +1,13 @@
 package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.Event;
-import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
-import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import be.xplore.notifyme.services.systemmessages.PickLanguageService;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -130,13 +124,5 @@ public class NotificationService implements INotificationService {
     notification.setCommunicationAddresAndUsedStrategy(userInfo);
     notificationRepo.save(notification);
     notification.send();
-  }
-
-  @Override
-  public Message testMessage(AvailableLanguages languageCode) {
-    var languageService = pickLanguageService.getLanguageService(languageCode);
-    var event = new Event(1L, "Title", "Description", "Artist",
-        LocalDateTime.now(), EventStatus.OK, new Venue(), new ArrayList<>(), new HashSet<>());
-    return languageService.getSystemMessage("cancelEvent", new Object[] {event});
   }
 }

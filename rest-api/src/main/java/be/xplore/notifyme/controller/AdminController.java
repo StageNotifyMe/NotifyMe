@@ -8,7 +8,6 @@ import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.IOrganisationService;
 import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.IVenueService;
-import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +48,8 @@ public class AdminController {
    * @return test string.
    */
   @GetMapping("/adminTest")
-  public ResponseEntity<String> adminInfoTest(@RequestParam String languageCode) {
-    var message = notificationService.testMessage(AvailableLanguages.valueOf(languageCode));
-    return ResponseEntity.ok(message.getTitle()+"\n"+message.getText());
-    //return ResponseEntity.ok("Well hello there, admin!");
+  public ResponseEntity<String> adminInfoTest() {
+    return ResponseEntity.ok("Well hello there, admin!");
   }
 
   /**
