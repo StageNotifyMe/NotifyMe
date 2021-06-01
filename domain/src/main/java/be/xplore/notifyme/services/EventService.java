@@ -7,6 +7,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IEventRepo;
+import be.xplore.notifyme.services.systemmessages.SystemMessages;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -124,7 +125,7 @@ public class EventService implements IEventService {
   }
 
   private void notifyForCanceledEvent(Event updatedEvent) {
-    var message = "cancelEvent";
+    var message = SystemMessages.CANCEL_EVENT;
     //notify organisation managers
     notificationService
         .notifyOrganisationManagersForCancelEvent(updatedEvent, message);

@@ -7,6 +7,7 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
 import be.xplore.notifyme.services.security.OrganisationSecurityService;
+import be.xplore.notifyme.services.systemmessages.SystemMessages;
 import java.security.Principal;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -40,7 +41,7 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
   }
 
   private void sendUserApplicationNotificationToAllOrgManagers(Long organisationId,
-      User appliedUser) {
+                                                               User appliedUser) {
     var org = organisationService.getOrganisationIncAppliedUsers(organisationId);
     var message = notificationService.createMessage("User application.",
         appliedUser.getUserName() + " applied to join " + org.getName() + ".");
@@ -77,7 +78,7 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
    */
   @Override
   public void respondToApplication(OrganisationUserKey organisationUserKey, boolean accept,
-      Principal principal) {
+                                   Principal principal) {
     if (accept) {
       var organisation = organisationService.addUserToOrganisation(organisationUserKey.getUserId(),
           organisationUserKey.getOrganisationId());
@@ -92,10 +93,14 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
   }
 
   private void sendUserApplicationApprovalNotification(User user, Organisation organisation) {
-    var message = notificationService
+    /*var message = notificationService
         .createMessage("Application Approved",
             "A manager of " + organisation.getName() + " has approved your application.");
-    notificationService.notifyUser(user.getUserName(), message.getId());
+    notificationService.notifyUser(user.getUserName(), message.getId());*/
+
+    notificationService
+        .createAndSendSystemNotification(user.getUserId(), SystemMessages.APPLICATION_APPROVED,
+            new Object[] {organisation.getName()});
   }
 
   /**
@@ -106,7 +111,7 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
    * @param principal    representation of the authenticated user.
    */
   private void secureOrgManagerRequestFromPrincipal(Organisation organisation,
-      Principal principal) {
+                                                    Principal principal) {
     var user = userService.getUserFromprincipalIncOrganisations(principal);
     organisationSecurityService.checkUserIsOrgManager(user, organisation);
   }

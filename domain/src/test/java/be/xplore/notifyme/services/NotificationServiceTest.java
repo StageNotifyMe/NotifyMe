@@ -22,6 +22,7 @@ import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStr
 import be.xplore.notifyme.services.communicationstrategies.IEmailService;
 import be.xplore.notifyme.services.communicationstrategies.ISmsService;
 import be.xplore.notifyme.services.systemmessages.PickLanguageService;
+import be.xplore.notifyme.services.systemmessages.SystemMessages;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -199,7 +200,7 @@ class NotificationServiceTest {
         new Venue(), new ArrayList<>(), new HashSet<>());
 
     assertDoesNotThrow(() -> {
-      notificationService.notifyOrganisationManagersForCancelEvent(event, "cancelEvent");
+      notificationService.notifyOrganisationManagersForCancelEvent(event, SystemMessages.CANCEL_EVENT);
     });
   }
 

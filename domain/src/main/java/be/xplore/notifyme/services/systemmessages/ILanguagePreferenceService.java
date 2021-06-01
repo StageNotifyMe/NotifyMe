@@ -20,21 +20,21 @@ public interface ILanguagePreferenceService {
    * @param attributes        attributes needed to construct the message.
    * @return a message object.
    */
-  default Message getSystemMessage(String messageIdentifier, Object[] attributes) {
+  default Message getSystemMessage(SystemMessages messageIdentifier, Object[] attributes) {
     switch (messageIdentifier) {
-      case "cancelEvent":
+      case CANCEL_EVENT:
         if (attributes.length < 1) {
           throw new SystemNotificationException(
               "Expected 1 attribute of type Event, but found none");
         }
         return this.getCancelEvent((Event) attributes[0]);
-      case "userApplication":
+      case USER_APPLICATION:
         if (attributes.length < 2) {
           throw new SystemNotificationException(
               "Expected 2 attributes: String userName, String organisationName | but found none.");
         }
         return this.getUserApplication((String) attributes[0], (String) attributes[1]);
-      case "applicationApproved":
+      case APPLICATION_APPROVED:
         if (attributes.length < 1) {
           throw new SystemNotificationException(
               "Expected 1 attribute: String organisationName | but found none.");

@@ -244,10 +244,10 @@ class EventServiceTest {
       }
     });
     doNothing()
-        .when(notificationService).createAndSendSystemNotification(anyString(), anyString(), any());
+        .when(notificationService).createAndSendSystemNotification(anyString(), any(), any());
     this.mockGetAllOrganisationIds(2);
     doNothing().when(notificationService)
-        .notifyOrganisationManagersForCancelEvent(any(),anyString());
+        .notifyOrganisationManagersForCancelEvent(any(),any());
     this.mockGetAttendingMembers(4);
     doNothing().when(notificationService).notifyUsers(anyList(), anyLong());
   }

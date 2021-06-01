@@ -7,6 +7,7 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
 import be.xplore.notifyme.services.systemmessages.PickLanguageService;
+import be.xplore.notifyme.services.systemmessages.SystemMessages;
 import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +73,7 @@ public class NotificationService implements INotificationService {
    * @param messageName identifier for the system message.
    * @param attribute   any attributes needed to create the message.
    */
-  public void createAndSendSystemNotification(String userId, String messageName,
+  public void createAndSendSystemNotification(String userId, SystemMessages messageName,
                                               Object[] attribute) {
     var user = userService.getUser(userId);
     var message = pickLanguageService.getLanguageService(user.getPreferedLanguage())
@@ -82,16 +83,8 @@ public class NotificationService implements INotificationService {
     finishAndSendNotification(notification, user.getUserName());
   }
 
-  /*@Override
-  public Message createCanceledEventMessage(Event updatedEvent,
-                                            AvailableLanguages preferedLanguage) {
-    var message = getLanguageService(preferedLanguage).getCancelEvent(updatedEvent);
-    return messageRepo.save(message);
-  }*/
-
-
   @Override
-  public void notifyOrganisationManagersForCancelEvent(Event event, String messageName) {
+  public void notifyOrganisationManagersForCancelEvent(Event event, SystemMessages messageName) {
     List<User> orgManagers = organisationService.getOrganisationManagersForEvent(event.getId());
     notifyUsers(orgManagers, messageName, new Object[] {event});
   }
@@ -107,7 +100,7 @@ public class NotificationService implements INotificationService {
   }
 
   @Override
-  public void notifyUsers(Collection<User> users, String systemMessageName, Object[] attributes) {
+  public void notifyUsers(Collection<User> users, SystemMessages systemMessageName, Object[] attributes) {
     if (users != null) {
       for (User user : users) {
         createAndSendSystemNotification(user.getUserId(), systemMessageName, attributes);
