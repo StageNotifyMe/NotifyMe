@@ -43,11 +43,6 @@ public class UserOrgApplicationService implements IUserOrgApplicationService {
   private void sendUserApplicationNotificationToAllOrgManagers(Long organisationId,
                                                                User appliedUser) {
     var org = organisationService.getOrganisationIncAppliedUsers(organisationId);
-    /*var message = notificationService.createMessage("User application.",
-        appliedUser.getUserName() + " applied to join " + org.getName() + ".");
-    org.getUsers()
-        .forEach(ou -> notificationService.notifyUser(ou.getUser().getUserName(), message.getId()));*/
-
     org.getUsers().forEach(ou -> notificationService
         .createAndSendSystemNotification(ou.getUser().getUserId(),
             SystemMessages.USER_APPLICATION,
