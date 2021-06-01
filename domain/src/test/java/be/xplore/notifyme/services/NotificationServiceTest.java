@@ -21,8 +21,10 @@ import be.xplore.notifyme.persistence.INotificationRepo;
 import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
 import be.xplore.notifyme.services.communicationstrategies.IEmailService;
 import be.xplore.notifyme.services.communicationstrategies.ISmsService;
+import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import be.xplore.notifyme.services.systemmessages.PickLanguageService;
 import be.xplore.notifyme.services.systemmessages.SystemMessages;
+import be.xplore.notifyme.services.systemmessages.SystemMessagesEn;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -308,5 +310,47 @@ class NotificationServiceTest {
         new Notification(1L, "mail@mailadres.com", comPref, "emailcommunicationstrategy", message,
             users.get(0), "userId", false));
     mockEmailCommunicationStrategy();
+  }
+
+  @Test
+  void createAndSendSystemNotification() {
+    mockCreateAndSendSystemNotification();
+    assertDoesNotThrow(() -> {
+      notificationService.createAndSendSystemNotification("userId", SystemMessages.CANCEL_EVENT,
+          new Object[] {Event.builder().id(1L).build()});
+    });
+  }
+
+  private void mockCreateAndSendSystemNotification() {
+    final var messageServiceEn = mock(SystemMessagesEn.class);
+    final var message = Message.builder().id(1L).text("text").title("title").build();
+    final var user = User.builder().userId("userId").userName("username").preferedLanguage(
+        AvailableLanguages.EN).build();
+    final var comPref = CommunicationPreference.builder().id(1L)
+        .communicationStrategy(mockEmailCommunicationStrategy()).isActive(true).isDefault(true)
+        .isUrgent(true).user(user).build();
+    when(userService.getUser(anyString()))
+        .thenReturn(user);
+    when(pickLanguageService.getLanguageService(AvailableLanguages.EN))
+        .thenReturn(messageServiceEn);
+    when(messageServiceEn.getSystemMessage(any(), any()))
+        .thenReturn(message);
+    mockSave();
+    mockCreateNotification(message, user, comPref);
+  }
+
+  @Test
+  void testNotifyUsersSystemMessage() {
+    mockCreateAndSendSystemNotification();
+    var userList = new ArrayList<User>();
+    userList.add(User.builder().userId("userId").build());
+    assertDoesNotThrow(() -> {
+      notificationService.notifyUsers(userList, SystemMessages.CANCEL_EVENT,
+          new Object[] {Event.builder().id(1L).build()});
+    });
+    assertDoesNotThrow(() -> {
+      notificationService.notifyUsers(null, SystemMessages.CANCEL_EVENT,
+          new Object[] {Event.builder().id(1L).build()});
+    });
   }
 }
