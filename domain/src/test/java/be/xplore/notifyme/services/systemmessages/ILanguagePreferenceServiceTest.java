@@ -1,8 +1,10 @@
 package be.xplore.notifyme.services.systemmessages;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.exception.SystemNotificationException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,9 @@ class ILanguagePreferenceServiceTest {
       var cancelMessageEn =
           systemMessagesEn.getSystemMessage(SystemMessages.APPLICATION_APPROVED, attributes);
     });
+    assertThrows(SystemNotificationException.class, () -> {
+      systemMessagesEn.getSystemMessage(SystemMessages.APPLICATION_APPROVED, new Object[] {});
+    });
   }
 
   //User application
@@ -57,6 +62,9 @@ class ILanguagePreferenceServiceTest {
     assertDoesNotThrow(() -> {
       var cancelMessageEn =
           systemMessagesEn.getSystemMessage(SystemMessages.USER_APPLICATION, attributes);
+    });
+    assertThrows(SystemNotificationException.class, () -> {
+      systemMessagesEn.getSystemMessage(SystemMessages.USER_APPLICATION, new Object[] {});
     });
   }
 
@@ -77,6 +85,9 @@ class ILanguagePreferenceServiceTest {
     assertDoesNotThrow(() -> {
       var cancelMessageEn =
           systemMessagesEn.getSystemMessage(SystemMessages.CANCEL_EVENT, attributes);
+    });
+    assertThrows(SystemNotificationException.class, () -> {
+      systemMessagesEn.getSystemMessage(SystemMessages.CANCEL_EVENT, new Object[] {});
     });
   }
 
