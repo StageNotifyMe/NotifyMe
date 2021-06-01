@@ -1,6 +1,9 @@
 package be.xplore.notifyme.services.systemmessages;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import be.xplore.notifyme.domain.Event;
@@ -102,5 +105,29 @@ class ILanguagePreferenceServiceTest {
 
 
     System.out.println("fin");
+  }
+
+  @Test
+  void getLanguagePreference() {
+    assertEquals(AvailableLanguages.EN, systemMessagesEn.getLanguagePreference());
+    assertEquals(AvailableLanguages.NL, systemMessagesNl.getLanguagePreference());
+  }
+
+  @Test
+  void testProperties() {
+    assertThat(systemMessagesEn.getCancelEventText(), instanceOf(String.class));
+    assertThat(systemMessagesEn.getCancelEventTitle(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getCancelEventText(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getCancelEventTitle(), instanceOf(String.class));
+
+    assertThat(systemMessagesEn.getUserApplicationApprovedText(), instanceOf(String.class));
+    assertThat(systemMessagesEn.getUserApplicationApprovedTitle(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getUserApplicationApprovedText(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getUserApplicationApprovedTitle(), instanceOf(String.class));
+
+    assertThat(systemMessagesEn.getUserApplicationApprovedText(), instanceOf(String.class));
+    assertThat(systemMessagesEn.getUserApplicationApprovedTitle(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getUserApplicationApprovedText(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getUserApplicationApprovedTitle(), instanceOf(String.class));
   }
 }
