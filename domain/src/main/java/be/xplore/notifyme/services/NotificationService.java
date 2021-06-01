@@ -1,12 +1,19 @@
 package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
+import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
+import be.xplore.notifyme.services.systemmessages.PickLanguageService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +28,8 @@ public class NotificationService implements INotificationService {
   private final IMessageRepo messageRepo;
   private final KeycloakCommunicationService keycloakCommunicationService;
   private final IOrganisationService organisationService;
+  private final IUserService userService;
+  private final PickLanguageService pickLanguageService;
 
   @Override
   public Message createMessage(String title, String text) {
@@ -62,21 +71,28 @@ public class NotificationService implements INotificationService {
     return notificationRepo.findByUser(userId);
   }
 
-  @Override
-  public Message createCanceledEventMessage(Event updatedEvent) {
-    var message = new Message("Event has been canceled", "An event has been canceled, details:"
-        + "\nEventId: " + updatedEvent.getId()
-        + "\nTitle: " + updatedEvent.getTitle()
-        + "\nDescription: " + updatedEvent.getDescription()
-        + "\nArtist: " + updatedEvent.getArtist()
-        + "\nDate and time: " + updatedEvent.getDateTime().toString());
-    return messageRepo.save(message);
+  public void createAndSendSystemNotification(String userId, String messageName,
+                                              Object[] attribute) {
+    var user = userService.getUser(userId);
+    var message = pickLanguageService.getLanguageService(user.getPreferedLanguage())
+        .getSystemMessage(messageName, attribute);
+    message = messageRepo.save(message);
+    var notification = notificationRepo.create(message.getId(), userId);
+    finishAndSendNotification(notification, user.getUserName());
   }
 
+  /*@Override
+  public Message createCanceledEventMessage(Event updatedEvent,
+                                            AvailableLanguages preferedLanguage) {
+    var message = getLanguageService(preferedLanguage).getCancelEvent(updatedEvent);
+    return messageRepo.save(message);
+  }*/
+
+
   @Override
-  public void notifyOrganisationManagersForCancelEvent(long eventId, long messageId) {
-    List<User> orgManagers = organisationService.getOrganisationManagersForEvent(eventId);
-    notifyUsers(orgManagers, messageId);
+  public void notifyOrganisationManagersForCancelEvent(Event event, String messageName) {
+    List<User> orgManagers = organisationService.getOrganisationManagersForEvent(event.getId());
+    notifyUsers(orgManagers, messageName, new Object[] {event});
   }
 
   @Override
@@ -85,6 +101,15 @@ public class NotificationService implements INotificationService {
       for (User user : users) {
         var notification = notificationRepo.create(messageId, user.getUserId());
         finishAndSendNotification(notification, user.getUserName());
+      }
+    }
+  }
+
+  @Override
+  public void notifyUsers(Collection<User> users, String systemMessageName, Object[] attributes) {
+    if (users != null) {
+      for (User user : users) {
+        createAndSendSystemNotification(user.getUserId(), systemMessageName, attributes);
       }
     }
   }
@@ -105,5 +130,13 @@ public class NotificationService implements INotificationService {
     notification.setCommunicationAddresAndUsedStrategy(userInfo);
     notificationRepo.save(notification);
     notification.send();
+  }
+
+  @Override
+  public Message testMessage(AvailableLanguages languageCode) {
+    var languageService = pickLanguageService.getLanguageService(languageCode);
+    var event = new Event(1L, "Title", "Description", "Artist",
+        LocalDateTime.now(), EventStatus.OK, new Venue(), new ArrayList<>(), new HashSet<>());
+    return languageService.getSystemMessage("cancelEvent", new Object[] {event});
   }
 }

@@ -5,6 +5,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.jpaobjects.JpaUser;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.IUserRepo;
+import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,5 +46,10 @@ public class JpaUserAdapter implements IUserRepo {
     var jpaUser = jpaUserRepository.findById(userId)
         .orElseThrow(() -> new CrudException("Could not find user for id " + userId));
     return jpaUser.toDomainIncAppliedOrganisations();
+  }
+
+  @Override
+  public AvailableLanguages getUserPreferedLanguage(String userId) {
+    return null;
   }
 }

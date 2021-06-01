@@ -1,6 +1,7 @@
 package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,6 +27,7 @@ public class JpaUser {
   //@GeneratedValue(strategy = GenerationType.IDENTITY)
   private String userId;
   private String userName;
+  private AvailableLanguages preferedLanguage;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<JpaOrganisationUser> organisations;
@@ -51,6 +53,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .venues(this.venues.stream().map(JpaVenue::toDomain).collect(Collectors.toList()))
         .events(this.events.stream().map(JpaEvent::toDomain).collect(Collectors.toList()))
         .organisations(this.organisations.stream().map(JpaOrganisationUser::toDomain).collect(
@@ -71,6 +74,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .appliedOrganisations(
             this.appliedOrganisations.stream().map(JpaUserOrgApplication::toDomainBase).collect(
                 Collectors.toList()))
@@ -86,6 +90,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .notifications(this.notifications.stream().map(JpaNotification::toDomainBase).collect(
             Collectors.toList()))
         .build();
@@ -100,6 +105,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .communicationPreferences(
             this.communicationPreferences.stream().map(JpaCommunicationPreference::toDomainBase)
                 .collect(Collectors.toList()))
@@ -115,6 +121,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .build();
   }
 
@@ -126,6 +133,7 @@ public class JpaUser {
   public JpaUser(User user) {
     this.userId = user.getUserId();
     this.userName = user.getUserName();
+    this.preferedLanguage = user.getPreferedLanguage();
     this.organisations = user.getOrganisations().stream().map(JpaOrganisationUser::new).collect(
         Collectors.toList());
     this.appliedOrganisations = user.getAppliedOrganisations().stream()
@@ -147,6 +155,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .organisations(
             this.organisations.stream().map(JpaOrganisationUser::toDomainBaseIncOrganisations)
                 .collect(Collectors.toList()))

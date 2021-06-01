@@ -42,11 +42,12 @@ public class JpaCommunicationPreference {
    * @param strategy  the strategy to use to send notifications for this preference.
    */
   public JpaCommunicationPreference(JpaUser jpaUser, boolean isActive, boolean isDefault,
-      boolean isUrgent,
-      ICommunicationStrategy strategy) {
+                                    boolean isUrgent,
+                                    ICommunicationStrategy strategy) {
     this.user = jpaUser;
     this.isDefault = isDefault;
     this.isActive = isActive;
+    this.isUrgent = isUrgent;
     this.communicationStrategy = strategy;
   }
 
@@ -87,7 +88,7 @@ public class JpaCommunicationPreference {
    * @param jpaUser                 complete JpaUser object.
    */
   public JpaCommunicationPreference(CommunicationPreference communicationPreference,
-      JpaUser jpaUser) {
+                                    JpaUser jpaUser) {
     this.id = communicationPreference.getId();
     this.isActive = communicationPreference.isActive();
     this.isDefault = communicationPreference.isDefault();

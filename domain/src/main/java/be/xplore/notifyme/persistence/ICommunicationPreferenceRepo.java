@@ -14,8 +14,8 @@ public interface ICommunicationPreferenceRepo {
   CommunicationPreference findById(long communicationPreferenceId);
 
   CommunicationPreference create(String userId, boolean isActive, boolean isDefault,
-      boolean isUrgent,
-      ICommunicationStrategy strategy);
+                                 boolean isUrgent,
+                                 ICommunicationStrategy strategy);
 
   void delete(long communicationPreferenceId);
 

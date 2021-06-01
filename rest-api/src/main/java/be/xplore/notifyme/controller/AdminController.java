@@ -4,9 +4,11 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
+import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.IOrganisationService;
 import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.IVenueService;
+import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,7 @@ public class AdminController {
   private final IOrganisationService organisationService;
   private final IVenueService venueService;
   private final IUserService userService;
+  private final INotificationService notificationService;
 
   /**
    * Test method for admin auth.
@@ -46,8 +49,10 @@ public class AdminController {
    * @return test string.
    */
   @GetMapping("/adminTest")
-  public ResponseEntity<String> adminInfoTest() {
-    return ResponseEntity.ok("Well hello there, admin!");
+  public ResponseEntity<String> adminInfoTest(@RequestParam String languageCode) {
+    var message = notificationService.testMessage(AvailableLanguages.valueOf(languageCode));
+    return ResponseEntity.ok(message.getTitle()+"\n"+message.getText());
+    //return ResponseEntity.ok("Well hello there, admin!");
   }
 
   /**
@@ -76,7 +81,7 @@ public class AdminController {
 
   @PostMapping("/promoteUserToVmanager")
   public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
-      long venueId) {
+                                                          long venueId) {
     venueService.makeUserVenueManager(userId, venueId);
     return ResponseEntity.noContent().build();
   }
