@@ -29,5 +29,6 @@ public interface INotificationService {
   void notifyOrganisationManagers(long organisationId, String sender, String
       title, String text);
 
-  void createAndSendSystemNotification(String userId, SystemMessages messageName, Object[] attribute);
+  void createAndSendSystemNotification(String userId, SystemMessages messageName,
+                                       Object[] attribute);
 }

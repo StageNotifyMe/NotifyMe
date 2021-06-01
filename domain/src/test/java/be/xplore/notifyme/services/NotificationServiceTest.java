@@ -200,7 +200,8 @@ class NotificationServiceTest {
         new Venue(), new ArrayList<>(), new HashSet<>());
 
     assertDoesNotThrow(() -> {
-      notificationService.notifyOrganisationManagersForCancelEvent(event, SystemMessages.CANCEL_EVENT);
+      notificationService
+          .notifyOrganisationManagersForCancelEvent(event, SystemMessages.CANCEL_EVENT);
     });
   }
 

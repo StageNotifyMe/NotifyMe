@@ -100,7 +100,8 @@ public class NotificationService implements INotificationService {
   }
 
   @Override
-  public void notifyUsers(Collection<User> users, SystemMessages systemMessageName, Object[] attributes) {
+  public void notifyUsers(Collection<User> users, SystemMessages systemMessageName,
+                          Object[] attributes) {
     if (users != null) {
       for (User user : users) {
         createAndSendSystemNotification(user.getUserId(), systemMessageName, attributes);
