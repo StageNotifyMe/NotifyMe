@@ -113,21 +113,31 @@ class ILanguagePreferenceServiceTest {
     assertEquals(AvailableLanguages.NL, systemMessagesNl.getLanguagePreference());
   }
 
-  @Test
-  void testProperties() {
+  private void testPropsCancelEvent() {
     assertThat(systemMessagesEn.getCancelEventText(), instanceOf(String.class));
     assertThat(systemMessagesEn.getCancelEventTitle(), instanceOf(String.class));
     assertThat(systemMessagesNl.getCancelEventText(), instanceOf(String.class));
     assertThat(systemMessagesNl.getCancelEventTitle(), instanceOf(String.class));
+  }
 
+  private void testPropsApplicationApproved() {
     assertThat(systemMessagesEn.getUserApplicationApprovedText(), instanceOf(String.class));
     assertThat(systemMessagesEn.getUserApplicationApprovedTitle(), instanceOf(String.class));
     assertThat(systemMessagesNl.getUserApplicationApprovedText(), instanceOf(String.class));
     assertThat(systemMessagesNl.getUserApplicationApprovedTitle(), instanceOf(String.class));
+  }
 
+  private void testPropsUserApplication() {
     assertThat(systemMessagesEn.getUserApplicationApprovedText(), instanceOf(String.class));
     assertThat(systemMessagesEn.getUserApplicationApprovedTitle(), instanceOf(String.class));
     assertThat(systemMessagesNl.getUserApplicationApprovedText(), instanceOf(String.class));
     assertThat(systemMessagesNl.getUserApplicationApprovedTitle(), instanceOf(String.class));
+  }
+
+  @Test
+  void testProperties() {
+    testPropsCancelEvent();
+    testPropsApplicationApproved();
+    testPropsUserApplication();
   }
 }
