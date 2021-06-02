@@ -2,6 +2,7 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.Line;
+import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.dto.ApplicationOrgNameDto;
 import be.xplore.notifyme.dto.NotificationDto;
 import be.xplore.notifyme.dto.OrganisationsLimitedInfoDto;
@@ -20,6 +21,7 @@ import be.xplore.notifyme.services.NotificationService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -195,6 +197,19 @@ public class UserController {
     return ResponseEntity
         .ok(lineService
             .getAvailableLinesForUser(userService.getUserFromPrincipal(principal).getUserId()));
+  }
+
+
+  /**
+   * Gets a list of team applications for the calling user.
+   *
+   * @param principal injected by securitycontext.
+   * @return Response entity containing the list of applications for a user.
+   */
+  @GetMapping(value = "teamApplications")
+  public ResponseEntity<Set<TeamApplication>> getTeamApplications(Principal principal) {
+    return ResponseEntity
+        .ok(teamApplicationService.getUserApplications(principal));
   }
 
   /**

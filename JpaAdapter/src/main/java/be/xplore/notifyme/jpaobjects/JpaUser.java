@@ -80,6 +80,21 @@ public class JpaUser {
   }
 
   /**
+   * Converts jpa user to domain user with applied organisations.
+   *
+   * @return domain user with applied orgs.
+   */
+  public User toDomainIncTeamApplications() {
+    return User.builder()
+        .userId(this.userId)
+        .userName(this.userName)
+        .teamApplications(
+            this.teamApplications.stream().map(JpaTeamApplication::toDomainBase).collect(
+                Collectors.toSet()))
+        .build();
+  }
+
+  /**
    * Returns the toDomainBase including notifications.
    *
    * @return user object.

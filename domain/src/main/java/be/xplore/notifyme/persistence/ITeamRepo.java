@@ -2,9 +2,11 @@ package be.xplore.notifyme.persistence;
 
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
+import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.domain.User;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -27,5 +29,5 @@ public interface ITeamRepo {
 
   void applyToTeam(long teamId,String userId);
 
-  List<User> getUserApplicationsForOrganisation(long teamId,long organisationId);
+  Set<TeamApplication> getUserApplicationsForOrganisationManager(String userId);
 }

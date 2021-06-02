@@ -2,8 +2,8 @@ package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
+import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.domain.TeamApplicationStatus;
-import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exceptions.JpaNotFoundException;
 import be.xplore.notifyme.jpaobjects.JpaOrganisation;
 import be.xplore.notifyme.jpaobjects.JpaTeam;
@@ -15,6 +15,7 @@ import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.ITeamRepo;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -111,7 +112,8 @@ public class JpaTeamAdapter implements ITeamRepo {
   }
 
   @Override
-  public List<User> getUserApplicationsForOrganisation(long teamId, long organisationId) {
-    return null;
+  public Set<TeamApplication> getUserApplicationsForOrganisationManager(String userId) {
+    return jpaTeamRepository.getTeamApplicationsForOrgManager(userId).stream()
+        .map(JpaTeamApplication::toDomainBase).collect(Collectors.toSet());
   }
 }

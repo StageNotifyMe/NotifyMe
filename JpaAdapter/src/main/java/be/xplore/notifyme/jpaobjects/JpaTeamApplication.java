@@ -1,6 +1,8 @@
 package be.xplore.notifyme.jpaobjects;
 
+import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.domain.TeamApplicationStatus;
+import be.xplore.notifyme.domain.UserOrgApplication;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,9 +38,9 @@ public class JpaTeamApplication {
   private TeamApplicationStatus applicationStatus;
 
   /**
-   * Constructor that creates a new OrganisationUser. It automatically fills the key by the user and
-   * org data. A boolean should be passed that represents if the user is an organisation manager or
-   * not.
+   * Constructor that creates a new TeamApplication. It automatically fills the key by the user and
+   * team data. An application status should be passed that represents the status of the
+   * application.
    *
    * @param team              the team that the user wants to join.
    * @param user              the user that wants to join the team.
@@ -50,5 +52,19 @@ public class JpaTeamApplication {
     this.appliedUser = user;
     this.appliedTeam = team;
     this.applicationStatus = applicationStatus;
+  }
+
+  /**
+   * Converts jpa userOrgApplication to domain representation.
+   *
+   * @return user org application.
+   */
+  public TeamApplication toDomainBase() {
+    return TeamApplication.builder()
+        .teamApplicationKey(this.jpaTeamApplicationKey.toDomain())
+        .appliedUser(this.appliedUser.toDomainBase())
+        .appliedTeam(this.appliedTeam.toDomainBase())
+        .applicationStatus(this.applicationStatus)
+        .build();
   }
 }

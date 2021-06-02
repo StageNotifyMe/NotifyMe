@@ -30,8 +30,8 @@ public class VenueService implements IVenueService {
   /**
    * Creates a new venue.
    *
-   * @param createVenueDto DTO containing all information abou the venue
-   *                       (name, description, address).
+   * @param createVenueDto DTO containing all information abou the venue (name, description,
+   *                       address).
    * @param principal      used to identify the user.
    * @return 203 if successful, 400 if unsuccessful.
    */
@@ -89,8 +89,8 @@ public class VenueService implements IVenueService {
   }
 
   /**
-   * Makes a user venue manager over a certain venue,
-   * also adds grants them venue_manager permissions.
+   * Makes a user venue manager over a certain venue, also adds grants them venue_manager
+   * permissions.
    *
    * @param userId  id of user to grant permission.
    * @param venueId id of venue over which the user gets perimissions.

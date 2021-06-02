@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,7 +36,7 @@ public class JpaTeam {
   private List<JpaOrganisation> organisations;
   @ManyToMany
   private Set<JpaUser> teamMembers;
-  @OneToMany(mappedBy = "appliedTeam")
+  @OneToMany(mappedBy = "appliedTeam",cascade = CascadeType.ALL)
   private List<JpaTeamApplication> userApplications;
 
   /**

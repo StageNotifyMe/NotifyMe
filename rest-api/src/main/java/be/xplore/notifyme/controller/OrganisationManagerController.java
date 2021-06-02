@@ -1,15 +1,18 @@
 package be.xplore.notifyme.controller;
 
+import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.dto.ApplicationUsernameDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.OrganisationLimitedInfoDto;
 import be.xplore.notifyme.dto.UserApplicationResponseDto;
+import be.xplore.notifyme.services.ITeamApplicationService;
 import be.xplore.notifyme.services.IUserOrgApplicationService;
 import be.xplore.notifyme.services.IUserOrgService;
 import be.xplore.notifyme.services.IUserService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +31,7 @@ public class OrganisationManagerController {
   private final IUserOrgApplicationService userOrgApplicationService;
   private final IUserService userService;
   private final IUserOrgService userOrgService;
+  private final ITeamApplicationService teamApplicationService;
 
   /**
    * Gets the user applications for a certain organisation and maps the usernames on users.
@@ -94,5 +98,11 @@ public class OrganisationManagerController {
     var result = userOrgService.getOrgInfoAsManager(organisationId, principal);
     var response = new OrganisationLimitedInfoDto(result);
     return ResponseEntity.status(HttpStatus.OK).body(response);
+  }
+
+  @GetMapping("teamApplications")
+  public ResponseEntity<Set<TeamApplication>> getTeamApplications(Principal principal) {
+    var result = teamApplicationService.getUserApplicationsForOrgAdmin(principal);
+    return ResponseEntity.status(HttpStatus.OK).body(result);
   }
 }
