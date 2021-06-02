@@ -6,6 +6,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
+import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -179,6 +180,14 @@ public class UserService implements IUserService {
     }
   }
 
+  private void updateUser(String userId, String preferedLanguage) {
+    var user = getUser(userId);
+    if (!user.getPreferedLanguage().toString().equals(preferedLanguage)) {
+      user.setPreferedLanguage(AvailableLanguages.valueOf(preferedLanguage));
+      userRepo.save(user);
+    }
+  }
+
   /**
    * Grants a any user any notifyme client role.
    *
@@ -190,5 +199,48 @@ public class UserService implements IUserService {
     var client = keycloakCommunicationService.getClient(this.clientName);
     var role = keycloakCommunicationService.getClientRole(roleName, client.getId());
     keycloakCommunicationService.giveUserRole(userId, role, client.getId());
+  }
+
+  @Override
+  public void updateAccountInfo(String userId, String username, String firstName, String lastName,
+                                String email, String phoneNumber, String preferedLanguage) {
+    updateUserRepresentation(userId, username, firstName, lastName, email, phoneNumber);
+    updateUser(userId, preferedLanguage);
+  }
+
+
+  private void updateUserRepresentation(String userId, String username, String firstName,
+                                        String lastName,
+                                        String email, String phoneNumber) {
+    var userRep = keycloakCommunicationService.getUserInfoId(userId);
+    userRep.setUsername(username);
+    userRep.setId(userId);
+    userRep.setFirstName(firstName);
+    userRep.setLastName(lastName);
+
+    var updateEmailAndPhoneResult = checkUpdateEmailAndPhone(userRep, email, phoneNumber);
+    userRep = (UserRepresentation) updateEmailAndPhoneResult[0];
+    var resendEmailVerification = (Boolean) updateEmailAndPhoneResult[1];
+    var resendPhoneVerification = (Boolean) updateEmailAndPhoneResult[2];
+
+    keycloakCommunicationService
+        .updateUserInfo(userRep, resendEmailVerification, resendPhoneVerification);
+  }
+
+  private Object[] checkUpdateEmailAndPhone(UserRepresentation userRep,
+                                            String email, String phoneNumber) {
+    var resendEmailVerification = false;
+    var resendPhoneVerification = false;
+    if (!email.equals(userRep.getEmail())) {
+      userRep.setEmail(email);
+      userRep.setEmailVerified(false);
+      resendEmailVerification = true;
+    }
+    if (!userRep.getAttributes().get("phone_number").get(0).equals(phoneNumber)) {
+      userRep.getAttributes().replace("phone_number", List.of(phoneNumber));
+      userRep.getAttributes().replace("phone_number_verified", List.of("false"));
+      resendPhoneVerification = true;
+    }
+    return new Object[] {userRep, resendEmailVerification, resendPhoneVerification};
   }
 }

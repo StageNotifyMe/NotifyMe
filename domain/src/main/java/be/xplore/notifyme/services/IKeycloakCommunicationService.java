@@ -48,4 +48,7 @@ public interface IKeycloakCommunicationService {
   void verifyPhoneNo(String username, String code);
 
   void checkPhoneVerification(String username);
+
+  void updateUserInfo(UserRepresentation userRep, boolean resendEmailVerification,
+                      boolean resendPhoneVerification);
 }
