@@ -12,6 +12,7 @@ import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/vmanager")
+@RolesAllowed({"venue_manager","admin"})
 @RequiredArgsConstructor
 @Validated
 public class VenueManagerController {

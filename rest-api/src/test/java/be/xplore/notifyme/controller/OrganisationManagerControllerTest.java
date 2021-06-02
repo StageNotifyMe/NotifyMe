@@ -17,6 +17,7 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.exception.UnauthorizedException;
+import be.xplore.notifyme.services.ITeamApplicationService;
 import be.xplore.notifyme.services.UserOrgApplicationService;
 import be.xplore.notifyme.services.UserOrgService;
 import be.xplore.notifyme.services.UserService;
@@ -59,6 +60,8 @@ class OrganisationManagerControllerTest {
   private UserOrgService userOrgService;
   @MockBean
   private UserService userService;
+  @MockBean
+  private ITeamApplicationService teamApplicationService;
 
   @Test
   @WithMockUser(username = "orgmanager", roles = {"user", "organisation_manager"})

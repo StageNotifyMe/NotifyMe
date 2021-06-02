@@ -88,7 +88,7 @@ class EventServiceTest {
 
   @Test
   void getEventSuccessful() {
-    when(eventRepo.findById(1L)).thenReturn(Optional.of(testEvent));
+    when(eventRepo.findByIdWithLineManagersAndVenue(1L)).thenReturn(Optional.of(testEvent));
 
     assertEquals(testEvent.getId(), eventService.getEvent(1L).getId());
   }
@@ -104,6 +104,7 @@ class EventServiceTest {
   void getEventAndVerifyLineManagerPermissionSuccessful() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     final IDToken token = Mockito.mock(IDToken.class);
+    mocktestEvent();
 
     when(tokenService.getIdToken(any(Principal.class))).thenReturn(token);
     when(token.getSubject()).thenReturn("testUser");
@@ -117,12 +118,19 @@ class EventServiceTest {
             .anyMatch(user -> user.getUserId().equals(testUser.getUserId())));
   }
 
+  private void mocktestEvent() {
+    testEvent.setLineManagers(new HashSet<>());
+    testEvent.setId(0);
+    testEvent.getLineManagers().add(User.builder().userId("testUser").build());
+    when(eventRepo.findByIdWithLineManagersAndVenue(anyLong())).thenReturn(Optional.of(testEvent));
+  }
+
   @Test
   void getEventAndVerifyLineManagerPermissionUnauthorized() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     final IDToken token = Mockito.mock(IDToken.class);
     testEvent.setLineManagers(new HashSet<>());
-    //when(eventRepo.findByIdWithLineManagers(1L)).thenReturn(Optional.of(testEvent));
+    when(eventRepo.findByIdWithLineManagersAndVenue(1L)).thenReturn(Optional.of(testEvent));
     when(tokenService.getIdToken(any(Principal.class))).thenReturn(token);
     when(token.getPreferredUsername()).thenReturn("testUser");
     when(userService.getUser("testUser")).thenReturn(testUser);
@@ -162,7 +170,7 @@ class EventServiceTest {
   @Test
   void promoteToLineManagerSuccessful() {
     when(userService.getUser(anyString())).thenReturn(testUser);
-    when(eventRepo.findById(anyLong())).thenReturn(Optional.of(testEvent));
+    when(eventRepo.findByIdWithLineManagersAndVenue(anyLong())).thenReturn(Optional.of(testEvent));
     when(eventRepo.save(any(Event.class))).thenReturn(testEvent);
     doNothing().when(userService).grantUserRole(anyString(), anyString());
 
@@ -174,7 +182,7 @@ class EventServiceTest {
     var testEventB = testEvent;
     testEventB.getLineManagers().add(testUser);
     when(userService.getUser(anyString())).thenReturn(testUser);
-    when(eventRepo.findById(anyLong())).thenReturn(Optional.of(testEventB));
+    when(eventRepo.findByIdWithLineManagersAndVenue(anyLong())).thenReturn(Optional.of(testEventB));
 
     assertThrows(SaveToDatabaseException.class,
         () -> eventService.promoteToLineManager("userid", 1L));
@@ -246,7 +254,7 @@ class EventServiceTest {
         .when(notificationService).createAndSendSystemNotification(anyString(), any(), any());
     this.mockGetAllOrganisationIds(2);
     doNothing().when(notificationService)
-        .notifyOrganisationManagersForCancelEvent(any(),any());
+        .notifyOrganisationManagersForCancelEvent(any(), any());
     this.mockGetAttendingMembers(4);
     doNothing().when(notificationService).notifyUsers(anyList(), anyLong());
   }

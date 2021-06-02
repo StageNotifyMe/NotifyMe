@@ -25,6 +25,9 @@ import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.services.CommunicationPreferenceService;
+import be.xplore.notifyme.services.ILineService;
+import be.xplore.notifyme.services.ITeamApplicationService;
+import be.xplore.notifyme.services.ITeamService;
 import be.xplore.notifyme.services.KeycloakCommunicationService;
 import be.xplore.notifyme.services.NotificationService;
 import be.xplore.notifyme.services.OrganisationService;
@@ -78,6 +81,10 @@ class UserControllerTest {
   private CommunicationPreferenceService communicationPreferenceService;
   @MockBean
   private NotificationService notificationService;
+  @MockBean
+  private ILineService lineService;
+  @MockBean
+  private ITeamApplicationService teamApplicationService;
 
   @Test
   void getAccessTokenForUserValid() throws Exception {

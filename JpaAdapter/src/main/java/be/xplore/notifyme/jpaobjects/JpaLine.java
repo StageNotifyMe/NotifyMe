@@ -30,7 +30,7 @@ public class JpaLine {
   private JpaFacility facility;
   @ManyToOne(cascade = CascadeType.ALL)
   private JpaEvent event;
-  @OneToOne(cascade = CascadeType.ALL,mappedBy = "line")
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "line")
   private JpaTeam team;
 
   /**
@@ -96,6 +96,7 @@ public class JpaLine {
         .requiredStaff(this.requiredStaff)
         .build();
   }
+
   /**
    * Converts a jpa-object to a domain variant with only primitive type attributes and event.
    *
