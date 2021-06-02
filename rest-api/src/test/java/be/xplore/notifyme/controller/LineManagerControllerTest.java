@@ -124,7 +124,7 @@ class LineManagerControllerTest {
   }
 
   private void mockGetCreateTeam() {
-    var dummyTeam = new Team(1L, new Line(), new ArrayList<>(), new HashSet<>());
+    var dummyTeam = new Team(1L, new Line(), new ArrayList<>(), new HashSet<>(), new ArrayList<>());
     when(teamService.getTeam(1L)).thenReturn(dummyTeam);
     when(teamService.createTeam(1L, 1L)).thenReturn(dummyTeam);
   }
