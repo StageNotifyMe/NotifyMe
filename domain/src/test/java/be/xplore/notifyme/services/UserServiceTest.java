@@ -34,6 +34,8 @@ import org.keycloak.representations.IDToken;
 import org.keycloak.representations.account.UserRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -52,6 +54,15 @@ class UserServiceTest {
   private IUserRepo userRepo;
   @MockBean
   private CommunicationPreferenceService communicationPreferenceService;
+
+  private void mockSave() {
+    when(userRepo.save(any())).thenAnswer(new Answer<User>() {
+      @Override
+      public User answer(InvocationOnMock invocation) throws Throwable {
+        return (User) invocation.getArgument(0);
+      }
+    });
+  }
 
 
   @Test
@@ -368,14 +379,33 @@ class UserServiceTest {
 
   @Test
   void updateAccountInfo() {
+    mockSave();
     mockUpdateUserRepresentation();
     mockUpdateUser();
 
+    //Only simple updates
     assertDoesNotThrow(() -> {
       userService
           .updateAccountInfo("userId", "username", "firstName2", "lastName2", "email@mail.com",
               "+32123456789", "EN");
     });
+    //Change preferedLanguage
+    assertDoesNotThrow(() -> {
+      userService
+          .updateAccountInfo("userId", "username", "firstName2", "lastName2", "email@mail.com",
+              "+32123456789", "NL");
+    });
+    //Change email
+    assertDoesNotThrow(()->{
+      userService
+          .updateAccountInfo("userId", "username", "firstName2", "lastName2", "email2@mail.com",
+              "+32123456789", "EN");
+    });
+
+    //Change phone
+    userService
+        .updateAccountInfo("userId", "username", "firstName2", "lastName2", "email@mail.com",
+            "+32123456780", "EN");
 
   }
 
