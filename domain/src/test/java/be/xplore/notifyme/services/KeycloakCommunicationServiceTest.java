@@ -602,7 +602,8 @@ class KeycloakCommunicationServiceTest {
     } else {
       userRepresentation.getAttributes().put("phone_number_verification_code", List.of());
     }
-
-    return (ArrayList<UserRepresentation>) List.of(userRepresentation);
+    var list = new ArrayList<UserRepresentation>();
+    list.add(userRepresentation);
+    return list;
   }
 }
