@@ -4,6 +4,7 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.domain.TeamApplicationStatus;
+import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exceptions.JpaNotFoundException;
 import be.xplore.notifyme.jpaobjects.JpaOrganisation;
 import be.xplore.notifyme.jpaobjects.JpaTeam;
@@ -115,5 +116,21 @@ public class JpaTeamAdapter implements ITeamRepo {
   public Set<TeamApplication> getUserApplicationsForOrganisationManager(String userId) {
     return jpaTeamRepository.getTeamApplicationsForOrgManager(userId).stream()
         .map(JpaTeamApplication::toDomainBase).collect(Collectors.toSet());
+  }
+
+  @Override
+  public Team changeApplicationStatus(String userId, Long teamId,
+      TeamApplicationStatus applicationStatus) {
+    var jpaTeam = jpaTeamRepository.findById(teamId).orElseThrow();
+    jpaTeam.getUserApplications().stream()
+        .filter(application -> application.getJpaTeamApplicationKey().getUserId().equals(userId)
+            && application.getJpaTeamApplicationKey().getTeamId().equals(teamId))
+        .findFirst()
+        .ifPresentOrElse(
+            teamApplication -> teamApplication.setApplicationStatus(applicationStatus),
+            () -> {
+              throw new CrudException("Could not find application to set status.");
+            });
+    return jpaTeamRepository.save(jpaTeam).toDomainBase();
   }
 }

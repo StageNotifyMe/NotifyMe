@@ -2,6 +2,7 @@ package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
+import be.xplore.notifyme.domain.TeamApplicationStatus;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
 import java.util.List;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class TeamService implements ITeamService {
+
   private final ITeamRepo teamRepo;
+
 
   @Override
   public Team createTeam(long lineId, long organisationId) {
@@ -51,5 +54,11 @@ public class TeamService implements ITeamService {
   @Override
   public void deleteOrganisationFromTeam(long teamId, long organisationId) {
     teamRepo.deleteOrganisationFromTeam(teamId, organisationId);
+  }
+
+  @Override
+  public Team changeApplicationStatus(String userId, Long teamId,
+      TeamApplicationStatus applicationStatus) {
+    return teamRepo.changeApplicationStatus(userId, teamId, applicationStatus);
   }
 }

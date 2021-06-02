@@ -1,11 +1,15 @@
 package be.xplore.notifyme.services;
 
-import be.xplore.notifyme.domain.OrganisationUser;
+import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.TeamApplication;
+import be.xplore.notifyme.domain.TeamApplicationKey;
+import be.xplore.notifyme.domain.TeamApplicationStatus;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.persistence.ITeamRepo;
+import be.xplore.notifyme.services.systemmessages.SystemMessages;
 import java.security.Principal;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -41,19 +45,40 @@ public class TeamApplicationService implements ITeamApplicationService {
     return teamRepo.getUserApplicationsForOrganisationManager(user.getUserId());
   }
 
+  @Override
+  public void handleTeamApplication(TeamApplicationKey teamApplicationKey, boolean accept,
+      Principal principal) {
+    if (accept) {
+      var team = teamService.addUserToTeam(teamApplicationKey.getTeamId(),
+          teamApplicationKey.getUserId());
+      teamService.changeApplicationStatus(teamApplicationKey.getUserId(),
+          teamApplicationKey.getTeamId(), TeamApplicationStatus.ACCEPTED);
+      var user = userService.getUser(teamApplicationKey.getUserId());
+      sendUserApplicationApprovalNotification(user, team);
+    } else {
+      teamService.changeApplicationStatus(teamApplicationKey.getUserId(),
+          teamApplicationKey.getTeamId(), TeamApplicationStatus.REFUSED);
+    }
+  }
+
+  private void sendUserApplicationApprovalNotification(User user, Team team) {
+    notificationService
+        .createAndSendSystemNotification(user.getUserId(), SystemMessages.TEAM_APPLICATION_APPROVED,
+            new Object[]{team.getLine().getEvent().getTitle()});
+  }
+
   private void notifyOrganisationManagersOfApplication(long teamId, User user) {
     var team = teamService.getTeam(teamId);
-    OrganisationUser foundOrgUser =
+    var managersOfUserManagingTeam =
         user.getOrganisations().stream().filter(ou -> team.getOrganisations().stream()
-            .anyMatch(organisation -> organisation.getId().equals(ou.getOrganisation().getId())))
-            .findFirst().orElseThrow();
+            .anyMatch(organisation -> organisation.getId().equals(ou.getOrganisation().getId()))
+            && ou.isOrganisationLeader()).collect(Collectors.toList());
 
-    var message =
-        notificationService
-            .createMessage("User applied for event team.",
-                user.getUserName() + " has applied to a team for the event " + team.getLine()
-                    .getEvent().getTitle());
-    //notificationService.notifyOrganisationManagers(foundOrgUser.getOrganisation().getId(),);
+    for (var manager : managersOfUserManagingTeam) {
+      var attributes = new String[]{user.getUserName(), team.getLine().getEvent().getTitle()};
+      notificationService.createAndSendSystemNotification(manager.getUser().getUserId(),
+          SystemMessages.USER_TEAM_APPLICATION, attributes);
+    }
   }
 
 }

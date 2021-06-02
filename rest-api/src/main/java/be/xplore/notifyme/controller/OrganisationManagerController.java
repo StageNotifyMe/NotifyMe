@@ -1,6 +1,7 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.TeamApplication;
+import be.xplore.notifyme.domain.TeamApplicationKey;
 import be.xplore.notifyme.dto.ApplicationUsernameDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.OrganisationLimitedInfoDto;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -104,5 +106,20 @@ public class OrganisationManagerController {
   public ResponseEntity<Set<TeamApplication>> getTeamApplications(Principal principal) {
     var result = teamApplicationService.getUserApplicationsForOrgAdmin(principal);
     return ResponseEntity.status(HttpStatus.OK).body(result);
+  }
+
+  /**
+   * Respond to a user application for a team.
+   *
+   * @param principal injected by securitycontext.
+   * @return Response entity.
+   */
+  @PostMapping(value = "teamApplication", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Void> respondToApplication(
+      @RequestBody TeamApplicationKey teamApplicationKey,
+      @RequestParam boolean accept,
+      Principal principal) {
+    teamApplicationService.handleTeamApplication(teamApplicationKey, accept, principal);
+    return ResponseEntity.ok().build();
   }
 }
