@@ -29,4 +29,5 @@ public interface IUserService {
   User updateUser(User user);
 
   void grantUserRole(String userId, String roleName);
+
 }

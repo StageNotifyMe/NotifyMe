@@ -6,6 +6,8 @@ import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
+import be.xplore.notifyme.services.systemmessages.PickLanguageService;
+import be.xplore.notifyme.services.systemmessages.SystemMessages;
 import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,8 @@ public class NotificationService implements INotificationService {
   private final IMessageRepo messageRepo;
   private final KeycloakCommunicationService keycloakCommunicationService;
   private final IOrganisationService organisationService;
+  private final IUserService userService;
+  private final PickLanguageService pickLanguageService;
 
   @Override
   public Message createMessage(String title, String text) {
@@ -62,21 +66,27 @@ public class NotificationService implements INotificationService {
     return notificationRepo.findByUser(userId);
   }
 
-  @Override
-  public Message createCanceledEventMessage(Event updatedEvent) {
-    var message = new Message("Event has been canceled", "An event has been canceled, details:"
-        + "\nEventId: " + updatedEvent.getId()
-        + "\nTitle: " + updatedEvent.getTitle()
-        + "\nDescription: " + updatedEvent.getDescription()
-        + "\nArtist: " + updatedEvent.getArtist()
-        + "\nDate and time: " + updatedEvent.getDateTime().toString());
-    return messageRepo.save(message);
+  /**
+   * Creates a system notification in the approriate language.
+   *
+   * @param userId      user for whom the notification is intended.
+   * @param messageName identifier for the system message.
+   * @param attribute   any attributes needed to create the message.
+   */
+  public void createAndSendSystemNotification(String userId, SystemMessages messageName,
+                                              Object[] attribute) {
+    var user = userService.getUser(userId);
+    var message = pickLanguageService.getLanguageService(user.getPreferedLanguage())
+        .getSystemMessage(messageName, attribute);
+    message = messageRepo.save(message);
+    var notification = notificationRepo.create(message.getId(), userId);
+    finishAndSendNotification(notification, user.getUserName());
   }
 
   @Override
-  public void notifyOrganisationManagersForCancelEvent(long eventId, long messageId) {
-    List<User> orgManagers = organisationService.getOrganisationManagersForEvent(eventId);
-    notifyUsers(orgManagers, messageId);
+  public void notifyOrganisationManagersForCancelEvent(Event event, SystemMessages messageName) {
+    List<User> orgManagers = organisationService.getOrganisationManagersForEvent(event.getId());
+    notifyUsers(orgManagers, messageName, new Object[] {event});
   }
 
   @Override
@@ -85,6 +95,16 @@ public class NotificationService implements INotificationService {
       for (User user : users) {
         var notification = notificationRepo.create(messageId, user.getUserId());
         finishAndSendNotification(notification, user.getUserName());
+      }
+    }
+  }
+
+  @Override
+  public void notifyUsers(Collection<User> users, SystemMessages systemMessageName,
+                          Object[] attributes) {
+    if (users != null) {
+      for (User user : users) {
+        createAndSendSystemNotification(user.getUserId(), systemMessageName, attributes);
       }
     }
   }

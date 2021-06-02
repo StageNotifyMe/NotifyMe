@@ -15,6 +15,7 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
+import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.KeycloakCommunicationService;
 import be.xplore.notifyme.services.OrganisationService;
 import be.xplore.notifyme.services.UserService;
@@ -44,6 +45,9 @@ class AdminControllerTest {
 
   @Autowired
   private AdminController adminController;
+
+  @MockBean
+  private INotificationService notificationService;
 
   @BeforeEach
   public void setup() {
