@@ -104,8 +104,7 @@ class EventServiceTest {
   void getEventAndVerifyLineManagerPermissionSuccessful() {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     final IDToken token = Mockito.mock(IDToken.class);
-    //when(eventRepo.findByIdWithLineManagers(1L))
-      //  .thenReturn(Optional.of(getTestEventWithLineManager()));
+
     when(tokenService.getIdToken(any(Principal.class))).thenReturn(token);
     when(token.getSubject()).thenReturn("testUser");
     when(userService.getUser("testUser")).thenReturn(testUser);

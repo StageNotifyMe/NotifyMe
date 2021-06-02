@@ -54,10 +54,6 @@ public interface ILanguagePreferenceService {
         }
         return this.getTeamApplication((String) attributes[0], (String) attributes[1]);
       case TEAM_APPLICATION_APPROVED:
-        if (attributes.length < 1) {
-          throw new SystemNotificationException(
-              "Expected 1 attribute: String eventName | but found none.");
-        }
         return this.getTeamApplicationApproved((String) attributes[0]);
       default:
         throw new SystemNotificationException(

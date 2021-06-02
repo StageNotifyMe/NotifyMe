@@ -47,7 +47,7 @@ public class User {
     this.appliedOrganisations = new ArrayList<>();
     this.venues = new ArrayList<>();
     this.teams = new HashSet<>();
-    this.teamApplications=new HashSet<>();
+    this.teamApplications = new HashSet<>();
     this.events = new ArrayList<>();
   }
 }
