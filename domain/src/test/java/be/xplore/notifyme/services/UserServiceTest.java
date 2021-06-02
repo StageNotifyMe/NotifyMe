@@ -396,7 +396,7 @@ class UserServiceTest {
               "+32123456789", "NL");
     });
     //Change email
-    assertDoesNotThrow(()->{
+    assertDoesNotThrow(() -> {
       userService
           .updateAccountInfo("userId", "username", "firstName2", "lastName2", "email2@mail.com",
               "+32123456789", "EN");
@@ -430,11 +430,16 @@ class UserServiceTest {
     userRep.setLastName("lastName");
     userRep.setEmail("email@mail.com");
     userRep.setEmailVerified(true);
+    var attributes = getAttributesForDummyUserRep();
+    userRep.setAttributes(attributes);
+    return userRep;
+  }
+
+  private HashMap<String, List<String>> getAttributesForDummyUserRep() {
     var attributes = new HashMap<String, List<String>>();
     attributes.put("phone_number", List.of("+32123456789"));
     attributes.put("phone_number_verification_code", List.of("code"));
     attributes.put("phone_number_verified", List.of("true"));
-    userRep.setAttributes(attributes);
-    return userRep;
+    return attributes;
   }
 }
