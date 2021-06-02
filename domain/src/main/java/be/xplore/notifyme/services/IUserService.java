@@ -30,4 +30,6 @@ public interface IUserService {
 
   void grantUserRole(String userId, String roleName);
 
+  void updateAccountInfo(String userId, String username, String firstName, String lastName,
+                         String email, String phoneNumber, String preferedLanguage);
 }

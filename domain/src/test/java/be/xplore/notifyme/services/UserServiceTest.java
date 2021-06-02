@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -18,9 +19,12 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
+import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.keycloak.AuthorizationContext;
@@ -30,6 +34,8 @@ import org.keycloak.representations.IDToken;
 import org.keycloak.representations.account.UserRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -48,6 +54,15 @@ class UserServiceTest {
   private IUserRepo userRepo;
   @MockBean
   private CommunicationPreferenceService communicationPreferenceService;
+
+  private void mockSave() {
+    when(userRepo.save(any())).thenAnswer(new Answer<User>() {
+      @Override
+      public User answer(InvocationOnMock invocation) throws Throwable {
+        return (User) invocation.getArgument(0);
+      }
+    });
+  }
 
 
   @Test
@@ -160,7 +175,7 @@ class UserServiceTest {
 
   @Test
   void getUser() {
-    var returnUser = new User();
+    var returnUser = new User("UserId", "username");
     when(userRepo.findById(anyString())).thenReturn(Optional.of(returnUser));
     assertEquals(returnUser, userService.getUser("testId"));
   }
@@ -362,4 +377,69 @@ class UserServiceTest {
     assertEquals("userId", userService.getUserIdFromPrincipal(getKeycloakPrincipal()));
   }
 
+  @Test
+  void updateAccountInfo() {
+    mockSave();
+    mockUpdateUserRepresentation();
+    mockUpdateUser();
+
+    //Only simple updates
+    assertDoesNotThrow(() -> {
+      userService
+          .updateAccountInfo("userId", "username", "firstName2", "lastName2", "email@mail.com",
+              "+32123456789", "EN");
+    });
+    //Change preferedLanguage
+    assertDoesNotThrow(() -> {
+      userService
+          .updateAccountInfo("userId", "username", "firstName2", "lastName2", "email@mail.com",
+              "+32123456789", "NL");
+    });
+    //Change email
+    assertDoesNotThrow(() -> {
+      userService
+          .updateAccountInfo("userId", "username", "firstName2", "lastName2", "email2@mail.com",
+              "+32123456789", "EN");
+    });
+
+    //Change phone
+    userService
+        .updateAccountInfo("userId", "username", "firstName2", "lastName2", "email@mail.com",
+            "+32123456780", "EN");
+
+  }
+
+  private void mockUpdateUserRepresentation() {
+    when(keycloakCommunicationService.getUserInfoId(anyString()))
+        .thenReturn(getDummyUserRepresentation());
+    doNothing().when(keycloakCommunicationService)
+        .updateUserInfo(any(), anyBoolean(), anyBoolean());
+  }
+
+  private void mockUpdateUser() {
+    var user = User.builder().userId("userId").userName("username").preferedLanguage(
+        AvailableLanguages.EN).build();
+    when(userRepo.findById(anyString())).thenReturn(Optional.of(user));
+  }
+
+  private UserRepresentation getDummyUserRepresentation() {
+    var userRep = new UserRepresentation();
+    userRep.setId("userId");
+    userRep.setUsername("username");
+    userRep.setFirstName("firstName");
+    userRep.setLastName("lastName");
+    userRep.setEmail("email@mail.com");
+    userRep.setEmailVerified(true);
+    var attributes = getAttributesForDummyUserRep();
+    userRep.setAttributes(attributes);
+    return userRep;
+  }
+
+  private HashMap<String, List<String>> getAttributesForDummyUserRep() {
+    var attributes = new HashMap<String, List<String>>();
+    attributes.put("phone_number", List.of("+32123456789"));
+    attributes.put("phone_number_verification_code", List.of("code"));
+    attributes.put("phone_number_verified", List.of("true"));
+    return attributes;
+  }
 }

@@ -22,6 +22,7 @@ import org.springframework.test.context.TestPropertySource;
 @EnableConfigurationProperties({SystemMessagesNl.class, SystemMessagesEn.class})
 @RequiredArgsConstructor
 class ILanguagePreferenceServiceTest {
+
   @Autowired
   private SystemMessagesEn systemMessagesEn;
 
@@ -31,7 +32,7 @@ class ILanguagePreferenceServiceTest {
   //Application approved
   private Object[] mockApplicationApproved() {
     var orgName = "orgName";
-    return new Object[] {orgName};
+    return new Object[]{orgName};
   }
 
   private void testApplicationApproved() {
@@ -45,7 +46,22 @@ class ILanguagePreferenceServiceTest {
           systemMessagesEn.getSystemMessage(SystemMessages.APPLICATION_APPROVED, attributes);
     });
     assertThrows(SystemNotificationException.class, () -> {
-      systemMessagesEn.getSystemMessage(SystemMessages.APPLICATION_APPROVED, new Object[] {});
+      systemMessagesEn.getSystemMessage(SystemMessages.APPLICATION_APPROVED, new Object[]{});
+    });
+  }
+
+  private void testTeamApplicationApproved() {
+    var attributes = mockApplicationApproved();
+    assertDoesNotThrow(() -> {
+      var cancelMessageNl =
+          systemMessagesNl.getSystemMessage(SystemMessages.TEAM_APPLICATION_APPROVED, attributes);
+    });
+    assertDoesNotThrow(() -> {
+      var cancelMessageEn =
+          systemMessagesEn.getSystemMessage(SystemMessages.TEAM_APPLICATION_APPROVED, attributes);
+    });
+    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+      systemMessagesEn.getSystemMessage(SystemMessages.TEAM_APPLICATION_APPROVED, new Object[]{});
     });
   }
 
@@ -53,7 +69,7 @@ class ILanguagePreferenceServiceTest {
   private Object[] mockUserApplication() {
     var orgName = "orgName";
     var userName = "userName";
-    return new Object[] {userName, orgName};
+    return new Object[]{userName, orgName};
   }
 
   private void testUserApplication() {
@@ -67,7 +83,22 @@ class ILanguagePreferenceServiceTest {
           systemMessagesEn.getSystemMessage(SystemMessages.USER_APPLICATION, attributes);
     });
     assertThrows(SystemNotificationException.class, () -> {
-      systemMessagesEn.getSystemMessage(SystemMessages.USER_APPLICATION, new Object[] {});
+      systemMessagesEn.getSystemMessage(SystemMessages.USER_APPLICATION, new Object[]{});
+    });
+  }
+
+  private void testUserAppliedToTeam() {
+    var attributes = mockUserApplication();
+    assertDoesNotThrow(() -> {
+      var cancelMessageNl =
+          systemMessagesNl.getSystemMessage(SystemMessages.USER_TEAM_APPLICATION, attributes);
+    });
+    assertDoesNotThrow(() -> {
+      var cancelMessageEn =
+          systemMessagesEn.getSystemMessage(SystemMessages.USER_TEAM_APPLICATION, attributes);
+    });
+    assertThrows(SystemNotificationException.class, () -> {
+      systemMessagesEn.getSystemMessage(SystemMessages.USER_TEAM_APPLICATION, new Object[]{});
     });
   }
 
@@ -76,7 +107,7 @@ class ILanguagePreferenceServiceTest {
     var event =
         Event.builder().id(1L).title("title").artist("artist").description("description").dateTime(
             LocalDateTime.now()).build();
-    return new Object[] {event};
+    return new Object[]{event};
   }
 
   private void testCancelEvent() {
@@ -90,7 +121,7 @@ class ILanguagePreferenceServiceTest {
           systemMessagesEn.getSystemMessage(SystemMessages.CANCEL_EVENT, attributes);
     });
     assertThrows(SystemNotificationException.class, () -> {
-      systemMessagesEn.getSystemMessage(SystemMessages.CANCEL_EVENT, new Object[] {});
+      systemMessagesEn.getSystemMessage(SystemMessages.CANCEL_EVENT, new Object[]{});
     });
   }
 
@@ -102,7 +133,10 @@ class ILanguagePreferenceServiceTest {
     testUserApplication();
     System.out.println("Testing application approved...");
     testApplicationApproved();
-
+    System.out.println("Testing Team application approved...");
+    testTeamApplicationApproved();
+    System.out.println("Testing Team application sent...");
+    testApplicationApproved();
 
     System.out.println("fin");
   }

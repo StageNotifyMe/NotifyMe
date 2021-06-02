@@ -339,7 +339,7 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
   public void giveUserRole(String userId, RoleRepresentation roleToGive, String idOfClient) {
     var uri = registerUri + String.format("/%s/role-mappings/clients/%s", userId, idOfClient);
     var role = new GiveClientRoleDto(roleToGive.getId(), roleToGive.getName(), true);
-    var body = new GiveClientRoleDto[]{role};
+    var body = new GiveClientRoleDto[] {role};
     var entity = createJsonHttpEntity(getAdminAccesstoken(), body);
     var restResult = restTemplate.postForEntity(uri, entity, String.class);
     if (restResult.getStatusCode() != HttpStatus.NO_CONTENT) {
@@ -427,5 +427,29 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
     var listType = new TypeToken<List<UserRepresentation>>() {
     }.getType();
     return gson.fromJson(bodyToParse, listType);
+  }
+
+  @Override
+  public void updateUserInfo(UserRepresentation userRepresentation, boolean resendEmailVer,
+                             boolean resendPhoneVerificationCode) {
+    try {
+      var entity = createJsonHttpEntity(getAdminAccesstoken(), userRepresentation);
+      restTemplate.put(registerUri + "/" + userRepresentation.getId(), entity, String.class);
+      String verificationCode = codeGeneratorService.generatePhoneVerificationCode();
+      if (resendEmailVer) {
+        sendEmailVerificationRequest(userRepresentation.getId());
+      }
+      if (resendPhoneVerificationCode) {
+        sendSmsVerificationCode(verificationCode, userRepresentation.getUsername(),
+            userRepresentation.getAttributes().get("phone_number").get(0));
+        userRepresentation.getAttributes()
+            .replace("phone_number_verification_code", List.of(verificationCode));
+      }
+      restTemplate.put(registerUri + "/" + userRepresentation.getId(), entity, String.class);
+    } catch (Exception e) {
+      throw new CrudException(
+          "Could not update userrepresentation for user " + userRepresentation.getId());
+    }
+
   }
 }

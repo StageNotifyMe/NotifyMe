@@ -35,7 +35,9 @@ import be.xplore.notifyme.services.UserOrgApplicationService;
 import be.xplore.notifyme.services.UserService;
 import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
 import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -260,6 +262,62 @@ class UserControllerTest {
     mockMvc.perform(get("/user/activatePhone?username=testUser&code=12345abcde")
         .header("Content-Type", "application/json")
     ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  void getAccountSettings() throws Exception {
+    when(userService.getUser(anyString()))
+        .thenReturn(User.builder().userId("userId").userName("username").preferedLanguage(
+            AvailableLanguages.EN).build());
+    when(userService.getUserInfo(anyString(), any())).thenReturn(getDummyUserRepresentation());
+
+    mockMvc.perform(get("/user/account?username=username"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andDo(result -> {
+          System.out.println(result.getResponse().getContentAsString());
+        })
+        .andExpect(MockMvcResultMatchers.content().json(
+            "{\"userId\":\"userId\",\"username\":\"username\",\"preferedLanguage\":\"EN\","
+                + "\"firstName\":\"firstName\",\"lastName\":\"lastName\","
+                + "\"email\":\"email@mail.com\","
+                + "\"phoneNumber\":\"+32123456789\",\"emailVerified\":true,\"phoneVerified\":true,"
+                + "\"availableLanguages\":[\"EN\",\"NL\"]}"));
+  }
+
+  @Test
+  void updateAccountSettings() throws Exception {
+    doNothing().when(userService)
+        .updateAccountInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
+        anyString(), anyString());
+
+    mockMvc.perform(put("/user/account").contentType(MediaType.APPLICATION_JSON).content(
+        "{\"userId\":\"userId\",\"username\":\"username\",\"preferedLanguage\":\"EN\",\"firstName\""
+            + ":\"firstName\",\"lastName\":\"lastName\",\"email\""
+            + ":\"email@mail.com\",\"phoneNumber\":"
+            + "\"+32123456789\",\"emailVerified\":true,\"phoneVerified\""
+            + ":true,\"availableLanguages\":[\"EN\",\"NL\"]}"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  private UserRepresentation getDummyUserRepresentation() {
+    var userRep = new UserRepresentation();
+    userRep.setId("userId");
+    userRep.setUsername("username");
+    userRep.setFirstName("firstName");
+    userRep.setLastName("lastName");
+    userRep.setEmail("email@mail.com");
+    userRep.setEmailVerified(true);
+    var attributes = getAttributesForDummyUserRep();
+    userRep.setAttributes(attributes);
+    return userRep;
+  }
+
+  private HashMap<String, List<String>> getAttributesForDummyUserRep() {
+    var attributes = new HashMap<String, List<String>>();
+    attributes.put("phone_number", List.of("+32123456789"));
+    attributes.put("phone_number_verification_code", List.of("code"));
+    attributes.put("phone_number_verified", List.of("true"));
+    return attributes;
   }
 
 
