@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -191,8 +192,8 @@ class KeycloakCommunicationServiceTest {
     when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
         eq(String.class)))
         .thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-    assertThrows(CrudException.class,() ->
-        keycloakCommunicationService.getUserInfoRestById("token","id"));
+    assertThrows(CrudException.class, () ->
+        keycloakCommunicationService.getUserInfoRestById("token", "id"));
   }
 
   @Test
@@ -354,7 +355,7 @@ class KeycloakCommunicationServiceTest {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     when(gson.fromJson("RoleArray", RoleRepresentation[].class))
-        .thenReturn(new RoleRepresentation[]{getTestRoleRepresentation()});
+        .thenReturn(new RoleRepresentation[] {getTestRoleRepresentation()});
   }
 
   @Test
@@ -487,6 +488,17 @@ class KeycloakCommunicationServiceTest {
     assertThrows(CrudException.class, () -> keycloakCommunicationService.getUserInfoId("user"));
   }
 
+  @Test
+  void updateUserInfo() {
+    mockGetAdminAccesstoken();
+    mockGetUserInfoRest();
+    doNothing().when(restTemplate).put(anyString(), any(), eq(String.class));
+
+    assertDoesNotThrow(() -> {
+      keycloakCommunicationService.updateUserInfo(getTestUserRepresentation().get(0), false, false);
+    });
+  }
+
   private void mockGetAllClients(boolean isSuccessful) {
     final ResponseEntity<String> mockResponse = mock(ResponseEntity.class);
     this.mockGetAdminAccesstoken();
@@ -500,7 +512,7 @@ class KeycloakCommunicationServiceTest {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     when(gson.fromJson("clientArray", RelevantClientInfoDto[].class))
-        .thenReturn(new RelevantClientInfoDto[]{getTestRelevantClientInfo()});
+        .thenReturn(new RelevantClientInfoDto[] {getTestRelevantClientInfo()});
   }
 
   private RelevantClientInfoDto getTestRelevantClientInfo() {
