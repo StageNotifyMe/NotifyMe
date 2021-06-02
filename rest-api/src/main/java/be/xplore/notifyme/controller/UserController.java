@@ -8,6 +8,8 @@ import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.communicationpreference.GetCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.PostCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.UpdateCommunicationPreferenceDto;
+import be.xplore.notifyme.dto.user.GetUserDto;
+import be.xplore.notifyme.dto.user.PutUserDto;
 import be.xplore.notifyme.services.ICommunicationPreferenceService;
 import be.xplore.notifyme.services.IKeycloakCommunicationService;
 import be.xplore.notifyme.services.IOrganisationService;
@@ -125,8 +127,39 @@ public class UserController {
 
   @GetMapping(value = "/userInfo")
   public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username,
-      Principal principal) {
+                                            Principal principal) {
     return ResponseEntity.ok(userService.getUserInfo(username, principal));
+  }
+
+  /**
+   * HTTP GET: used to get user account information.
+   *
+   * @param username  of the user you want to retrieve information from.
+   * @param principal Keycloak Authorization header.
+   * @return relevant account information.
+   */
+  @GetMapping(value = "/account")
+  public ResponseEntity<Object> getAccountSetting(@RequestParam String username,
+                                                  Principal principal) {
+    var keycloakUser = userService.getUserInfo(username, principal);
+    var dbUser = userService.getUser(keycloakUser.getId());
+    var getUserDto = new GetUserDto(dbUser, keycloakUser);
+
+    return ResponseEntity.ok(getUserDto);
+  }
+
+  /**
+   * HTTP PUT: used to update user account information.
+   *
+   * @param putUserDto contains updated user account attributes.
+   * @return 204 | no content
+   */
+  @PutMapping(value = "/account")
+  public ResponseEntity<Object> updateAccountSettings(@RequestBody PutUserDto putUserDto) {
+    userService.updateAccountInfo(putUserDto.getUserId(), putUserDto.getUsername(),
+        putUserDto.getFirstName(), putUserDto.getLastName(), putUserDto.getEmail(),
+        putUserDto.getPhoneNumber(), putUserDto.getPreferedLanguage());
+    return ResponseEntity.noContent().build();
   }
 
   @GetMapping(value = "/organisations")
@@ -144,7 +177,7 @@ public class UserController {
 
   @GetMapping(value = "activatePhone")
   public ResponseEntity<String> activatePhone(@RequestParam(name = "username") String username,
-      @RequestParam(name = "code") String code) {
+                                              @RequestParam(name = "code") String code) {
     keycloakCommunicationService.verifyPhoneNo(username, code);
     return ResponseEntity.ok("Your number is now ready to receive notifications through text.");
   }

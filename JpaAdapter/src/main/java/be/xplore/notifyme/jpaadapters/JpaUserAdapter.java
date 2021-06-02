@@ -2,6 +2,7 @@ package be.xplore.notifyme.jpaadapters;
 
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.exceptions.JpaNotFoundException;
 import be.xplore.notifyme.jpaobjects.JpaUser;
 import be.xplore.notifyme.jparepositories.JpaUserRepository;
 import be.xplore.notifyme.persistence.IUserRepo;
@@ -20,7 +21,11 @@ public class JpaUserAdapter implements IUserRepo {
 
   @Override
   public User save(User user) {
-    return jpaUserRepository.save(new JpaUser(user)).toDomainBase();
+    var jpaUser = jpaUserRepository.findById(user.getUserId()).orElseThrow(
+        () -> new JpaNotFoundException("Could not find user for id " + user.getUserId()));
+    jpaUser.setUserName(user.getUserName());
+    jpaUser.setPreferedLanguage(user.getPreferedLanguage());
+    return jpaUserRepository.save(jpaUser).toDomainBase();
   }
 
   @Override
