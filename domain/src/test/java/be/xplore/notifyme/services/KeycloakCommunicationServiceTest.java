@@ -51,7 +51,7 @@ class KeycloakCommunicationServiceTest {
   @Autowired
   private CodeGeneratorService codeGeneratorService;
   @MockBean
-  private ISmsVerificationSenderService ismsVerificationSenderService;
+  private ISmsVerificationSenderService smsVerificationSenderService;
   @MockBean
   private Gson gson;
 
@@ -492,11 +492,24 @@ class KeycloakCommunicationServiceTest {
   void updateUserInfo() {
     mockGetAdminAccesstoken();
     mockGetUserInfoRest();
-    doNothing().when(restTemplate).put(anyString(), any(), eq(String.class));
 
+    //Simple update
+    doNothing().when(restTemplate).put(anyString(), any(), eq(String.class));
     assertDoesNotThrow(() -> {
       keycloakCommunicationService.updateUserInfo(getTestUserRepresentation().get(0), false, false);
     });
+    //With email verification
+    doNothing().when(restTemplate).put(anyString(), any());
+    assertDoesNotThrow(() -> {
+      keycloakCommunicationService.updateUserInfo(getTestUserRepresentation().get(0), true, false);
+    });
+    //With phone verification DIT IS DE SUPER BROKEN ONE
+    /*doNothing().when(smsVerificationSenderService).send(anyString(), anyString(), anyString());
+    assertDoesNotThrow(() -> {
+      keycloakCommunicationService.updateUserInfo(getTestUserRepresentation().get(0), false, true);
+    });*/
+
+    //With error
   }
 
   private void mockGetAllClients(boolean isSuccessful) {
@@ -550,6 +563,8 @@ class KeycloakCommunicationServiceTest {
     ArrayList<UserRepresentation> arrayList = new ArrayList<>();
     UserRepresentation userRepresentation = new UserRepresentation();
     userRepresentation.setId("test-id");
+    userRepresentation.setUsername("username");
+    userRepresentation.setEmail("mail@mail.com");
     arrayList.add(userRepresentation);
     return arrayList;
   }

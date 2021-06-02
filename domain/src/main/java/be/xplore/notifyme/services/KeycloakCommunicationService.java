@@ -431,15 +431,15 @@ public class KeycloakCommunicationService implements IKeycloakCommunicationServi
 
   @Override
   public void updateUserInfo(UserRepresentation userRepresentation, boolean resendEmailVer,
-                             boolean resendPhoneVer) {
-    var entity = createJsonHttpEntity(getAdminAccesstoken(), userRepresentation);
-    restTemplate.put(registerUri + "/" + userRepresentation.getId(), entity, String.class);
+                             boolean resendPhoneVerificationCode) {
     try {
+      var entity = createJsonHttpEntity(getAdminAccesstoken(), userRepresentation);
+      restTemplate.put(registerUri + "/" + userRepresentation.getId(), entity, String.class);
+      String verificationCode = codeGeneratorService.generatePhoneVerificationCode();
       if (resendEmailVer) {
         sendEmailVerificationRequest(userRepresentation.getId());
       }
-      if (resendPhoneVer) {
-        var verificationCode = requestVerificationCode;
+      if (resendPhoneVerificationCode) {
         sendSmsVerificationCode(verificationCode, userRepresentation.getUsername(),
             userRepresentation.getAttributes().get("phone_number").get(0));
         userRepresentation.getAttributes()
