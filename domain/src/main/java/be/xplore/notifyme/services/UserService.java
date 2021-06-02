@@ -180,6 +180,14 @@ public class UserService implements IUserService {
     }
   }
 
+  private void updateUser(String userId, String preferedLanguage) {
+    var user = getUser(userId);
+    if (!user.getPreferedLanguage().toString().equals(preferedLanguage)) {
+      user.setPreferedLanguage(AvailableLanguages.valueOf(preferedLanguage));
+      userRepo.save(user);
+    }
+  }
+
   /**
    * Grants a any user any notifyme client role.
    *
@@ -200,13 +208,6 @@ public class UserService implements IUserService {
     updateUser(userId, preferedLanguage);
   }
 
-  private void updateUser(String userId, String preferedLanguage) {
-    var user = getUser(userId);
-    if (!user.getPreferedLanguage().toString().equals(preferedLanguage)) {
-      user.setPreferedLanguage(AvailableLanguages.valueOf(preferedLanguage));
-      userRepo.save(user);
-    }
-  }
 
   private void updateUserRepresentation(String userId, String username, String firstName,
                                         String lastName,
