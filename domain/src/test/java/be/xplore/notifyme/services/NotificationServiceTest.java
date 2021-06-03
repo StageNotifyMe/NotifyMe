@@ -2,6 +2,7 @@ package be.xplore.notifyme.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
@@ -313,7 +315,7 @@ class NotificationServiceTest {
     mockCreateNotification(message, users.get(0), comPref);
     when(notificationRepo.create(anyLong(), anyString(), anyString())).thenReturn(
         new Notification(1L, "mail@mailadres.com", comPref, "emailcommunicationstrategy", message,
-            users.get(0), "userId", false,LocalDateTime.now()));
+            users.get(0), "userId", false, LocalDateTime.now()));
     mockEmailCommunicationStrategy();
   }
 
@@ -357,5 +359,12 @@ class NotificationServiceTest {
       notificationService.notifyUsers(null, SystemMessages.CANCEL_EVENT,
           new Object[] {Event.builder().id(1L).build()});
     });
+  }
+
+  @Test
+  void testGetAllNotifications() {
+    when(notificationRepo.getAllNotifications())
+        .thenReturn(List.of(Notification.builder().id(1L).build()));
+    assertTrue(notificationService.getAllNotifications().stream().anyMatch(n->n.getId()==1L));
   }
 }
