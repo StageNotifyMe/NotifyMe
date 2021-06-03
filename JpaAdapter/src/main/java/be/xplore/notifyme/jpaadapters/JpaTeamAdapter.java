@@ -81,6 +81,16 @@ public class JpaTeamAdapter implements ITeamRepo {
   }
 
   @Override
+  public Team removeUser(long teamId, String userId) {
+    var jpaTeam = jpaTeamRepository.findById(teamId)
+        .orElseThrow(() -> new JpaNotFoundException(TEAM_NOT_FOUND_MESSAGE + teamId));
+    jpaTeam.getUserApplications()
+        .removeIf(ua -> ua.getJpaTeamApplicationKey().getUserId().equals(userId));
+    jpaTeam.getTeamMembers().removeIf(user -> user.getUserId().equals(userId));
+    return jpaTeamRepository.save(jpaTeam).toDomainBaseIncMembers();
+  }
+
+  @Override
   public List<Organisation> getAvailableOrganisations(long teamId) {
     var jpaTeam = jpaTeamRepository.findById(teamId)
         .orElseThrow(() -> new JpaNotFoundException(TEAM_NOT_FOUND_MESSAGE + teamId));
@@ -116,6 +126,12 @@ public class JpaTeamAdapter implements ITeamRepo {
   public Set<TeamApplication> getUserApplicationsForOrganisationManager(String userId) {
     return jpaTeamRepository.getTeamApplicationsForOrgManager(userId).stream()
         .map(JpaTeamApplication::toDomainBase).collect(Collectors.toSet());
+  }
+
+  @Override
+  public Set<Team> getTeamsForUser(String userId) {
+    return jpaTeamRepository.getTeamApplicationsForUser(userId).stream()
+        .map(JpaTeam::toDomainBase).collect(Collectors.toSet());
   }
 
   @Override

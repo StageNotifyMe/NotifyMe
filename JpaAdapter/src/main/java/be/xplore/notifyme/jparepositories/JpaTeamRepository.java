@@ -1,6 +1,6 @@
 package be.xplore.notifyme.jparepositories;
 
-import be.xplore.notifyme.domain.TeamApplication;
+import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.jpaobjects.JpaTeam;
 import be.xplore.notifyme.jpaobjects.JpaTeamApplication;
 import java.util.Set;
@@ -19,4 +19,10 @@ public interface JpaTeamRepository extends JpaRepository<JpaTeam, Long> {
       + "         JOIN organisationUsers.user u"
       + " WHERE u.userId = :orgManagerId")
   Set<JpaTeamApplication> getTeamApplicationsForOrgManager(String orgManagerId);
+
+  @Query(value = "SELECT teams "
+      + "FROM JpaTeam teams "
+      + "         JOIN teams.teamMembers members"
+      + " WHERE members.userId = :userId")
+  Set<JpaTeam> getTeamApplicationsForUser(String userId);
 }

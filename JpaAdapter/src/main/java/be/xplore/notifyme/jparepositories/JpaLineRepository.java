@@ -18,7 +18,8 @@ public interface JpaLineRepository extends JpaRepository<JpaLine, Long> {
       + "         JOIN jt.organisations jto"
       + "         JOIN jto.users jtuo"
       + "         JOIN jtuo.user u"
-      + " WHERE u.userId = :userId")
+      + "         LEFT JOIN jt.teamMembers tm"
+      + " WHERE (tm.userId <> :userId or tm.userId is null) and u.userId = :userId")
   List<JpaLine> getAllAvailableLinesForUser(String userId);
 
 }

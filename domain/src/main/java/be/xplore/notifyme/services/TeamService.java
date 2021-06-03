@@ -6,6 +6,7 @@ import be.xplore.notifyme.domain.TeamApplicationStatus;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,11 @@ public class TeamService implements ITeamService {
     return teamRepo.addUser(teamId, userId);
   }
 
+  @Override
+  public Team removeUserFromTeam(long teamId, String userId) {
+    return teamRepo.removeUser(teamId, userId);
+  }
+
 
   @Override
   public void deleteTeam(long teamId) {
@@ -52,6 +58,11 @@ public class TeamService implements ITeamService {
   }
 
   @Override
+  public Set<Team> getTeamsForUser(String userId) {
+    return teamRepo.getTeamsForUser(userId);
+  }
+
+  @Override
   public void deleteOrganisationFromTeam(long teamId, long organisationId) {
     teamRepo.deleteOrganisationFromTeam(teamId, organisationId);
   }
@@ -61,4 +72,6 @@ public class TeamService implements ITeamService {
       TeamApplicationStatus applicationStatus) {
     return teamRepo.changeApplicationStatus(userId, teamId, applicationStatus);
   }
+
+
 }
