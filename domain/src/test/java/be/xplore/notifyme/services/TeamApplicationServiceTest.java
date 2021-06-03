@@ -44,7 +44,7 @@ class TeamApplicationServiceTest {
     KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     var user = User.builder().userId("testUser").userName("test.user")
         .organisations(
-            List.of(OrganisationUser.builder().isOrganisationLeader(true)
+            List.of(OrganisationUser.builder().isOrganisationLeader(false)
                 .organisation(Organisation.builder().id(1L).build())
                 .user(User.builder().userId("testUser").build())
                 .build())).build();

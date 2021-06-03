@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.keycloak.representations.account.UserRepresentation;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -345,5 +346,14 @@ class VenueManagerControllerTest {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content()
             .json("{\"id\":1,\n\"eventStatus\":\"CANCELED\"\n}"));
+  }
+
+  @Test
+  @WithMockUser(username = "vmanager", roles = {"user", "venue_manager"})
+  void getUsers() throws Exception {
+    when(userService.getAllUserInfo()).thenReturn(List.of(new UserRepresentation()));
+
+    mockMvc.perform(get("/vmanager/users"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
   }
 }

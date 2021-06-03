@@ -355,7 +355,7 @@ class KeycloakCommunicationServiceTest {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     when(gson.fromJson("RoleArray", RoleRepresentation[].class))
-        .thenReturn(new RoleRepresentation[] {getTestRoleRepresentation()});
+        .thenReturn(new RoleRepresentation[]{getTestRoleRepresentation()});
   }
 
   @Test
@@ -518,10 +518,9 @@ class KeycloakCommunicationServiceTest {
 
   private void updateUserInfoPhone() {
     //With phone verification DIT IS DE SUPER BROKEN ONE
-    /*doNothing().when(smsVerificationSenderService).send(anyString(), anyString(), anyString());
     assertDoesNotThrow(() -> {
       keycloakCommunicationService.updateUserInfo(getTestUserRepresentation().get(0), false, true);
-    });*/
+    });
   }
 
   private void updateUserInfoError() {
@@ -545,7 +544,7 @@ class KeycloakCommunicationServiceTest {
       when(mockResponse.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     when(gson.fromJson("clientArray", RelevantClientInfoDto[].class))
-        .thenReturn(new RelevantClientInfoDto[] {getTestRelevantClientInfo()});
+        .thenReturn(new RelevantClientInfoDto[]{getTestRelevantClientInfo()});
   }
 
   private RelevantClientInfoDto getTestRelevantClientInfo() {
@@ -585,12 +584,15 @@ class KeycloakCommunicationServiceTest {
     userRepresentation.setId("test-id");
     userRepresentation.setUsername("username");
     userRepresentation.setEmail("mail@mail.com");
+    userRepresentation.setAttributes(new HashMap<>());
+    userRepresentation.getAttributes().put("phone_number", List.of("testPhoneNo."));
+    userRepresentation.getAttributes().put("phone_number_verification_code", List.of("code"));
     arrayList.add(userRepresentation);
     return arrayList;
   }
 
   private ArrayList<UserRepresentation> getTestUserRepresentationForPhone(boolean verified,
-                                                                          boolean testcode) {
+      boolean testcode) {
     UserRepresentation userRepresentation = new UserRepresentation();
     userRepresentation.setId("test-id");
     userRepresentation.setAttributes(new HashMap<>());

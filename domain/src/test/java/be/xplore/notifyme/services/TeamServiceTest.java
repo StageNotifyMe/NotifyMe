@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -14,6 +17,7 @@ import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.TeamApplication;
+import be.xplore.notifyme.domain.TeamApplicationStatus;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
@@ -137,5 +141,13 @@ class TeamServiceTest {
     assertDoesNotThrow(() -> {
       teamService.deleteOrganisationFromTeam(1L, 1L);
     });
+  }
+
+  @Test
+  void changeApplicationStatus() {
+    var team = new Team();
+    when(teamRepo.changeApplicationStatus(anyString(), anyLong(), any())).thenReturn(team);
+    assertEquals(team,
+        teamRepo.changeApplicationStatus("test", 1L, TeamApplicationStatus.ACCEPTED));
   }
 }

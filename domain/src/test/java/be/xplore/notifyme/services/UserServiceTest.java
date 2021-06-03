@@ -124,7 +124,7 @@ class UserServiceTest {
   }
 
   private void mockKeycloakSecurityContext(UserRepresentation userRep,
-                                           Boolean hasRequiredPermission) {
+      Boolean hasRequiredPermission) {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
 
     KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);
@@ -343,6 +343,24 @@ class UserServiceTest {
 
     assertEquals(mockUser,
         userService.getUserFromprincipalIncOrganisations(getKeycloakPrincipal()));
+  }
+
+  @Test
+  @WithMockKeycloakAuth(authorities = "user",
+      oidc = @OidcStandardClaims(
+          email = "test@test.com",
+          emailVerified = true,
+          nickName = "ElTestor",
+          preferredUsername = "Test"))
+  void getUserFromPrincipalIncTeamApplications() {
+    var mockToken = mock(IDToken.class);
+    when(tokenService.getIdToken(any())).thenReturn(mockToken);
+    when(mockToken.getSubject()).thenReturn("userId");
+    var mockUser = mock(User.class);
+    when(userRepo.findByIdIncTeamApplications("userId")).thenReturn(mockUser);
+
+    assertEquals(mockUser,
+        userService.getUserFromPrincipalIncTeamApplications(getKeycloakPrincipal()));
   }
 
   @Test

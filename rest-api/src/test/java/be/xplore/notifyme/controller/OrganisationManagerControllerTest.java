@@ -22,6 +22,7 @@ import be.xplore.notifyme.services.UserOrgApplicationService;
 import be.xplore.notifyme.services.UserOrgService;
 import be.xplore.notifyme.services.UserService;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -122,6 +123,40 @@ class OrganisationManagerControllerTest {
     org.setName("orgje");
     when(userOrgService.getOrgInfoAsManager(anyLong(), any())).thenReturn(org);
     mockMvc.perform(get("/omanager/organisation?organisationId=1"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"organisation_manager"})
+  void getTeamApplications() throws Exception {
+    when(teamApplicationService.getUserApplicationsForOrgAdmin(any())).thenReturn(new HashSet<>());
+    mockMvc.perform(get("/omanager/teamApplications"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "orgmanager", roles = {"user", "organisation_manager"})
+  void respondToTeamApplicationAccept() throws Exception {
+    mockMvc.perform(
+        post("/omanager/teamApplication?accept=true").content("{ "
+            + "\"teamApplicationKey\": { "
+            + "\"teamId\": 1, "
+            + "\"userId\": \"testId\""
+            + " }"
+            + " }").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "orgmanager", roles = {"user", "organisation_manager"})
+  void respondToTeamApplicationRefuse() throws Exception {
+    mockMvc.perform(
+        post("/omanager/teamApplication?accept=false").content("{ "
+            + "\"teamApplicationKey\": { "
+            + "\"teamId\": 1, "
+            + "\"userId\": \"testId\""
+            + " }"
+            + " }").contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
 

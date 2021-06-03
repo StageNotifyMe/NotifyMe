@@ -127,18 +127,11 @@ class ILanguagePreferenceServiceTest {
 
   @Test
   void getSystemMessage() {
-    System.out.println("Testing cancel event...");
     testCancelEvent();
-    System.out.println("Testing user application...");
     testUserApplication();
-    System.out.println("Testing application approved...");
     testApplicationApproved();
-    System.out.println("Testing Team application approved...");
     testTeamApplicationApproved();
-    System.out.println("Testing Team application sent...");
     testUserAppliedToTeam();
-
-    System.out.println("fin");
   }
 
   @Test
@@ -168,10 +161,26 @@ class ILanguagePreferenceServiceTest {
     assertThat(systemMessagesNl.getUserApplicationApprovedTitle(), instanceOf(String.class));
   }
 
+  private void testPropsTeamsApplicationApproved() {
+    assertThat(systemMessagesEn.getTeamApplicationApprovedTitle(), instanceOf(String.class));
+    assertThat(systemMessagesEn.getTeamApplicationApprovedText(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getTeamApplicationApprovedTitle(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getTeamApplicationApprovedText(), instanceOf(String.class));
+  }
+
+  private void testPropsTeamApplication() {
+    assertThat(systemMessagesEn.getUserTeamApplicationTitle(), instanceOf(String.class));
+    assertThat(systemMessagesEn.getUserTeamApplicationText(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getUserTeamApplicationTitle(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getUserTeamApplicationText(), instanceOf(String.class));
+  }
+
   @Test
   void testProperties() {
     testPropsCancelEvent();
     testPropsUserApplication();
     testPropsApplicationApproved();
+    testPropsTeamsApplicationApproved();
+    testPropsTeamApplication();
   }
 }

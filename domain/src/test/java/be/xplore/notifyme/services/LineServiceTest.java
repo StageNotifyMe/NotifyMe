@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +18,7 @@ import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ILineRepo;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,5 +110,12 @@ class LineServiceTest {
     when(lineRepo.findById(anyLong())).thenReturn(Optional.empty());
 
     assertThrows(CrudException.class, () -> lineService.getLine(1L));
+  }
+
+  @Test
+  void getAvailableLinesForUser() {
+    var lines = new ArrayList<Line>();
+    when(lineRepo.getAvailableLinesForUser(anyString())).thenReturn(lines);
+    assertEquals(lines,lineService.getAvailableLinesForUser("test"));
   }
 }
