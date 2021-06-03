@@ -87,8 +87,13 @@ class NotificationServiceTest {
     when(mockComPref.getCommunicationStrategy())
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
-        new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"), null, false);
+        Notification.builder()
+            .id(1L).communicationAddress("+32123456789").communicationPreference(mockComPref)
+            .usedCommunicationStrategy("smscommunicationstrategy")
+            .message(new Message("title", "text"))
+            .receiver(new User("userId", "username")).timestamp(LocalDateTime.now()).hidden(false)
+            .sender("SYSTEM").build();
+
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -113,7 +118,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"), null, false);
+            new User("userId", "username"), null, false, LocalDateTime.now());
     when(notificationRepo.createUrgent(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -138,7 +143,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"), null, false);
+            new User("userId", "username"), null, false, LocalDateTime.now());
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -228,7 +233,7 @@ class NotificationServiceTest {
   private void mockCreateNotification(Message message, User user, CommunicationPreference comPref) {
     var notification =
         new Notification(1L, "address", comPref, "emailservice", message,
-            user, null, false);
+            user, null, false, LocalDateTime.now());
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
   }
 
@@ -308,7 +313,7 @@ class NotificationServiceTest {
     mockCreateNotification(message, users.get(0), comPref);
     when(notificationRepo.create(anyLong(), anyString(), anyString())).thenReturn(
         new Notification(1L, "mail@mailadres.com", comPref, "emailcommunicationstrategy", message,
-            users.get(0), "userId", false));
+            users.get(0), "userId", false,LocalDateTime.now()));
     mockEmailCommunicationStrategy();
   }
 

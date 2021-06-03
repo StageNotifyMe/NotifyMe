@@ -145,6 +145,11 @@ public class AdminController {
     return ResponseEntity.ok(managers);
   }
 
+  /**
+   * HTTP GET: gets all non-hidden notifications.
+   *
+   * @return List of GetNotificationDto.
+   */
   @GetMapping("/notifications")
   public ResponseEntity<Object> getSystemNotifications() {
     var notifications = notificationService.getAllNotifications();
