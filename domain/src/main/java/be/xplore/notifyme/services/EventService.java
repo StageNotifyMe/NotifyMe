@@ -49,7 +49,7 @@ public class EventService implements IEventService {
    */
   @Override
   public Event getEvent(long eventId) {
-    return eventRepo.findById(eventId)
+    return eventRepo.findByIdWithLineManagersAndVenue(eventId)
         .orElseThrow(() -> new CrudException("Could not retrieve event for id " + eventId));
   }
 
@@ -62,7 +62,7 @@ public class EventService implements IEventService {
    */
   @Override
   public Event getEventAndVerifyLineManagerPermission(long eventId, Principal principal) {
-    var event = eventRepo.findByIdWithLineManagers(eventId)
+    var event = eventRepo.findByIdWithLineManagersAndVenue(eventId)
         .orElseThrow(() -> new CrudException("Could not retrieve event for id " + eventId));
     var token = tokenService.getIdToken(principal);
     if (event.getLineManagers().stream().anyMatch(u -> u.getUserId().equals(token.getSubject()))) {
@@ -107,8 +107,7 @@ public class EventService implements IEventService {
     var user = userService.getUser(userId);
     var event = this.getEvent(eventId);
     if (!event.getLineManagers().contains(user)) {
-      event.getLineManagers().add(user);
-      eventRepo.save(event);
+      eventRepo.addLineManager(eventId, userId);
     } else {
       throw new SaveToDatabaseException("User is already line manager of this event!");
     }

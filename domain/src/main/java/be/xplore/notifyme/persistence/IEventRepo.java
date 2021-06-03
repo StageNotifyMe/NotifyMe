@@ -16,7 +16,7 @@ public interface IEventRepo {
 
   Event addLineManager(long eventId, String userId);
 
-  Optional<Event> findByIdWithLineManagers(long eventId);
+  Optional<Event> findByIdWithLineManagersAndVenue(long eventId);
 
   List<Event> findAllForLineManager(String userId);
 

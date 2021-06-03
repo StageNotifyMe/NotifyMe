@@ -18,6 +18,8 @@ public interface IUserService {
 
   User getUserFromPrincipalIncAppliedUsers(Principal principal);
 
+  User getUserFromPrincipalIncTeamApplications(Principal principal);
+
   User getUser(String id);
 
   void register(UserRegistrationDto userRegistrationDto);

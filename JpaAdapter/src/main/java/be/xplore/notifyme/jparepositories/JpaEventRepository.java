@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface JpaEventRepository extends JpaRepository<JpaEvent, Long> {
+
   List<JpaEvent> findAllByLineManagersContains(JpaUser user);
 }

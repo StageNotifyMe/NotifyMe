@@ -1,9 +1,14 @@
 package be.xplore.notifyme.persistence;
 
+import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
+import be.xplore.notifyme.domain.TeamApplication;
+import be.xplore.notifyme.domain.TeamApplicationStatus;
+import be.xplore.notifyme.domain.User;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -23,4 +28,11 @@ public interface ITeamRepo {
   List<Organisation> getAvailableOrganisations(long teamId);
 
   void deleteOrganisationFromTeam(long teamId, long organisationId);
+
+  void applyToTeam(long teamId,String userId);
+
+  Set<TeamApplication> getUserApplicationsForOrganisationManager(String userId);
+
+  Team changeApplicationStatus(String userId, Long teamId,
+      TeamApplicationStatus applicationStatus);
 }

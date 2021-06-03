@@ -37,7 +37,7 @@ public class JpaEvent {
 
   @ManyToOne
   private JpaVenue venue;
-  @OneToMany
+  @OneToMany(mappedBy = "event")
   private List<JpaLine> lines;
   @ManyToMany(cascade = CascadeType.ALL)
   private Set<JpaUser> lineManagers;
@@ -90,6 +90,7 @@ public class JpaEvent {
         .artist(this.artist)
         .dateTime(this.dateTime)
         .eventStatus(this.eventStatus)
+        .venue(this.venue.toDomainBase())
         .lineManagers(
             this.lineManagers.stream().map(JpaUser::toDomainBase).collect(Collectors.toSet()))
         .build();
@@ -130,6 +131,26 @@ public class JpaEvent {
     this.venue = jpaVenue;
     this.lines = event.getLines().stream().map(JpaLine::new)
         .collect(Collectors.toList());
+    this.lineManagers = event.getLineManagers().stream().map(JpaUser::new)
+        .collect(Collectors.toSet());
+  }
+
+  /**
+   * Create a jpa event.
+   *
+   * @param event    domain representation of new event.
+   * @param jpaVenue jpa venue to add event to.
+   * @param jpaLines jpa lines to add to event.
+   */
+  public JpaEvent(Event event, JpaVenue jpaVenue, List<JpaLine> jpaLines) {
+    this.id = event.getId();
+    this.title = event.getTitle();
+    this.description = event.getDescription();
+    this.artist = event.getArtist();
+    this.dateTime = event.getDateTime();
+    this.eventStatus = event.getEventStatus();
+    this.venue = jpaVenue;
+    this.lines = jpaLines;
     this.lineManagers = event.getLineManagers().stream().map(JpaUser::new)
         .collect(Collectors.toSet());
   }

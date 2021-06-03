@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class LineService implements ILineService {
+
   private final EventService eventService;
   private final FacilityService facilityService;
   private final ILineRepo lineRepo;
@@ -53,5 +54,16 @@ public class LineService implements ILineService {
     var line =
         new Line(createLineDto.getNote(), createLineDto.getRequiredStaff(), new Team());
     return lineRepo.create(line, createLineDto.getEventId(), createLineDto.getFacilityId());
+  }
+
+  /**
+   * Gets all of the lines a member of one or multiple orgs can apply to.
+   *
+   * @param userId the unique id of the user.
+   * @return the lines that a user can apply for to be part of a team.
+   */
+  @Override
+  public List<Line> getAvailableLinesForUser(String userId) {
+    return lineRepo.getAvailableLinesForUser(userId);
   }
 }

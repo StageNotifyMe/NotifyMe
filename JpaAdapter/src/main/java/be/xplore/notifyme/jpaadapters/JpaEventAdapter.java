@@ -53,7 +53,7 @@ public class JpaEventAdapter implements IEventRepo {
   }
 
   @Override
-  public Optional<Event> findByIdWithLineManagers(long eventId) {
+  public Optional<Event> findByIdWithLineManagersAndVenue(long eventId) {
     return jpaEventRepository.findById(eventId).map(JpaEvent::toDomainIncLineManagers);
   }
 

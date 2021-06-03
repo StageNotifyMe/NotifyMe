@@ -25,6 +25,8 @@ import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.services.CommunicationPreferenceService;
+import be.xplore.notifyme.services.ILineService;
+import be.xplore.notifyme.services.ITeamApplicationService;
 import be.xplore.notifyme.services.KeycloakCommunicationService;
 import be.xplore.notifyme.services.NotificationService;
 import be.xplore.notifyme.services.OrganisationService;
@@ -35,6 +37,7 @@ import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrateg
 import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,6 +83,10 @@ class UserControllerTest {
   private CommunicationPreferenceService communicationPreferenceService;
   @MockBean
   private NotificationService notificationService;
+  @MockBean
+  private ILineService lineService;
+  @MockBean
+  private ITeamApplicationService teamApplicationService;
 
   @Test
   void getAccessTokenForUserValid() throws Exception {
@@ -281,7 +288,7 @@ class UserControllerTest {
   void updateAccountSettings() throws Exception {
     doNothing().when(userService)
         .updateAccountInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
-        anyString(), anyString());
+            anyString(), anyString());
 
     mockMvc.perform(put("/user/account").contentType(MediaType.APPLICATION_JSON).content(
         "{\"userId\":\"userId\",\"username\":\"username\",\"preferedLanguage\":\"EN\",\"firstName\""
@@ -291,6 +298,36 @@ class UserControllerTest {
             + ":true,\"availableLanguages\":[\"EN\",\"NL\"]}"))
         .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getTeamApplications() throws Exception {
+    when(teamApplicationService.getUserApplications(any())).thenReturn(new HashSet<>());
+    mockMvc.perform(get("/user/teamApplications")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getAvailableLines() throws Exception {
+    when(userService.getUserFromPrincipal(any()))
+        .thenReturn(User.builder().userId("userId").userName("username").preferedLanguage(
+            AvailableLanguages.EN).build());
+    when(lineService.getAvailableLinesForUser(any())).thenReturn(new ArrayList<>());
+    mockMvc.perform(get("/user/lines")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void postTeamApplications() throws Exception {
+    mockMvc.perform(post("/user/teamApplication?teamId=1")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
 
   private UserRepresentation getDummyUserRepresentation() {
     var userRep = new UserRepresentation();

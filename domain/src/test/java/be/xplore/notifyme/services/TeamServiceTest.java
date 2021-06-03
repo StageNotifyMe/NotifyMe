@@ -7,12 +7,17 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
+import be.xplore.notifyme.domain.TeamApplication;
+import be.xplore.notifyme.domain.TeamApplicationStatus;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
@@ -27,6 +32,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {TeamService.class})
 class TeamServiceTest {
+
   @Autowired
   private TeamService teamService;
   @MockBean
@@ -37,7 +43,8 @@ class TeamServiceTest {
     dummyLine.setId(1L);
     final var dummyOrgList = new ArrayList<Organisation>();
     final var dummyMemberSet = new HashSet<User>();
-    final var dummyTeam = new Team(1L, dummyLine, dummyOrgList, dummyMemberSet);
+    final var dummyTeamApps = new ArrayList<TeamApplication>();
+    final var dummyTeam = new Team(1L, dummyLine, dummyOrgList, dummyMemberSet, dummyTeamApps);
     final var dummyOrg = new Organisation(1L, "organisation", new ArrayList<>());
     final var dummyUsr = new User("userId", "username");
 
@@ -45,7 +52,7 @@ class TeamServiceTest {
   }
 
   private void setUpRepoMockito(Team dummyTeam, Organisation dummyOrg, User dummyUsr,
-                                List<Organisation> dummyOrglist) {
+      List<Organisation> dummyOrglist) {
     when(teamRepo.findById(1L)).thenReturn(Optional.of(dummyTeam));
     when(teamRepo.create(1L, 1L)).thenReturn(dummyTeam);
     when(teamRepo.addOrganisation(1L, 1L)).thenReturn(addOrgToTeam(dummyTeam, dummyOrg));
@@ -134,5 +141,13 @@ class TeamServiceTest {
     assertDoesNotThrow(() -> {
       teamService.deleteOrganisationFromTeam(1L, 1L);
     });
+  }
+
+  @Test
+  void changeApplicationStatus() {
+    var team = new Team();
+    when(teamRepo.changeApplicationStatus(anyString(), anyLong(), any())).thenReturn(team);
+    assertEquals(team,
+        teamService.changeApplicationStatus("test", 1L, TeamApplicationStatus.ACCEPTED));
   }
 }

@@ -43,6 +43,8 @@ public class JpaUser {
   private List<JpaNotification> notifications;
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
   private List<JpaCommunicationPreference> communicationPreferences;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "appliedUser")
+  private List<JpaTeamApplication> teamApplications;
 
   /**
    * Converts a jpa-object to a domain variant.
@@ -78,6 +80,21 @@ public class JpaUser {
         .appliedOrganisations(
             this.appliedOrganisations.stream().map(JpaUserOrgApplication::toDomainBase).collect(
                 Collectors.toList()))
+        .build();
+  }
+
+  /**
+   * Converts jpa user to domain user with applied organisations.
+   *
+   * @return domain user with applied orgs.
+   */
+  public User toDomainIncTeamApplications() {
+    return User.builder()
+        .userId(this.userId)
+        .userName(this.userName)
+        .teamApplications(
+            this.teamApplications.stream().map(JpaTeamApplication::toDomainBase).collect(
+                Collectors.toSet()))
         .build();
   }
 
