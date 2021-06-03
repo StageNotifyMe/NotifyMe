@@ -310,6 +310,18 @@ class UserControllerTest {
 
   @Test
   @WithMockUser(username = "user", roles = {"user"})
+  void getAvailableLines() throws Exception {
+    when(userService.getUserFromPrincipal(any()))
+        .thenReturn(User.builder().userId("userId").userName("username").preferedLanguage(
+            AvailableLanguages.EN).build());
+    when(lineService.getAvailableLinesForUser(any())).thenReturn(new ArrayList<>());
+    mockMvc.perform(get("/user/lines")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
   void postTeamApplications() throws Exception {
     mockMvc.perform(post("/user/teamApplication?teamId=1")
         .header("Content-Type", "application/json")

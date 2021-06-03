@@ -148,6 +148,6 @@ class TeamServiceTest {
     var team = new Team();
     when(teamRepo.changeApplicationStatus(anyString(), anyLong(), any())).thenReturn(team);
     assertEquals(team,
-        teamRepo.changeApplicationStatus("test", 1L, TeamApplicationStatus.ACCEPTED));
+        teamService.changeApplicationStatus("test", 1L, TeamApplicationStatus.ACCEPTED));
   }
 }
