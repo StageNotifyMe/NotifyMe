@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
+import be.xplore.notifyme.domain.Message;
+import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
@@ -20,6 +22,8 @@ import be.xplore.notifyme.services.KeycloakCommunicationService;
 import be.xplore.notifyme.services.OrganisationService;
 import be.xplore.notifyme.services.UserService;
 import be.xplore.notifyme.services.VenueService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -198,5 +202,25 @@ class AdminControllerTest {
 
     mockMvc.perform(get("/admin/venueManagers?venueId=1"))
         .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "adminUser", roles = {"user", "admin"})
+  void getAllNotifications() throws Exception {
+    var notifications = new ArrayList<Notification>();
+    notifications.add(
+        Notification.builder().message(Message.builder().id(1L).text("text").title("title").build()
+        ).communicationAddress("address").id(1L).hidden(false).sender("Sender")
+            .receiver(User.builder().userId("userId").userName("username").build()).timestamp(
+            LocalDateTime.now()).usedCommunicationStrategy("strategy").build());
+    when(notificationService.getAllNotifications()).thenReturn(notifications);
+
+    mockMvc.perform(get("/admin/notifications"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andDo(result -> System.out.println(result))
+        .andExpect(MockMvcResultMatchers.content().json(
+            "[{\"id\":1,\"sender\":\"Sender\",\"receiver\":\"username\",\"messageTitle\":"
+                +
+                "\"title\",\"messageText\":\"text\",\"usedCommunicationStrategy\":\"strategy\"}]"));
   }
 }
