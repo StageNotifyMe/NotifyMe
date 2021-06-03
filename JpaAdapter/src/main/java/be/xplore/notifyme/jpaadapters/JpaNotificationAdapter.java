@@ -72,6 +72,12 @@ public class JpaNotificationAdapter implements INotificationRepo {
     return createNotification(messageId, userId, true, null);
   }
 
+  @Override
+  public List<Notification> getAllNotifications() {
+    return jpaNotificationRepository.findAllByHidden(false).stream()
+        .map(JpaNotification::toDomainBase).collect(Collectors.toList());
+  }
+
   /**
    * Creates a notification that can be either urgent or default.
    *

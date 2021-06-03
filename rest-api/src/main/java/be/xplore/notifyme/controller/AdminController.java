@@ -4,6 +4,7 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
+import be.xplore.notifyme.dto.notification.GetNotificationDto;
 import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.IOrganisationService;
 import be.xplore.notifyme.services.IUserService;
@@ -11,6 +12,7 @@ import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -141,6 +143,14 @@ public class AdminController {
   public ResponseEntity<Object> getAllVenueManagers(@RequestParam long venueId) {
     var managers = venueService.getAllVenueManagers(venueId);
     return ResponseEntity.ok(managers);
+  }
+
+  @GetMapping("/notifications")
+  public ResponseEntity<Object> getSystemNotifications() {
+    var notifications = notificationService.getAllNotifications();
+    var parsedNotifications = notifications.stream().map(GetNotificationDto::new).collect(
+        Collectors.toList());
+    return ResponseEntity.ok(parsedNotifications);
   }
 
 }
