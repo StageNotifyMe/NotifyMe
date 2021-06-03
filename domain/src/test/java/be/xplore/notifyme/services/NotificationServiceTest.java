@@ -365,6 +365,6 @@ class NotificationServiceTest {
   void testGetAllNotifications() {
     when(notificationRepo.getAllNotifications())
         .thenReturn(List.of(Notification.builder().id(1L).build()));
-    assertTrue(notificationService.getAllNotifications().stream().anyMatch(n->n.getId()==1L));
+    assertTrue(notificationService.getAllNotifications().stream().anyMatch(n -> n.getId() == 1L));
   }
 }
