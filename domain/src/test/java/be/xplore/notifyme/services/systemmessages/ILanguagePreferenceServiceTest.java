@@ -136,7 +136,7 @@ class ILanguagePreferenceServiceTest {
     System.out.println("Testing Team application approved...");
     testTeamApplicationApproved();
     System.out.println("Testing Team application sent...");
-    testApplicationApproved();
+    testUserAppliedToTeam();
 
     System.out.println("fin");
   }
