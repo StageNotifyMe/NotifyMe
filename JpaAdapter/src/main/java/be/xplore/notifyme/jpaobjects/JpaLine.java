@@ -30,7 +30,7 @@ public class JpaLine {
   private JpaFacility facility;
   @ManyToOne(cascade = CascadeType.ALL)
   private JpaEvent event;
-  @OneToOne(cascade = CascadeType.ALL, mappedBy = "line")
+  @OneToOne(cascade = CascadeType.ALL)
   private JpaTeam team;
 
   /**

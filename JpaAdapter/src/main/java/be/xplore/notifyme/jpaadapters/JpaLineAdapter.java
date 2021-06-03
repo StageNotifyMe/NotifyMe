@@ -23,7 +23,8 @@ public class JpaLineAdapter implements ILineRepo {
 
   @Override
   public Optional<Line> findById(long lineId) {
-    return jpaLineRepository.findById(lineId).map(JpaLine::toDomainBase);
+    return jpaLineRepository.findById(lineId)
+        .map(JpaLine::toDomainBase);
   }
 
   @Override
