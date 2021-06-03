@@ -18,4 +18,6 @@ public interface INotificationRepo {
   public Notification createUrgent(long messageId, String userId);
 
   public List<Notification> findByUser(String userId);
+
+  List<Notification> getAllNotifications();
 }

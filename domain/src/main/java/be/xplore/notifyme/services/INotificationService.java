@@ -31,4 +31,6 @@ public interface INotificationService {
 
   void createAndSendSystemNotification(String userId, SystemMessages messageName,
                                        Object[] attribute);
+
+  List<Notification> getAllNotifications();
 }

@@ -1,5 +1,6 @@
 package be.xplore.notifyme.domain;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class Notification {
   private User receiver;
   private String sender;
   private boolean hidden;
+  private LocalDateTime timestamp = LocalDateTime.now();
 
   public void send() {
     this.getCommunicationPreference().getCommunicationStrategy().send(this);

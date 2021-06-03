@@ -126,4 +126,10 @@ public class NotificationService implements INotificationService {
     notificationRepo.save(notification);
     notification.send();
   }
+
+
+  @Override
+  public List<Notification> getAllNotifications() {
+    return notificationRepo.getAllNotifications();
+  }
 }
