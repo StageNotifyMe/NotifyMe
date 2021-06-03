@@ -217,7 +217,7 @@ class AdminControllerTest {
 
     mockMvc.perform(get("/admin/notifications"))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andDo(result -> System.out.println(result))
+        .andDo(System.out::println)
         .andExpect(MockMvcResultMatchers.content().json(
             "[{\"id\":1,\"sender\":\"Sender\",\"receiver\":\"username\",\"messageTitle\":"
                 +
