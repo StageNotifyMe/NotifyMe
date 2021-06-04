@@ -13,6 +13,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -77,6 +79,11 @@ class TeamServiceTest {
     return team;
   }
 
+  private Team removeUsrsFromTeam(Team team) {
+    team.getTeamMembers().removeIf(user -> user.getUserId().equals("userId"));
+    return team;
+  }
+
   @Test
   void createTeam() {
     setupTeamRepo();
@@ -105,6 +112,17 @@ class TeamServiceTest {
     assertThat(result, instanceOf(Team.class));
     assertEquals(1L, result.getId());
     assertTrue(result.getTeamMembers().stream().anyMatch(m -> m.getUserId().equals("userId")));
+  }
+
+  @Test
+  void removeUserFromTeam() {
+    var team = Team.builder().id(1L).teamMembers(new HashSet<>()).line(Line.builder().event(
+        Event.builder().title("anEvent").build()).build()).build();
+    when(teamRepo.removeUser(anyLong(), anyString())).thenReturn(team);
+    var result = teamService.removeUserFromTeam(1L, "userId");
+    assertThat(result, instanceOf(Team.class));
+    assertEquals(1L, result.getId());
+    assertTrue(result.getTeamMembers().stream().noneMatch(m -> m.getUserId().equals("userId")));
   }
 
   @Test
@@ -153,5 +171,12 @@ class TeamServiceTest {
     when(teamRepo.changeApplicationStatus(anyString(), anyLong(), any())).thenReturn(team);
     assertEquals(team,
         teamService.changeApplicationStatus("test", 1L, TeamApplicationStatus.ACCEPTED));
+  }
+
+  @Test
+  void getTeamsForUser() {
+    Set<Team> teams = new HashSet<>();
+    when(teamRepo.getTeamsForUser(anyString())).thenReturn(teams);
+    assertEquals(teams, teamService.getTeamsForUser("testUser"));
   }
 }

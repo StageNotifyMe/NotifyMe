@@ -9,7 +9,6 @@ import be.xplore.notifyme.persistence.ITeamRepo;
 import be.xplore.notifyme.services.systemmessages.SystemMessages;
 import java.security.Principal;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -67,20 +66,6 @@ public class TeamApplicationService implements ITeamApplicationService {
     notificationService
         .createAndSendSystemNotification(user.getUserId(), SystemMessages.TEAM_APPLICATION_APPROVED,
             new Object[]{team.getLine().getEvent().getTitle()});
-  }
-
-  private void notifyOrganisationManagersOfApplication(long teamId, User user) {
-    var team = teamService.getTeam(teamId);
-    var managersOfUserManagingTeam =
-        user.getOrganisations().stream().filter(ou -> team.getOrganisations().stream()
-            .anyMatch(organisation -> organisation.getId().equals(ou.getOrganisation().getId()))
-            && ou.isOrganisationLeader()).collect(Collectors.toList());
-
-    for (var manager : managersOfUserManagingTeam) {
-      var attributes = new String[]{user.getUserName(), team.getLine().getEvent().getTitle()};
-      notificationService.createAndSendSystemNotification(manager.getUser().getUserId(),
-          SystemMessages.USER_TEAM_APPLICATION, attributes);
-    }
   }
 
 }

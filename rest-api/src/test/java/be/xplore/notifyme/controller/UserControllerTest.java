@@ -331,6 +331,17 @@ class UserControllerTest {
     ).andExpect(MockMvcResultMatchers.status().isOk());
   }
 
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getTeams() throws Exception {
+    when(userService.getUserFromPrincipal(any())).thenReturn(User.builder().userId("id").build());
+    when(teamService.getTeamsForUser(anyString())).thenReturn(new HashSet<>());
+
+    mockMvc.perform(get("/user/teams")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
 
   private UserRepresentation getDummyUserRepresentation() {
     var userRep = new UserRepresentation();
