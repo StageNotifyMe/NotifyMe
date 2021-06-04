@@ -44,7 +44,7 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
 
   @Override
   public Organisation changeApplicationStatus(String userId, Long organisationId,
-                                              OrgApplicationStatus applicationStatus) {
+      OrgApplicationStatus applicationStatus) {
     var jpaorg = jpaOrganisationRepository.findById(organisationId).orElseThrow();
     jpaorg.getAppliedUsers().stream()
         .filter(application -> application.getOrganisationUserKey().getUserId().equals(userId)
@@ -120,6 +120,7 @@ public class JpaOrganisationAdapter implements IOrganisationRepo {
           .orElseThrow(() -> new JpaNotFoundException(USER_NOT_FOUND_MESSAGE + jpaUserId));
       jpaUsers.add(jpaUser);
     }
-    return jpaUsers.stream().map(JpaUser::toDomainBase).collect(Collectors.toList());
+    return jpaUsers.stream().map(JpaUser::toDomainIncOrganisations)
+        .collect(Collectors.toList());
   }
 }

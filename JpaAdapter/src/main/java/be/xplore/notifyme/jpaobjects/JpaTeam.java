@@ -36,7 +36,7 @@ public class JpaTeam {
   private List<JpaOrganisation> organisations;
   @ManyToMany
   private Set<JpaUser> teamMembers;
-  @OneToMany(mappedBy = "appliedTeam",cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "appliedTeam", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<JpaTeamApplication> userApplications;
 
   /**

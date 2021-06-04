@@ -2,6 +2,7 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.Line;
+import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.dto.ApplicationOrgNameDto;
 import be.xplore.notifyme.dto.NotificationDto;
@@ -17,6 +18,7 @@ import be.xplore.notifyme.services.IKeycloakCommunicationService;
 import be.xplore.notifyme.services.ILineService;
 import be.xplore.notifyme.services.IOrganisationService;
 import be.xplore.notifyme.services.ITeamApplicationService;
+import be.xplore.notifyme.services.ITeamService;
 import be.xplore.notifyme.services.IUserOrgApplicationService;
 import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.NotificationService;
@@ -55,6 +57,7 @@ public class UserController {
   private final ICommunicationPreferenceService communicationPreferenceService;
   private final NotificationService notificationService;
   private final ITeamApplicationService teamApplicationService;
+  private final ITeamService teamService;
 
   @GetMapping(value = "/token")
   public ResponseEntity<String> getAccessTokenForUser(String username, String password) {
@@ -134,7 +137,7 @@ public class UserController {
 
   @GetMapping(value = "/userInfo")
   public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username,
-                                            Principal principal) {
+      Principal principal) {
     return ResponseEntity.ok(userService.getUserInfo(username, principal));
   }
 
@@ -147,7 +150,7 @@ public class UserController {
    */
   @GetMapping(value = "/account")
   public ResponseEntity<Object> getAccountSetting(@RequestParam String username,
-                                                  Principal principal) {
+      Principal principal) {
     var keycloakUser = userService.getUserInfo(username, principal);
     var dbUser = userService.getUser(keycloakUser.getId());
     var getUserDto = new GetUserDto(dbUser, keycloakUser);
@@ -184,7 +187,7 @@ public class UserController {
 
   @GetMapping(value = "activatePhone")
   public ResponseEntity<String> activatePhone(@RequestParam(name = "username") String username,
-                                              @RequestParam(name = "code") String code) {
+      @RequestParam(name = "code") String code) {
     keycloakCommunicationService.verifyPhoneNo(username, code);
     return ResponseEntity.ok("Your number is now ready to receive notifications through text.");
   }
@@ -256,5 +259,31 @@ public class UserController {
       Principal principal) {
     teamApplicationService.applyForEventLine(teamId, principal);
     return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Gets the teams that the user calling the method was added to.
+   *
+   * @param principal injected by securitycontext.
+   * @return Response entity containing a set of teams the user was added to.
+   */
+  @GetMapping(value = "teams")
+  public ResponseEntity<Set<Team>> getTeams(Principal principal) {
+    var user = userService.getUserFromPrincipal(principal);
+    return ResponseEntity.ok(teamService.getTeamsForUser(user.getUserId()));
+  }
+
+  /**
+   * Remove a user from the team they are assigned to.
+   *
+   * @param principal injected by securitycontext.
+   * @param teamId    unique id of the team.
+   * @return Response entity containing the list of notifications of the user.
+   */
+  @DeleteMapping(value = "team")
+  public ResponseEntity<Team> removeFromTeam(@RequestParam(name = "teamId") Long teamId,
+      Principal principal) {
+    var user = userService.getUserFromPrincipal(principal);
+    return ResponseEntity.ok(teamService.removeUserFromTeam(teamId, user.getUserId()));
   }
 }

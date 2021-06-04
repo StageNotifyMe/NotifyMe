@@ -18,6 +18,8 @@ public interface ILanguagePreferenceService {
 
   public Message getTeamApplicationApproved(String eventName);
 
+  public Message getUserAttendanceCancelled(String username, String eventname);
+
   /**
    * Returns the correct message based on the identifier. Expected contents of attributes: -
    * CANCEL_EVENT: Event object. - USER_APPLICATION: String userName, String organisationName. -
@@ -53,11 +55,29 @@ public interface ILanguagePreferenceService {
               "Expected 2 attributes: String userName, String eventName | but found none.");
         }
         return this.getTeamApplication((String) attributes[0], (String) attributes[1]);
+      default:
+        return getSystemMessageExtension(messageIdentifier, attributes);
+    }
+  }
+
+  private Message getSystemMessageExtension(SystemMessages messageIdentifier, Object[] attributes) {
+    switch (messageIdentifier) {
       case TEAM_APPLICATION_APPROVED:
+        if (attributes.length < 1) {
+          throw new SystemNotificationException(
+              "Expected 1 attribute: String eventName | but found none.");
+        }
         return this.getTeamApplicationApproved((String) attributes[0]);
+      case USER_CANCELLED_ATTENDANCE:
+        if (attributes.length < 2) {
+          throw new SystemNotificationException(
+              "Expected 2 attributes: String username, String eventname | but found none.");
+        }
+        return this.getUserAttendanceCancelled((String) attributes[0], (String) attributes[1]);
       default:
         throw new SystemNotificationException(
             "Could not find message for identifier " + messageIdentifier);
     }
   }
+
 }

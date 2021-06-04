@@ -60,7 +60,7 @@ class ILanguagePreferenceServiceTest {
       var cancelMessageEn =
           systemMessagesEn.getSystemMessage(SystemMessages.TEAM_APPLICATION_APPROVED, attributes);
     });
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+    assertThrows(SystemNotificationException.class, () -> {
       systemMessagesEn.getSystemMessage(SystemMessages.TEAM_APPLICATION_APPROVED, new Object[]{});
     });
   }
@@ -102,12 +102,32 @@ class ILanguagePreferenceServiceTest {
     });
   }
 
+  private void testUserCancelledAttendance() {
+    var attributes = mockCancelAttendance();
+    assertDoesNotThrow(() -> {
+      var cancelMessageNl =
+          systemMessagesNl.getSystemMessage(SystemMessages.USER_CANCELLED_ATTENDANCE, attributes);
+    });
+    assertDoesNotThrow(() -> {
+      var cancelMessageEn =
+          systemMessagesEn.getSystemMessage(SystemMessages.USER_CANCELLED_ATTENDANCE, attributes);
+    });
+    assertThrows(SystemNotificationException.class, () -> {
+      systemMessagesEn.getSystemMessage(SystemMessages.USER_CANCELLED_ATTENDANCE, new Object[]{});
+    });
+  }
+
   //Cancel event
   private Object[] mockCancelEvent() {
     var event =
         Event.builder().id(1L).title("title").artist("artist").description("description").dateTime(
             LocalDateTime.now()).build();
     return new Object[]{event};
+  }
+
+  //Cancel event attendance
+  private Object[] mockCancelAttendance() {
+    return new Object[]{"username", "eventname"};
   }
 
   private void testCancelEvent() {
@@ -132,6 +152,7 @@ class ILanguagePreferenceServiceTest {
     testApplicationApproved();
     testTeamApplicationApproved();
     testUserAppliedToTeam();
+    testUserCancelledAttendance();
   }
 
   @Test
@@ -175,6 +196,13 @@ class ILanguagePreferenceServiceTest {
     assertThat(systemMessagesNl.getUserTeamApplicationText(), instanceOf(String.class));
   }
 
+  private void testPropsUserAttendanceCancelled() {
+    assertThat(systemMessagesEn.getUserAttendanceCancelledTitle(), instanceOf(String.class));
+    assertThat(systemMessagesEn.getUserAttendanceCancelledText(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getUserAttendanceCancelledTitle(), instanceOf(String.class));
+    assertThat(systemMessagesNl.getUserAttendanceCancelledText(), instanceOf(String.class));
+  }
+
   @Test
   void testProperties() {
     testPropsCancelEvent();
@@ -182,5 +210,6 @@ class ILanguagePreferenceServiceTest {
     testPropsApplicationApproved();
     testPropsTeamsApplicationApproved();
     testPropsTeamApplication();
+    testPropsUserAttendanceCancelled();
   }
 }

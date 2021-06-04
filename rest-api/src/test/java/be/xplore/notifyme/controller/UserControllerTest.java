@@ -20,6 +20,7 @@ import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUserKey;
+import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
@@ -27,6 +28,7 @@ import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.services.CommunicationPreferenceService;
 import be.xplore.notifyme.services.ILineService;
 import be.xplore.notifyme.services.ITeamApplicationService;
+import be.xplore.notifyme.services.ITeamService;
 import be.xplore.notifyme.services.KeycloakCommunicationService;
 import be.xplore.notifyme.services.NotificationService;
 import be.xplore.notifyme.services.OrganisationService;
@@ -87,6 +89,8 @@ class UserControllerTest {
   private ILineService lineService;
   @MockBean
   private ITeamApplicationService teamApplicationService;
+  @MockBean
+  private ITeamService teamService;
 
   @Test
   void getAccessTokenForUserValid() throws Exception {
@@ -324,6 +328,28 @@ class UserControllerTest {
   @WithMockUser(username = "user", roles = {"user"})
   void postTeamApplications() throws Exception {
     mockMvc.perform(post("/user/teamApplication?teamId=1")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getTeams() throws Exception {
+    when(userService.getUserFromPrincipal(any())).thenReturn(User.builder().userId("id").build());
+    when(teamService.getTeamsForUser(anyString())).thenReturn(new HashSet<>());
+
+    mockMvc.perform(get("/user/teams")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void removeUserFromTeam() throws Exception {
+    when(userService.getUserFromPrincipal(any())).thenReturn(User.builder().userId("id").build());
+    when(teamService.removeUserFromTeam(anyLong(), anyString())).thenReturn(new Team());
+
+    mockMvc.perform(delete("/user/team?teamId=1")
         .header("Content-Type", "application/json")
     ).andExpect(MockMvcResultMatchers.status().isOk());
   }

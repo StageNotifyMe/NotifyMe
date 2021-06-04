@@ -117,6 +117,11 @@ public class UserService implements IUserService {
         () -> new CrudException(String.format("Could not retrieve user for id %s", id)));
   }
 
+  @Override
+  public User getUserIncOrganisations(String id) {
+    return userRepo.findByIdIncOrganisations(id);
+  }
+
   /**
    * Gets a user's ID based on their username and sends them an email to verify their email. *
    *
@@ -209,15 +214,15 @@ public class UserService implements IUserService {
 
   @Override
   public void updateAccountInfo(String userId, String username, String firstName, String lastName,
-                                String email, String phoneNumber, String preferedLanguage) {
+      String email, String phoneNumber, String preferedLanguage) {
     updateUserRepresentation(userId, username, firstName, lastName, email, phoneNumber);
     updateUser(userId, preferedLanguage);
   }
 
 
   private void updateUserRepresentation(String userId, String username, String firstName,
-                                        String lastName,
-                                        String email, String phoneNumber) {
+      String lastName,
+      String email, String phoneNumber) {
     var userRep = keycloakCommunicationService.getUserInfoId(userId);
     userRep.setUsername(username);
     userRep.setId(userId);
@@ -234,7 +239,7 @@ public class UserService implements IUserService {
   }
 
   private Object[] checkUpdateEmailAndPhone(UserRepresentation userRep,
-                                            String email, String phoneNumber) {
+      String email, String phoneNumber) {
     var resendEmailVerification = false;
     var resendPhoneVerification = false;
     if (!email.equals(userRep.getEmail())) {
@@ -247,6 +252,6 @@ public class UserService implements IUserService {
       userRep.getAttributes().replace("phone_number_verified", List.of("false"));
       resendPhoneVerification = true;
     }
-    return new Object[] {userRep, resendEmailVerification, resendPhoneVerification};
+    return new Object[]{userRep, resendEmailVerification, resendPhoneVerification};
   }
 }

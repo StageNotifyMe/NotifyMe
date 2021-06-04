@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface JpaUserRepository extends JpaRepository<JpaUser, String> {
+
   @Query(nativeQuery = true, value = "select ju.user_id from jpa_user ju "
       + "join jpa_organisation_user jou on ju.user_id = jou.user_id "
       + "join jpa_organisation jo on jou.organisation_id = jo.id "

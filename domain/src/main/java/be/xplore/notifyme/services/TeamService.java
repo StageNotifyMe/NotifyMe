@@ -5,7 +5,9 @@ import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.TeamApplicationStatus;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
+import be.xplore.notifyme.services.systemmessages.SystemMessages;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 public class TeamService implements ITeamService {
 
   private final ITeamRepo teamRepo;
+  private final IUserService userService;
+  private final INotificationService notificationService;
 
 
   @Override
@@ -31,6 +35,15 @@ public class TeamService implements ITeamService {
   @Override
   public Team addUserToTeam(long teamId, String userId) {
     return teamRepo.addUser(teamId, userId);
+  }
+
+  @Override
+  public Team removeUserFromTeam(long teamId, String userId) {
+    var team = teamRepo.removeUser(teamId, userId);
+    var user = userService.getUserIncOrganisations(userId);
+    notificationService.notifyOrganisationManagersForUserEvent(team.getLine().getEvent(), user,
+        SystemMessages.USER_CANCELLED_ATTENDANCE);
+    return team;
   }
 
 
@@ -52,6 +65,11 @@ public class TeamService implements ITeamService {
   }
 
   @Override
+  public Set<Team> getTeamsForUser(String userId) {
+    return teamRepo.getTeamsForUser(userId);
+  }
+
+  @Override
   public void deleteOrganisationFromTeam(long teamId, long organisationId) {
     teamRepo.deleteOrganisationFromTeam(teamId, organisationId);
   }
@@ -61,4 +79,6 @@ public class TeamService implements ITeamService {
       TeamApplicationStatus applicationStatus) {
     return teamRepo.changeApplicationStatus(userId, teamId, applicationStatus);
   }
+
+
 }

@@ -21,6 +21,12 @@ public interface JpaTeamRepository extends JpaRepository<JpaTeam, Long> {
       + " WHERE u.userId = :orgManagerId")
   Set<JpaTeamApplication> getTeamApplicationsForOrgManager(String orgManagerId);
 
+  @Query(value = "SELECT teams "
+      + "FROM JpaTeam teams "
+      + "         JOIN teams.teamMembers members"
+      + " WHERE members.userId = :userId")
+  Set<JpaTeam> getTeamApplicationsForUser(String userId);
+
   @Modifying
   @Transactional
   @Query(nativeQuery = true, value = "UPDATE jpa_team SET line_id = :lineId WHERE id = :teamId")
