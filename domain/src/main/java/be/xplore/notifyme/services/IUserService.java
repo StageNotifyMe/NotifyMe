@@ -21,6 +21,7 @@ public interface IUserService {
   User getUserFromPrincipalIncTeamApplications(Principal principal);
 
   User getUser(String id);
+
   User getUserIncOrganisations(String id);
 
   void register(UserRegistrationDto userRegistrationDto);
@@ -32,5 +33,5 @@ public interface IUserService {
   void grantUserRole(String userId, String roleName);
 
   void updateAccountInfo(String userId, String username, String firstName, String lastName,
-                         String email, String phoneNumber, String preferedLanguage);
+      String email, String phoneNumber, String preferedLanguage);
 }

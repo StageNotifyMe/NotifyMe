@@ -37,6 +37,10 @@ class TeamServiceTest {
   private TeamService teamService;
   @MockBean
   private ITeamRepo teamRepo;
+  @MockBean
+  private IUserService userService;
+  @MockBean
+  private INotificationService notificationService;
 
   private void setupTeamRepo() {
     final var dummyLine = new Line("note", 10);

@@ -27,6 +27,7 @@ import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.services.CommunicationPreferenceService;
 import be.xplore.notifyme.services.ILineService;
 import be.xplore.notifyme.services.ITeamApplicationService;
+import be.xplore.notifyme.services.ITeamService;
 import be.xplore.notifyme.services.KeycloakCommunicationService;
 import be.xplore.notifyme.services.NotificationService;
 import be.xplore.notifyme.services.OrganisationService;
@@ -87,6 +88,8 @@ class UserControllerTest {
   private ILineService lineService;
   @MockBean
   private ITeamApplicationService teamApplicationService;
+  @MockBean
+  private ITeamService teamService;
 
   @Test
   void getAccessTokenForUserValid() throws Exception {

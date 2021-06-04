@@ -60,7 +60,7 @@ class ILanguagePreferenceServiceTest {
       var cancelMessageEn =
           systemMessagesEn.getSystemMessage(SystemMessages.TEAM_APPLICATION_APPROVED, attributes);
     });
-    assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+    assertThrows(SystemNotificationException.class, () -> {
       systemMessagesEn.getSystemMessage(SystemMessages.TEAM_APPLICATION_APPROVED, new Object[]{});
     });
   }
