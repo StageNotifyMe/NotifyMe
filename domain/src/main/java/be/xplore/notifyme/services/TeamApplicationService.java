@@ -30,7 +30,9 @@ public class TeamApplicationService implements ITeamApplicationService {
   public void applyForEventLine(long teamId, Principal principal) {
     var user = userService.getUserFromprincipalIncOrganisations(principal);
     teamRepo.applyToTeam(teamId, user.getUserId());
-    notifyOrganisationManagersOfApplication(teamId, user);
+    var team = teamService.getTeam(teamId);
+    notificationService.notifyOrganisationManagersForUserEvent(team.getLine().getEvent(), user,
+        SystemMessages.USER_TEAM_APPLICATION);
   }
 
   @Override

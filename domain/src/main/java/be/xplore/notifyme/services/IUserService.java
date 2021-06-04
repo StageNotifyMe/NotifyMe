@@ -21,6 +21,7 @@ public interface IUserService {
   User getUserFromPrincipalIncTeamApplications(Principal principal);
 
   User getUser(String id);
+  User getUserIncOrganisations(String id);
 
   void register(UserRegistrationDto userRegistrationDto);
 

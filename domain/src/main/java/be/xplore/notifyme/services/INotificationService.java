@@ -20,6 +20,9 @@ public interface INotificationService {
 
   void notifyOrganisationManagersForCancelEvent(Event eventId, SystemMessages messageName);
 
+  void notifyOrganisationManagersForUserEvent(Event eventId, User user,
+      SystemMessages messageName);
+
   void notifyUsers(Collection<User> users, long messageId);
 
   void notifyUsers(Collection<User> users, SystemMessages systemMessageName, Object[] attributes);
@@ -30,5 +33,7 @@ public interface INotificationService {
       title, String text);
 
   void createAndSendSystemNotification(String userId, SystemMessages messageName,
-                                       Object[] attribute);
+      Object[] attribute);
+
+  List<Notification> getAllNotifications();
 }

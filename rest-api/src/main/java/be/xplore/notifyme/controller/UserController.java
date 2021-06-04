@@ -284,7 +284,6 @@ public class UserController {
   public ResponseEntity<Team> removeFromTeam(@RequestParam(name = "teamId") Long teamId,
       Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
-    teamService.removeUserFromTeam(teamId, user.getUserId());
     return ResponseEntity.ok(teamService.removeUserFromTeam(teamId, user.getUserId()));
   }
 }

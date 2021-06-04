@@ -87,7 +87,7 @@ public class JpaTeamAdapter implements ITeamRepo {
     jpaTeam.getUserApplications()
         .removeIf(ua -> ua.getJpaTeamApplicationKey().getUserId().equals(userId));
     jpaTeam.getTeamMembers().removeIf(user -> user.getUserId().equals(userId));
-    return jpaTeamRepository.save(jpaTeam).toDomainBaseIncMembers();
+    return jpaTeamRepository.save(jpaTeam).toDomainBaseIncOrganisations();
   }
 
   @Override

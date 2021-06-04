@@ -1,6 +1,7 @@
 package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.Notification;
+import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,6 +34,7 @@ public class JpaNotification {
   private JpaUser receiver;
   private String sender;
   boolean hidden;
+  LocalDateTime timestamp;
 
   /**
    * Constructor used to create a new notification and wire message, user and
@@ -42,12 +44,13 @@ public class JpaNotification {
    * @param jpaUser    jpa version of the receiver.
    */
   public JpaNotification(JpaMessage jpaMessage, JpaUser jpaUser,
-      JpaCommunicationPreference jpaCommunicationPreference) {
+                         JpaCommunicationPreference jpaCommunicationPreference) {
     this.message = jpaMessage;
     this.receiver = jpaUser;
     this.communicationPreference = jpaCommunicationPreference;
     this.usedCommunicationStrategy =
         jpaCommunicationPreference.getCommunicationStrategy().toString();
+    this.timestamp = LocalDateTime.now();
   }
 
   /**
@@ -57,7 +60,7 @@ public class JpaNotification {
    * @param jpaUser      already converted version of notification.getReceiver.
    */
   public JpaNotification(Notification notification, JpaUser jpaUser,
-      JpaCommunicationPreference jpaCommunicationPreference) {
+                         JpaCommunicationPreference jpaCommunicationPreference) {
     this.id = notification.getId();
     this.communicationAddress = notification.getCommunicationAddress();
     this.communicationPreference = jpaCommunicationPreference;
@@ -65,6 +68,7 @@ public class JpaNotification {
     this.message = new JpaMessage(notification.getMessage());
     this.receiver = jpaUser;
     this.sender = notification.getSender();
+    this.timestamp = notification.getTimestamp();
   }
 
   /**
@@ -81,6 +85,7 @@ public class JpaNotification {
         .communicationPreference(this.communicationPreference.toDomainBase())
         .message(this.message.toDomainBase())
         .sender(this.sender)
+        .timestamp(this.timestamp)
         .build();
   }
 
@@ -98,5 +103,6 @@ public class JpaNotification {
     this.message = new JpaMessage(notification.getMessage());
     this.receiver = new JpaUser(notification.getReceiver());
     this.sender = notification.getSender();
+    this.timestamp = notification.getTimestamp();
   }
 }

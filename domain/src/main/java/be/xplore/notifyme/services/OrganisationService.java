@@ -113,7 +113,7 @@ public class OrganisationService implements IOrganisationService {
    */
   @Override
   public Organisation changeApplicationStatus(String userId, Long oranisationId,
-                                              OrgApplicationStatus applicationStatus) {
+      OrgApplicationStatus applicationStatus) {
     return organisationRepo.changeApplicationStatus(userId, oranisationId, applicationStatus);
   }
 

@@ -27,6 +27,9 @@ public class SystemMessagesNl implements ILanguagePreferenceService {
   private String teamApplicationApprovedTitle;
   private String teamApplicationApprovedText;
 
+  private String userAttendanceCancelledTitle;
+  private String userAttendanceCancelledText;
+
   @Override
   public AvailableLanguages getLanguagePreference() {
     return AvailableLanguages.NL;
@@ -63,5 +66,11 @@ public class SystemMessagesNl implements ILanguagePreferenceService {
   public Message getTeamApplicationApproved(String eventName) {
     var text = String.format(teamApplicationApprovedText, eventName);
     return new Message(teamApplicationApprovedTitle, text);
+  }
+
+  @Override
+  public Message getUserAttendanceCancelled(String username, String eventname) {
+    var text = String.format(userAttendanceCancelledText, username, eventname);
+    return new Message(userAttendanceCancelledTitle, text);
   }
 }

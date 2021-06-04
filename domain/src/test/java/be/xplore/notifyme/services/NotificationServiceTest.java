@@ -2,6 +2,7 @@ package be.xplore.notifyme.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.account.UserRepresentation;
@@ -87,8 +89,13 @@ class NotificationServiceTest {
     when(mockComPref.getCommunicationStrategy())
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
-        new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"), null, false);
+        Notification.builder()
+            .id(1L).communicationAddress("+32123456789").communicationPreference(mockComPref)
+            .usedCommunicationStrategy("smscommunicationstrategy")
+            .message(new Message("title", "text"))
+            .receiver(new User("userId", "username")).timestamp(LocalDateTime.now()).hidden(false)
+            .sender("SYSTEM").build();
+
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -113,7 +120,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"), null, false);
+            new User("userId", "username"), null, false, LocalDateTime.now());
     when(notificationRepo.createUrgent(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -138,7 +145,7 @@ class NotificationServiceTest {
         .thenReturn(new EmailCommunicationStrategy(emailService));
     var notification =
         new Notification(1L, "address", mockComPref, "emailservice", new Message("title", "text"),
-            new User("userId", "username"), null, false);
+            new User("userId", "username"), null, false, LocalDateTime.now());
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
 
     when(notificationRepo.save(any())).thenAnswer(new Answer<Notification>() {
@@ -228,7 +235,7 @@ class NotificationServiceTest {
   private void mockCreateNotification(Message message, User user, CommunicationPreference comPref) {
     var notification =
         new Notification(1L, "address", comPref, "emailservice", message,
-            user, null, false);
+            user, null, false, LocalDateTime.now());
     when(notificationRepo.create(anyLong(), anyString())).thenReturn(notification);
   }
 
@@ -308,7 +315,7 @@ class NotificationServiceTest {
     mockCreateNotification(message, users.get(0), comPref);
     when(notificationRepo.create(anyLong(), anyString(), anyString())).thenReturn(
         new Notification(1L, "mail@mailadres.com", comPref, "emailcommunicationstrategy", message,
-            users.get(0), "userId", false));
+            users.get(0), "userId", false, LocalDateTime.now()));
     mockEmailCommunicationStrategy();
   }
 
@@ -352,5 +359,12 @@ class NotificationServiceTest {
       notificationService.notifyUsers(null, SystemMessages.CANCEL_EVENT,
           new Object[] {Event.builder().id(1L).build()});
     });
+  }
+
+  @Test
+  void testGetAllNotifications() {
+    when(notificationRepo.getAllNotifications())
+        .thenReturn(List.of(Notification.builder().id(1L).build()));
+    assertTrue(notificationService.getAllNotifications().stream().anyMatch(n -> n.getId() == 1L));
   }
 }

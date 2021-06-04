@@ -74,7 +74,7 @@ public class NotificationService implements INotificationService {
    * @param attribute   any attributes needed to create the message.
    */
   public void createAndSendSystemNotification(String userId, SystemMessages messageName,
-                                              Object[] attribute) {
+      Object[] attribute) {
     var user = userService.getUser(userId);
     var message = pickLanguageService.getLanguageService(user.getPreferedLanguage())
         .getSystemMessage(messageName, attribute);
@@ -86,7 +86,20 @@ public class NotificationService implements INotificationService {
   @Override
   public void notifyOrganisationManagersForCancelEvent(Event event, SystemMessages messageName) {
     List<User> orgManagers = organisationService.getOrganisationManagersForEvent(event.getId());
-    notifyUsers(orgManagers, messageName, new Object[] {event});
+    notifyUsers(orgManagers, messageName, new Object[]{event});
+  }
+
+  @Override
+  public void notifyOrganisationManagersForUserEvent(Event event, User user,
+      SystemMessages messageName) {
+    List<User> orgManagers = organisationService.getOrganisationManagersForEvent(event.getId());
+    orgManagers
+        .removeIf(orgmgr -> orgmgr.getOrganisations().stream().noneMatch(organisationUser ->
+            user.getOrganisations().stream().anyMatch(
+                cancellingOu -> cancellingOu.getOrganisationUserKey().getOrganisationId()
+                    .equals(organisationUser.getOrganisationUserKey().getOrganisationId()))
+                && organisationUser.isOrganisationLeader()));
+    notifyUsers(orgManagers, messageName, new Object[]{user.getUserName(), event.getTitle()});
   }
 
   @Override
@@ -101,7 +114,7 @@ public class NotificationService implements INotificationService {
 
   @Override
   public void notifyUsers(Collection<User> users, SystemMessages systemMessageName,
-                          Object[] attributes) {
+      Object[] attributes) {
     if (users != null) {
       for (User user : users) {
         createAndSendSystemNotification(user.getUserId(), systemMessageName, attributes);
@@ -111,7 +124,7 @@ public class NotificationService implements INotificationService {
 
   @Override
   public void notifyOrganisationManagers(long organisationId, String sender, String title,
-                                         String text) {
+      String text) {
     var message = this.createMessage(title, text);
     var orgManagers = organisationService.getOrganisationManagers(organisationId);
     for (User orgManager : orgManagers) {
@@ -125,5 +138,11 @@ public class NotificationService implements INotificationService {
     notification.setCommunicationAddresAndUsedStrategy(userInfo);
     notificationRepo.save(notification);
     notification.send();
+  }
+
+
+  @Override
+  public List<Notification> getAllNotifications() {
+    return notificationRepo.getAllNotifications();
   }
 }
