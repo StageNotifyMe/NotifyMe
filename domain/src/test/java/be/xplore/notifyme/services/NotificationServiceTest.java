@@ -15,6 +15,8 @@ import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
+import be.xplore.notifyme.domain.OrganisationUser;
+import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.persistence.IMessageRepo;
@@ -201,6 +203,7 @@ class NotificationServiceTest {
   @Test
   void notifyOrganisationsManagers() {
     mockNotifyOrgManagersFromEvent();
+    mockCreateAndSendSystemNotification();
 
     var orgIdList = new ArrayList<Long>();
     orgIdList.add(1L);
@@ -214,16 +217,48 @@ class NotificationServiceTest {
     });
   }
 
+  @Test
+  void notifyOrganisationsManagersForUserEvent() {
+    mockCreateAndSendSystemNotification();
+    mockNotifyOrgManagersFromEvent();
+
+    assertDoesNotThrow(() -> notificationService
+        .notifyOrganisationManagersForUserEvent(
+            Event.builder().id(1L).title("testEvent").build(),
+            User.builder().userName("testUser").organisations(List.of(
+                OrganisationUser.builder().isOrganisationLeader(false).organisationUserKey(
+                    OrganisationUserKey.builder().organisationId(1L).build()).build()))
+                .build(), SystemMessages.USER_CANCELLED_ATTENDANCE));
+  }
+
   private void mockNotifyOrgManagersFromEvent() {
-    var orgManager1 = new User("org1-man", "orgMan1");
-    var orgManager2 = new User("org2-man", "orgMan2");
-    //this.mockGetOrganisationManagers(orgManager1, orgManager2);
+    var orgManager1 = User.builder().userId("org1-man").userName("orgMan1")
+        .preferedLanguage(AvailableLanguages.EN).organisations(List.of(
+            OrganisationUser.builder().isOrganisationLeader(true).organisationUserKey(
+                OrganisationUserKey.builder().organisationId(1L).build()).build()))
+        .build();
+
+    var orgManager2 = User.builder().userId("org1-man").userName("orgMan1")
+        .preferedLanguage(AvailableLanguages.NL).organisations(List.of(
+            OrganisationUser.builder().isOrganisationLeader(false).organisationUserKey(
+                OrganisationUserKey.builder().organisationId(2L).build()).build()))
+        .build();
+
+    this.mockGetOrganisationManagers(orgManager1, orgManager2);
     var message = new Message(1L, "title", "text");
     var comPref = new CommunicationPreference(1L, orgManager1, true, true, true,
         mockEmailCommunicationStrategy());
     this.mockCreateNotification(message, orgManager1, comPref);
     this.mockCreateNotification(message, orgManager2, comPref);
     this.mockGetUserInfoUsername();
+  }
+
+  private void mockGetOrganisationManagers(User user, User user2) {
+    List<User> userList = new ArrayList<>(List.of(user, user2));
+    when(organisationService.getOrganisationManagersForEvent(anyLong()))
+        .thenReturn(userList);
+    when(userService.getUser("org1-man")).thenReturn(user);
+    when(userService.getUser("org2-man")).thenReturn(user);
   }
 
   private EmailCommunicationStrategy mockEmailCommunicationStrategy() {
@@ -295,6 +330,7 @@ class NotificationServiceTest {
 
   @Test
   void notifyOrganisationManagers() {
+    mockCreateAndSendSystemNotification();
     mockNotifyOrgManagers();
 
     assertDoesNotThrow(() -> {
@@ -324,7 +360,7 @@ class NotificationServiceTest {
     mockCreateAndSendSystemNotification();
     assertDoesNotThrow(() -> {
       notificationService.createAndSendSystemNotification("userId", SystemMessages.CANCEL_EVENT,
-          new Object[] {Event.builder().id(1L).build()});
+          new Object[]{Event.builder().id(1L).build()});
     });
   }
 
@@ -353,11 +389,11 @@ class NotificationServiceTest {
     userList.add(User.builder().userId("userId").build());
     assertDoesNotThrow(() -> {
       notificationService.notifyUsers(userList, SystemMessages.CANCEL_EVENT,
-          new Object[] {Event.builder().id(1L).build()});
+          new Object[]{Event.builder().id(1L).build()});
     });
     assertDoesNotThrow(() -> {
       notificationService.notifyUsers(null, SystemMessages.CANCEL_EVENT,
-          new Object[] {Event.builder().id(1L).build()});
+          new Object[]{Event.builder().id(1L).build()});
     });
   }
 
