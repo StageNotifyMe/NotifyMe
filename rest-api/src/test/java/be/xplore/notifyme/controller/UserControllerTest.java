@@ -20,6 +20,7 @@ import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUserKey;
+import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
@@ -338,6 +339,17 @@ class UserControllerTest {
     when(teamService.getTeamsForUser(anyString())).thenReturn(new HashSet<>());
 
     mockMvc.perform(get("/user/teams")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void removeUserFromTeam() throws Exception {
+    when(userService.getUserFromPrincipal(any())).thenReturn(User.builder().userId("id").build());
+    when(teamService.removeUserFromTeam(anyLong(), anyString())).thenReturn(new Team());
+
+    mockMvc.perform(delete("/user/team?teamId=1")
         .header("Content-Type", "application/json")
     ).andExpect(MockMvcResultMatchers.status().isOk());
   }

@@ -244,7 +244,13 @@ class NotificationServiceTest {
                 OrganisationUserKey.builder().organisationId(2L).build()).build()))
         .build();
 
-    this.mockGetOrganisationManagers(orgManager1, orgManager2);
+    var orgManager3 = User.builder().userId("org3-man").userName("orgMan3")
+        .preferedLanguage(AvailableLanguages.EN).organisations(List.of(
+            OrganisationUser.builder().isOrganisationLeader(false).organisationUserKey(
+                OrganisationUserKey.builder().organisationId(1L).build()).build()))
+        .build();
+
+    this.mockGetOrganisationManagers(orgManager1, orgManager2, orgManager3);
     var message = new Message(1L, "title", "text");
     var comPref = new CommunicationPreference(1L, orgManager1, true, true, true,
         mockEmailCommunicationStrategy());
@@ -253,12 +259,10 @@ class NotificationServiceTest {
     this.mockGetUserInfoUsername();
   }
 
-  private void mockGetOrganisationManagers(User user, User user2) {
-    List<User> userList = new ArrayList<>(List.of(user, user2));
+  private void mockGetOrganisationManagers(User user, User user2, User user3) {
+    List<User> userList = new ArrayList<>(List.of(user, user2, user3));
     when(organisationService.getOrganisationManagersForEvent(anyLong()))
         .thenReturn(userList);
-    when(userService.getUser("org1-man")).thenReturn(user);
-    when(userService.getUser("org2-man")).thenReturn(user);
   }
 
   private EmailCommunicationStrategy mockEmailCommunicationStrategy() {

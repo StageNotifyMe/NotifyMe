@@ -181,6 +181,13 @@ class UserServiceTest {
   }
 
   @Test
+  void getUserIncOrganisations() {
+    var returnUser = new User("UserId", "username");
+    when(userRepo.findByIdIncOrganisations(anyString())).thenReturn(returnUser);
+    assertEquals(returnUser, userService.getUserIncOrganisations("testId"));
+  }
+
+  @Test
   void getUserNotFound() {
     when(userRepo.findById(anyString())).thenReturn(Optional.empty());
     assertThrows(CrudException.class, () -> userService.getUser("testId"));
