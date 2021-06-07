@@ -17,4 +17,6 @@ public interface IUserRepo {
   User findByIdIncAppliedUsers(String userId);
 
   User findByIdIncTeamApplications(String userId);
+
+  User createUser(User user);
 }

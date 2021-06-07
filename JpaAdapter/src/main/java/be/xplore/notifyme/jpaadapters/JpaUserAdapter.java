@@ -58,4 +58,11 @@ public class JpaUserAdapter implements IUserRepo {
         .orElseThrow(() -> new CrudException("Could not find user for id " + userId));
     return jpaUser.toDomainIncTeamApplications();
   }
+
+  @Override
+  public User createUser(User user) {
+    JpaUser jpaUser = new JpaUser(user);
+    var savedUser = jpaUserRepository.save(jpaUser);
+    return savedUser.toDomainBase();
+  }
 }
