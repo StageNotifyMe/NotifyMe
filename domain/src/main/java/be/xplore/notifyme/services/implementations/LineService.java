@@ -51,10 +51,11 @@ public class LineService implements ILineService {
    * @return the created line.
    */
   @Override
-  public Line createLine(CreateLineDto createLineDto, Principal principal) {
+  public Line createLine(String note, int requiredStaff, long facilityId, long eventId,
+                         Principal principal) {
     var line =
-        new Line(createLineDto.getNote(), createLineDto.getRequiredStaff(), new Team());
-    return lineRepo.create(line, createLineDto.getEventId(), createLineDto.getFacilityId());
+        new Line(note, requiredStaff, new Team());
+    return lineRepo.create(line, eventId, facilityId);
   }
 
   /**

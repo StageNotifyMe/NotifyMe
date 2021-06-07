@@ -236,7 +236,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void postLineSuccessful() throws Exception {
-    when(lineService.createLine(any(), any()))
+    when(lineService.createLine(anyString(), anyInt(), anyLong(), anyLong(), any()))
         .thenReturn(new Line());
 
     mockMvc
@@ -248,7 +248,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void postLineUnsuccessful() throws Exception {
-    when(lineService.createLine(any(), any()))
+    when(lineService.createLine(anyString(), anyInt(), anyLong(), anyLong(), any()))
         .thenThrow(new CrudException("Could not create line"));
 
     mockMvc

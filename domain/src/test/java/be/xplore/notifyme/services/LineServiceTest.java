@@ -14,7 +14,6 @@ import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ILineRepo;
 import be.xplore.notifyme.services.implementations.EventService;
@@ -49,7 +48,7 @@ class LineServiceTest {
   @MockBean
   private UserService userService;
 
-  private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
+  //private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
   private final Event event =
       new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), EventStatus.OK,
           new Venue(),
@@ -64,7 +63,7 @@ class LineServiceTest {
     KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     when(lineRepo.create(any(Line.class), anyLong(), anyLong())).thenReturn(line);
 
-    var result = lineService.createLine(createLineDto, principal);
+    var result = lineService.createLine("note", 10, 1L, 1L, principal);
     assertEquals(line, result);
   }
 
@@ -74,7 +73,7 @@ class LineServiceTest {
     doThrow(new CrudException("Could not find event for id 1")).when(lineRepo)
         .create(any(), anyLong(), anyLong());
 
-    assertThrows(CrudException.class, () -> lineService.createLine(createLineDto, principal));
+    assertThrows(CrudException.class, () -> lineService.createLine("note", 10, 1L, 1L, principal));
   }
 
   @Test
@@ -83,7 +82,7 @@ class LineServiceTest {
     doThrow(new CrudException("Could not find facility for id 1")).when(lineRepo)
         .create(any(), anyLong(), anyLong());
 
-    assertThrows(CrudException.class, () -> lineService.createLine(createLineDto, principal));
+    assertThrows(CrudException.class, () -> lineService.createLine("note", 10, 1L, 1L, principal));
   }
 
   @Test

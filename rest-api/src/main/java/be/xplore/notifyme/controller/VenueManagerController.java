@@ -3,7 +3,7 @@ package be.xplore.notifyme.controller;
 import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.dto.event.CreateEventDto;
 import be.xplore.notifyme.dto.facility.CreateFacilityDto;
-import be.xplore.notifyme.dto.CreateLineDto;
+import be.xplore.notifyme.dto.line.CreateLineDto;
 import be.xplore.notifyme.dto.event.PutEventDto;
 import be.xplore.notifyme.services.IEventService;
 import be.xplore.notifyme.services.IFacilityService;
@@ -85,7 +85,8 @@ public class VenueManagerController {
   @PostMapping("/line")
   public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto,
                                            Principal principal) {
-    var line = lineService.createLine(createLineDto, principal);
+    var line = lineService.createLine(createLineDto.getNote(), createLineDto.getRequiredStaff(),
+        createLineDto.getFacilityId(), createLineDto.getEventId(), principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(line);
   }
 
