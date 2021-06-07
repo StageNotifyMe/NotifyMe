@@ -1,29 +1,26 @@
-package be.xplore.notifyme.dto;
+package be.xplore.notifyme.dto.organisationapplication;
 
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.OrganisationUserKey;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
 @Getter
 @Setter
-public class ApplicationOrgNameDto {
+public class ApplicationUsernameDto {
 
   private OrganisationUserKey organisationUserKey;
   private OrgApplicationStatus applicationStatus;
-  private String orgName;
+  private String userName;
 
   /**
-   * Constructs the application for an organisation dto with only relevant data for user.
+   * Constructs the application for an organisation dto with only relevant data for organisation.
    *
    * @param userOrgApplication to convert.
    */
-  public ApplicationOrgNameDto(UserOrgApplication userOrgApplication) {
+  public ApplicationUsernameDto(UserOrgApplication userOrgApplication) {
     this.organisationUserKey = userOrgApplication.getOrganisationUserKey();
     this.applicationStatus = userOrgApplication.getApplicationStatus();
-    this.orgName = userOrgApplication.getAppliedOrganisation().getName();
   }
 }

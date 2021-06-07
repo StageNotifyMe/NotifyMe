@@ -2,7 +2,7 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.domain.TeamApplicationKey;
-import be.xplore.notifyme.dto.ApplicationUsernameDto;
+import be.xplore.notifyme.dto.organisationapplication.ApplicationUsernameDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.OrganisationLimitedInfoDto;
 import be.xplore.notifyme.dto.UserApplicationResponseDto;

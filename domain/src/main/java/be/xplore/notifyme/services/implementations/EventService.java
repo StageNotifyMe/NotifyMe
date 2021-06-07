@@ -3,7 +3,6 @@ package be.xplore.notifyme.services.implementations;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.SystemMessages;
-import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
@@ -30,14 +29,14 @@ public class EventService implements IEventService {
   /**
    * Method to create an event from a createEventDTO (comes from API).
    *
-   * @param createEventDto contains all the necessary data to create an event.
    * @return HTTP Response
    */
   @Override
-  public Event createEvent(CreateEventDto createEventDto, Principal principal) {
-    var venue = venueService.getVenue(createEventDto.getVenueId());
-    var event = new Event(createEventDto.getTitle(), createEventDto.getDescription(),
-        createEventDto.getArtist(), createEventDto.getDateTime(), venue);
+  public Event createEvent(String title, String description, String artist, String dateTime,
+                           long venueId, Principal principal) {
+    var venue = venueService.getVenue(venueId);
+    var event = new Event(title, description,
+        artist, dateTime, venue);
     event = eventRepo.save(event);
     makeCreatorLineManager(event.getId(), principal);
     return event;

@@ -18,7 +18,6 @@ import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.services.IUserService;
@@ -91,7 +90,8 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void createEventSuccessful() throws Exception {
-    when(eventService.createEvent(any(CreateEventDto.class), any(Principal.class)))
+    when(eventService.createEvent(anyString(), anyString(), anyString(), anyString(), anyLong(),
+        any(Principal.class)))
         .thenReturn(mockEvent);
 
     mockMvc
@@ -103,7 +103,8 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "user", roles = {"user"})
   void unauthorizedCreate() throws Exception {
-    when(eventService.createEvent(any(CreateEventDto.class), any()))
+    when(eventService
+        .createEvent(anyString(), anyString(), anyString(), anyString(), anyLong(), any()))
         .thenReturn(mockEvent);
 
     mockMvc
@@ -115,7 +116,8 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void nullBodyCreate() throws Exception {
-    when(eventService.createEvent(any(CreateEventDto.class), any((Principal.class))))
+    when(eventService.createEvent(anyString(), anyString(), anyString(), anyString(), anyLong(),
+        any((Principal.class))))
         .thenReturn(mockEvent);
 
     mockMvc.perform(post("/vmanager/event"))

@@ -1,7 +1,7 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.EventStatus;
-import be.xplore.notifyme.dto.CreateEventDto;
+import be.xplore.notifyme.dto.event.CreateEventDto;
 import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.dto.event.PutEventDto;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/vmanager")
-@RolesAllowed({"venue_manager","admin"})
+@RolesAllowed({"venue_manager", "admin"})
 @RequiredArgsConstructor
 @Validated
 public class VenueManagerController {
@@ -44,7 +44,10 @@ public class VenueManagerController {
   @PostMapping("/event")
   public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto,
                                             Principal principal) {
-    var result = eventService.createEvent(createEventDto, principal);
+    var result = eventService
+        .createEvent(createEventDto.getTitle(), createEventDto.getDescription(),
+            createEventDto.getArtist(), createEventDto.getDateTime(), createEventDto.getVenueId(),
+            principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(result);
   }
 

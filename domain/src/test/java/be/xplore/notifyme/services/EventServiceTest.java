@@ -19,7 +19,6 @@ import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
@@ -74,11 +73,12 @@ class EventServiceTest {
     when(venueService.getVenue(1)).thenReturn(getTestVenue());
     when(userService.getUserFromPrincipal(any(Principal.class))).thenReturn(testUser);
 
-    var ced = getTestCreateEventDto();
     var event = new Event();
     event.setId(1L);
     when(eventRepo.save(any())).thenReturn(event);
-    assertThat(eventService.createEvent(ced, principal), instanceOf(Event.class));
+    assertThat(eventService
+            .createEvent("title", "description", "artist", "2021-04-30 06:45", 1L, principal),
+        instanceOf(Event.class));
   }
 
   @Test
@@ -86,9 +86,10 @@ class EventServiceTest {
     final KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     doThrow(CrudException.class).when(venueService).getVenue(1);
 
-    var ced = getTestCreateEventDto();
     assertThrows(CrudException.class, () ->
-        eventService.createEvent(ced, principal));
+        eventService
+            .createEvent("title", "description", "artist",
+                "2021-04-30 06:45", 1L, principal));
   }
 
   @Test
@@ -208,12 +209,6 @@ class EventServiceTest {
 
     assertThrows(CrudException.class,
         () -> eventService.promoteToLineManager("userid", 1L));
-  }
-
-
-  private CreateEventDto getTestCreateEventDto() {
-    return new CreateEventDto("Evenement", "een evenement", "een artiest",
-        "2021-04-30 06:45", 1);
   }
 
   private Venue getTestVenue() {
