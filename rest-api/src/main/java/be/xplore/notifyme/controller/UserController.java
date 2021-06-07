@@ -6,7 +6,7 @@ import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.dto.organisationapplication.ApplicationOrgNameDto;
 import be.xplore.notifyme.dto.notification.NotificationDto;
-import be.xplore.notifyme.dto.OrganisationsLimitedInfoDto;
+import be.xplore.notifyme.dto.organisation.OrganisationsLimitedInfoDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.communicationpreference.GetCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.PostCommunicationPreferenceDto;

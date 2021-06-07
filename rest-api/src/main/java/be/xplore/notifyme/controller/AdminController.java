@@ -3,7 +3,7 @@ package be.xplore.notifyme.controller;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.dto.venue.CreateVenueDto;
 import be.xplore.notifyme.dto.organisation.OrganisationDto;
-import be.xplore.notifyme.dto.UserOrgRequestDto;
+import be.xplore.notifyme.dto.organisationapplication.UserOrgRequestDto;
 import be.xplore.notifyme.dto.notification.GetNotificationDto;
 import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.IOrganisationService;

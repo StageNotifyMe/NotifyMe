@@ -1,4 +1,4 @@
-package be.xplore.notifyme.dto;
+package be.xplore.notifyme.dto.organisation;
 
 import be.xplore.notifyme.domain.Organisation;
 import lombok.Getter;

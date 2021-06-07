@@ -1,4 +1,4 @@
-package be.xplore.notifyme.dto;
+package be.xplore.notifyme.dto.userapplication;
 
 import be.xplore.notifyme.domain.OrganisationUserKey;
 import lombok.AllArgsConstructor;
