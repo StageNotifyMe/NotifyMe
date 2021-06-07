@@ -3,8 +3,8 @@ package be.xplore.notifyme.services;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
+import be.xplore.notifyme.domain.SystemMessages;
 import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.services.systemmessages.SystemMessages;
 import java.util.Collection;
 import java.util.List;
 

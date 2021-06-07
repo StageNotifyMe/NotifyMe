@@ -10,6 +10,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.EventStatus;
@@ -17,17 +18,19 @@ import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.OrganisationUser;
 import be.xplore.notifyme.domain.OrganisationUserKey;
+import be.xplore.notifyme.domain.SystemMessages;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.persistence.IMessageRepo;
 import be.xplore.notifyme.persistence.INotificationRepo;
-import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
 import be.xplore.notifyme.services.communicationstrategies.IEmailService;
 import be.xplore.notifyme.services.communicationstrategies.ISmsService;
-import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
-import be.xplore.notifyme.services.systemmessages.PickLanguageService;
-import be.xplore.notifyme.services.systemmessages.SystemMessages;
-import be.xplore.notifyme.services.systemmessages.SystemMessagesEn;
+import be.xplore.notifyme.services.communicationstrategies.implementations.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.implementations.KeycloakCommunicationService;
+import be.xplore.notifyme.services.implementations.NotificationService;
+import be.xplore.notifyme.services.implementations.OrganisationService;
+import be.xplore.notifyme.services.systemmessages.implementations.PickLanguageService;
+import be.xplore.notifyme.services.systemmessages.implementations.SystemMessagesEn;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -364,7 +367,7 @@ class NotificationServiceTest {
     mockCreateAndSendSystemNotification();
     assertDoesNotThrow(() -> {
       notificationService.createAndSendSystemNotification("userId", SystemMessages.CANCEL_EVENT,
-          new Object[]{Event.builder().id(1L).build()});
+          new Object[] {Event.builder().id(1L).build()});
     });
   }
 
@@ -393,11 +396,11 @@ class NotificationServiceTest {
     userList.add(User.builder().userId("userId").build());
     assertDoesNotThrow(() -> {
       notificationService.notifyUsers(userList, SystemMessages.CANCEL_EVENT,
-          new Object[]{Event.builder().id(1L).build()});
+          new Object[] {Event.builder().id(1L).build()});
     });
     assertDoesNotThrow(() -> {
       notificationService.notifyUsers(null, SystemMessages.CANCEL_EVENT,
-          new Object[]{Event.builder().id(1L).build()});
+          new Object[] {Event.builder().id(1L).build()});
     });
   }
 

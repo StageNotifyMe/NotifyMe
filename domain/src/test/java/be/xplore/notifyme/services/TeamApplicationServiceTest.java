@@ -16,6 +16,7 @@ import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.domain.TeamApplicationKey;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.persistence.ITeamRepo;
+import be.xplore.notifyme.services.implementations.TeamApplicationService;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;

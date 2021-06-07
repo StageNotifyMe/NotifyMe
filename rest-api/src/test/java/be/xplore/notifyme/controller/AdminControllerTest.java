@@ -18,10 +18,10 @@ import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.services.INotificationService;
-import be.xplore.notifyme.services.KeycloakCommunicationService;
-import be.xplore.notifyme.services.OrganisationService;
-import be.xplore.notifyme.services.UserService;
-import be.xplore.notifyme.services.VenueService;
+import be.xplore.notifyme.services.implementations.KeycloakCommunicationService;
+import be.xplore.notifyme.services.implementations.OrganisationService;
+import be.xplore.notifyme.services.implementations.UserService;
+import be.xplore.notifyme.services.implementations.VenueService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -164,7 +164,9 @@ class AdminControllerTest {
   @Test
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void createVenue() throws Exception {
-    when(venueService.createVenue(any(), any()))
+    when(venueService
+        .createVenue(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),
+            any()))
         .thenReturn(new Venue());
 
     mockMvc.perform(post("/admin/venue").content("{"

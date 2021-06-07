@@ -1,7 +1,7 @@
 package be.xplore.notifyme.dto.user;
 
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,6 +1,5 @@
 package be.xplore.notifyme.domain;
 
-import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.ArrayList;
 import java.util.HashSet;

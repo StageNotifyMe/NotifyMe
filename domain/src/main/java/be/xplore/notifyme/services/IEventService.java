@@ -2,13 +2,13 @@ package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.EventStatus;
-import be.xplore.notifyme.dto.CreateEventDto;
 import java.security.Principal;
 import java.util.List;
 
 public interface IEventService {
 
-  Event createEvent(CreateEventDto createEventDto, Principal principal);
+  Event createEvent(String title, String description, String artist, String dateTime,
+                    long venueId, Principal principal);
 
   Event getEvent(long eventId);
 

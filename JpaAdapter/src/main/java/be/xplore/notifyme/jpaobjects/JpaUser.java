@@ -1,7 +1,7 @@
 package be.xplore.notifyme.jpaobjects;
 
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.User;
-import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

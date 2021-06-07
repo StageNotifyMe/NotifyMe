@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
@@ -25,18 +26,17 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
-import be.xplore.notifyme.services.CommunicationPreferenceService;
 import be.xplore.notifyme.services.ILineService;
 import be.xplore.notifyme.services.ITeamApplicationService;
 import be.xplore.notifyme.services.ITeamService;
-import be.xplore.notifyme.services.KeycloakCommunicationService;
-import be.xplore.notifyme.services.NotificationService;
-import be.xplore.notifyme.services.OrganisationService;
-import be.xplore.notifyme.services.UserOrgApplicationService;
-import be.xplore.notifyme.services.UserService;
-import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
 import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
-import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
+import be.xplore.notifyme.services.communicationstrategies.implementations.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.implementations.CommunicationPreferenceService;
+import be.xplore.notifyme.services.implementations.KeycloakCommunicationService;
+import be.xplore.notifyme.services.implementations.NotificationService;
+import be.xplore.notifyme.services.implementations.OrganisationService;
+import be.xplore.notifyme.services.implementations.UserOrgApplicationService;
+import be.xplore.notifyme.services.implementations.UserService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,6 +55,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 
 @SpringBootTest(classes = {UserController.class})
 @AutoConfigureMockMvc(addFilters = false)

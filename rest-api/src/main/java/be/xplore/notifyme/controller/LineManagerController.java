@@ -2,7 +2,7 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Team;
-import be.xplore.notifyme.dto.GetLineDto;
+import be.xplore.notifyme.dto.line.GetLineDto;
 import be.xplore.notifyme.dto.notification.PostOrgNotificationDto;
 import be.xplore.notifyme.dto.team.PostTeamDto;
 import be.xplore.notifyme.dto.team.PutTeamDto;

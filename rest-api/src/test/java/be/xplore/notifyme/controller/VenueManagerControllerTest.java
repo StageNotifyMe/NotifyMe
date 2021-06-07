@@ -1,6 +1,7 @@
 package be.xplore.notifyme.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -18,14 +19,13 @@ import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
-import be.xplore.notifyme.services.EventService;
-import be.xplore.notifyme.services.FacilityService;
 import be.xplore.notifyme.services.IUserService;
-import be.xplore.notifyme.services.LineService;
-import be.xplore.notifyme.services.VenueService;
+import be.xplore.notifyme.services.implementations.EventService;
+import be.xplore.notifyme.services.implementations.FacilityService;
+import be.xplore.notifyme.services.implementations.LineService;
+import be.xplore.notifyme.services.implementations.VenueService;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -91,7 +91,8 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void createEventSuccessful() throws Exception {
-    when(eventService.createEvent(any(CreateEventDto.class), any(Principal.class)))
+    when(eventService.createEvent(anyString(), anyString(), anyString(), anyString(), anyLong(),
+        any(Principal.class)))
         .thenReturn(mockEvent);
 
     mockMvc
@@ -103,7 +104,8 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "user", roles = {"user"})
   void unauthorizedCreate() throws Exception {
-    when(eventService.createEvent(any(CreateEventDto.class), any()))
+    when(eventService
+        .createEvent(anyString(), anyString(), anyString(), anyString(), anyLong(), any()))
         .thenReturn(mockEvent);
 
     mockMvc
@@ -115,7 +117,8 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void nullBodyCreate() throws Exception {
-    when(eventService.createEvent(any(CreateEventDto.class), any((Principal.class))))
+    when(eventService.createEvent(anyString(), anyString(), anyString(), anyString(), anyLong(),
+        any((Principal.class))))
         .thenReturn(mockEvent);
 
     mockMvc.perform(post("/vmanager/event"))
@@ -233,7 +236,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void postLineSuccessful() throws Exception {
-    when(lineService.createLine(any(), any()))
+    when(lineService.createLine(anyString(), anyInt(), anyLong(), anyLong(), any()))
         .thenReturn(new Line());
 
     mockMvc
@@ -245,7 +248,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void postLineUnsuccessful() throws Exception {
-    when(lineService.createLine(any(), any()))
+    when(lineService.createLine(anyString(), anyInt(), anyLong(), anyLong(), any()))
         .thenThrow(new CrudException("Could not create line"));
 
     mockMvc
@@ -257,7 +260,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void postFacilitySuccessful() throws Exception {
-    when(facilityService.createFacility(any()))
+    when(facilityService.createFacility(anyString(), anyString(), anyInt(), anyInt(), anyLong()))
         .thenReturn(new Facility());
 
     mockMvc
@@ -269,7 +272,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void postFacilityUnuccessful() throws Exception {
-    when(facilityService.createFacility(any()))
+    when(facilityService.createFacility(anyString(), anyString(), anyInt(), anyInt(), anyLong()))
         .thenThrow(new CrudException("Could not create facility."));
 
     mockMvc

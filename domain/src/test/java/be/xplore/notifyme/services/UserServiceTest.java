@@ -12,6 +12,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.RelevantClientInfoDto;
 import be.xplore.notifyme.dto.UserRegistrationDto;
@@ -19,7 +20,10 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
-import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
+import be.xplore.notifyme.services.implementations.CommunicationPreferenceService;
+import be.xplore.notifyme.services.implementations.KeycloakCommunicationService;
+import be.xplore.notifyme.services.implementations.TokenService;
+import be.xplore.notifyme.services.implementations.UserService;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 import java.util.ArrayList;
@@ -124,7 +128,7 @@ class UserServiceTest {
   }
 
   private void mockKeycloakSecurityContext(UserRepresentation userRep,
-      Boolean hasRequiredPermission) {
+                                           Boolean hasRequiredPermission) {
     KeycloakAuthenticationToken keycloakPrincipal = getKeycloakPrincipal();
 
     KeycloakSecurityContext keycloakSecurityContext = Mockito.mock(KeycloakSecurityContext.class);

@@ -6,8 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.SystemMessages;
 import be.xplore.notifyme.exception.SystemNotificationException;
+import be.xplore.notifyme.services.systemmessages.implementations.SystemMessagesEn;
+import be.xplore.notifyme.services.systemmessages.implementations.SystemMessagesNl;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;

@@ -5,10 +5,10 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
 import be.xplore.notifyme.services.communicationstrategies.IEmailService;
 import be.xplore.notifyme.services.communicationstrategies.ISmsService;
-import be.xplore.notifyme.services.communicationstrategies.SmsCommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.implementations.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.implementations.SmsCommunicationStrategy;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
