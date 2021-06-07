@@ -1,10 +1,11 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
+import be.xplore.notifyme.services.IOrganisationService;
 import java.security.Principal;
 import java.util.List;
 import lombok.AllArgsConstructor;

@@ -1,5 +1,7 @@
-package be.xplore.notifyme.services.systemmessages;
+package be.xplore.notifyme.services.systemmessages.implementations;
 
+import be.xplore.notifyme.domain.AvailableLanguages;
+import be.xplore.notifyme.services.systemmessages.ILanguagePreferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,9 @@
-package be.xplore.notifyme.services.systemmessages;
+package be.xplore.notifyme.services.systemmessages.implementations;
 
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Message;
+import be.xplore.notifyme.services.systemmessages.ILanguagePreferenceService;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

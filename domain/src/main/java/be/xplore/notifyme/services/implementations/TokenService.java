@@ -1,6 +1,7 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
 import be.xplore.notifyme.exception.TokenHandlerException;
+import be.xplore.notifyme.services.ITokenService;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

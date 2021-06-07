@@ -16,6 +16,8 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
+import be.xplore.notifyme.services.implementations.OrganisationService;
+import be.xplore.notifyme.services.implementations.UserService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;

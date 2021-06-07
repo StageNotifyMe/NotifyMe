@@ -1,10 +1,11 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.persistence.ICommunicationPreferenceRepo;
-import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.ICommunicationPreferenceService;
 import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
-import be.xplore.notifyme.services.communicationstrategies.SmsCommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.implementations.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.implementations.SmsCommunicationStrategy;
 import java.util.List;
 import javax.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,8 @@ public class CommunicationPreferenceService implements ICommunicationPreferenceS
 
   @Override
   public CommunicationPreference createCommunicationPreference(String userId, boolean isActive,
-      boolean isDefault, boolean isUrgent, String strategy) {
+                                                               boolean isDefault, boolean isUrgent,
+                                                               String strategy) {
     var strategyImpl = getStrategyImplementation(strategy);
     if (strategyImpl instanceof SmsCommunicationStrategy) {
       keycloakCommunicationService.checkPhoneVerification(userId);
@@ -34,8 +36,9 @@ public class CommunicationPreferenceService implements ICommunicationPreferenceS
 
   @Override
   public CommunicationPreference updateCommunicationPreference(long communicationPreferenceId,
-      boolean isActive,
-      boolean isDefault, boolean isUrgent) {
+                                                               boolean isActive,
+                                                               boolean isDefault,
+                                                               boolean isUrgent) {
     var communicationPreference = communicationPreferenceRepo.findById(communicationPreferenceId);
     if (!communicationPreference.isDefault() && !communicationPreference.isUrgent() && !isDefault
         && !isUrgent) {

@@ -1,11 +1,14 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
 import be.xplore.notifyme.domain.Organisation;
+import be.xplore.notifyme.domain.SystemMessages;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.TeamApplicationStatus;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
-import be.xplore.notifyme.services.systemmessages.SystemMessages;
+import be.xplore.notifyme.services.INotificationService;
+import be.xplore.notifyme.services.ITeamService;
+import be.xplore.notifyme.services.IUserService;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +79,7 @@ public class TeamService implements ITeamService {
 
   @Override
   public Team changeApplicationStatus(String userId, Long teamId,
-      TeamApplicationStatus applicationStatus) {
+                                      TeamApplicationStatus applicationStatus) {
     return teamRepo.changeApplicationStatus(userId, teamId, applicationStatus);
   }
 

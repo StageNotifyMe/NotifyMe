@@ -1,7 +1,9 @@
 package be.xplore.notifyme.services.systemmessages;
 
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Message;
+import be.xplore.notifyme.domain.SystemMessages;
 import be.xplore.notifyme.exception.SystemNotificationException;
 
 public interface ILanguagePreferenceService {

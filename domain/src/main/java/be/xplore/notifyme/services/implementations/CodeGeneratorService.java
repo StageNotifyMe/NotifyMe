@@ -1,4 +1,4 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
 import java.security.SecureRandom;
 import lombok.RequiredArgsConstructor;

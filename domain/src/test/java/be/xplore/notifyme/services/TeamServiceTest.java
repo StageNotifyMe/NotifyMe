@@ -22,6 +22,7 @@ import be.xplore.notifyme.domain.TeamApplicationStatus;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
+import be.xplore.notifyme.services.implementations.TeamService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

@@ -1,9 +1,10 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
 import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IFacilityRepo;
+import be.xplore.notifyme.services.IFacilityService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

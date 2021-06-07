@@ -12,6 +12,7 @@ import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.services.communicationstrategies.implementations.SmsCommunicationStrategy;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package be.xplore.notifyme.services.systemmessages;
+package be.xplore.notifyme.domain;
 
 public enum SystemMessages {
   CANCEL_EVENT,

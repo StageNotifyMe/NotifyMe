@@ -1,13 +1,15 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.EventStatus;
+import be.xplore.notifyme.domain.SystemMessages;
 import be.xplore.notifyme.dto.CreateEventDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IEventRepo;
-import be.xplore.notifyme.services.systemmessages.SystemMessages;
+import be.xplore.notifyme.services.IEventService;
+import be.xplore.notifyme.services.INotificationService;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

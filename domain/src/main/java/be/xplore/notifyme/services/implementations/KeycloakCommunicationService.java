@@ -1,4 +1,4 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
 import be.xplore.notifyme.dto.AdminTokenResponseDto;
 import be.xplore.notifyme.dto.CredentialRepresentationDto;
@@ -8,6 +8,8 @@ import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.exception.ChannelNotVerifiedException;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.services.IKeycloakCommunicationService;
+import be.xplore.notifyme.services.ISmsVerificationSenderService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.account.UserRepresentation;
@@ -40,16 +43,22 @@ import org.springframework.web.client.RestTemplate;
 public class KeycloakCommunicationService implements IKeycloakCommunicationService {
 
   @Value("${keycloak.resource}")
-  String clientId;
+  @Getter
+  private String clientId;
   @Value("${keycloak.credentials.secret}")
-  String clientSecret;
+  @Getter
+  private String clientSecret;
   @Value("${userservice.login.url}")
-  String tokenUri;
+  @Getter
+  public String tokenUri;
   @Value("${userservice.register.url}")
+  @Getter
   private String registerUri;
   @Value("${userservice.clients.url}")
+  @Getter
   private String clientUri;
   @Value("${notifyme.link}")
+  @Getter
   private String notifymeLink;
   final RestTemplate restTemplate;
   @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")

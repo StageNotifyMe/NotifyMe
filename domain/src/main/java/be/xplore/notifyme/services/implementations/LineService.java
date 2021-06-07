@@ -1,10 +1,11 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ILineRepo;
+import be.xplore.notifyme.services.ILineService;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

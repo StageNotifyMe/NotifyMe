@@ -1,4 +1,4 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
 import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.User;
@@ -8,6 +8,7 @@ import be.xplore.notifyme.dto.GetVenueDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.persistence.IVenueRepo;
+import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;

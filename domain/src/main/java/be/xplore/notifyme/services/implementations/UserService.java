@@ -1,12 +1,14 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
+
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.UnauthorizedException;
 import be.xplore.notifyme.persistence.IUserRepo;
-import be.xplore.notifyme.services.systemmessages.AvailableLanguages;
+import be.xplore.notifyme.services.IUserService;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -214,15 +216,15 @@ public class UserService implements IUserService {
 
   @Override
   public void updateAccountInfo(String userId, String username, String firstName, String lastName,
-      String email, String phoneNumber, String preferedLanguage) {
+                                String email, String phoneNumber, String preferedLanguage) {
     updateUserRepresentation(userId, username, firstName, lastName, email, phoneNumber);
     updateUser(userId, preferedLanguage);
   }
 
 
   private void updateUserRepresentation(String userId, String username, String firstName,
-      String lastName,
-      String email, String phoneNumber) {
+                                        String lastName,
+                                        String email, String phoneNumber) {
     var userRep = keycloakCommunicationService.getUserInfoId(userId);
     userRep.setUsername(username);
     userRep.setId(userId);
@@ -239,7 +241,7 @@ public class UserService implements IUserService {
   }
 
   private Object[] checkUpdateEmailAndPhone(UserRepresentation userRep,
-      String email, String phoneNumber) {
+                                            String email, String phoneNumber) {
     var resendEmailVerification = false;
     var resendPhoneVerification = false;
     if (!email.equals(userRep.getEmail())) {
@@ -252,6 +254,6 @@ public class UserService implements IUserService {
       userRep.getAttributes().replace("phone_number_verified", List.of("false"));
       resendPhoneVerification = true;
     }
-    return new Object[]{userRep, resendEmailVerification, resendPhoneVerification};
+    return new Object[] {userRep, resendEmailVerification, resendPhoneVerification};
   }
 }

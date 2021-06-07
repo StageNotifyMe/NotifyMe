@@ -20,6 +20,8 @@ import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.UserRepresentationDto;
 import be.xplore.notifyme.exception.ChannelNotVerifiedException;
 import be.xplore.notifyme.exception.CrudException;
+import be.xplore.notifyme.services.implementations.CodeGeneratorService;
+import be.xplore.notifyme.services.implementations.KeycloakCommunicationService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;

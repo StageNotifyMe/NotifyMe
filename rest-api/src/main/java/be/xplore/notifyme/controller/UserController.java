@@ -21,7 +21,7 @@ import be.xplore.notifyme.services.ITeamApplicationService;
 import be.xplore.notifyme.services.ITeamService;
 import be.xplore.notifyme.services.IUserOrgApplicationService;
 import be.xplore.notifyme.services.IUserService;
-import be.xplore.notifyme.services.NotificationService;
+import be.xplore.notifyme.services.implementations.NotificationService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;

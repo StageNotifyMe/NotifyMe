@@ -16,6 +16,8 @@ import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IFacilityRepo;
 import be.xplore.notifyme.persistence.IVenueRepo;
+import be.xplore.notifyme.services.implementations.FacilityService;
+import be.xplore.notifyme.services.implementations.VenueService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;

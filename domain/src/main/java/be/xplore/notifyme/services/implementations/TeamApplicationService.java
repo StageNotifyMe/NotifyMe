@@ -1,12 +1,16 @@
-package be.xplore.notifyme.services;
+package be.xplore.notifyme.services.implementations;
 
+import be.xplore.notifyme.domain.SystemMessages;
 import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.domain.TeamApplicationKey;
 import be.xplore.notifyme.domain.TeamApplicationStatus;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.persistence.ITeamRepo;
-import be.xplore.notifyme.services.systemmessages.SystemMessages;
+import be.xplore.notifyme.services.INotificationService;
+import be.xplore.notifyme.services.ITeamApplicationService;
+import be.xplore.notifyme.services.ITeamService;
+import be.xplore.notifyme.services.IUserService;
 import java.security.Principal;
 import java.util.Set;
 import lombok.Getter;
@@ -48,7 +52,7 @@ public class TeamApplicationService implements ITeamApplicationService {
 
   @Override
   public void handleTeamApplication(TeamApplicationKey teamApplicationKey, boolean accept,
-      Principal principal) {
+                                    Principal principal) {
     if (accept) {
       var team = teamService.addUserToTeam(teamApplicationKey.getTeamId(),
           teamApplicationKey.getUserId());
@@ -65,7 +69,7 @@ public class TeamApplicationService implements ITeamApplicationService {
   private void sendUserApplicationApprovalNotification(User user, Team team) {
     notificationService
         .createAndSendSystemNotification(user.getUserId(), SystemMessages.TEAM_APPLICATION_APPROVED,
-            new Object[]{team.getLine().getEvent().getTitle()});
+            new Object[] {team.getLine().getEvent().getTitle()});
   }
 
 }
