@@ -159,7 +159,7 @@ public class UserService implements IUserService {
   private void createUserInDatabase(String id, String username) {
     var user = new User(id, username);
     user.setUserId(id);
-    userRepo.save(user);
+    userRepo.createUser(user);
   }
 
   /**
