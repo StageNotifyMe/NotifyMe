@@ -15,7 +15,6 @@ import static org.mockito.Mockito.when;
 import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.dto.GetVenueDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
 import be.xplore.notifyme.exception.TokenHandlerException;
@@ -115,8 +114,8 @@ class VenueServiceTest {
     when(venueRepo.getAllByManagersIsContaining(user.getUserId())).thenReturn(getTestVenues());
 
     var result = venueService.getVenuesForUser("abcd");
-    assertEquals(getTestGetVenues().size(), result.size());
-    assertEquals(getTestGetVenues().get(0).getId(), result.get(0).getId());
+    assertEquals(getTestVenues().size(), result.size());
+    assertEquals(getTestVenues().get(0).getId(), result.get(0).getId());
   }
 
   @Test
@@ -184,12 +183,12 @@ class VenueServiceTest {
         .anyMatch(user -> user.getUserId().equals(getTestUser().getUserId())));
   }
 
-  private List<GetVenueDto> getTestGetVenues() {
+/*  private List<GetVenueDto> getTestGetVenues() {
     LinkedList<GetVenueDto> venues = new LinkedList<>();
     venues.add(new GetVenueDto(getTestVenue().getId(), getTestVenue().getName(),
         getTestVenue().getDescription(), getTestVenue().getAddress()));
     return venues;
-  }
+  }*/
 
   private List<Venue> getTestVenues() {
     LinkedList<Venue> venues = new LinkedList<>();

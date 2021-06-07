@@ -1,4 +1,4 @@
-package be.xplore.notifyme.dto;
+package be.xplore.notifyme.dto.notification;
 
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;

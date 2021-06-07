@@ -2,7 +2,7 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.dto.GetVenueDto;
+import be.xplore.notifyme.dto.venue.GetVenueDto;
 import be.xplore.notifyme.dto.event.CreateEventDto;
 import be.xplore.notifyme.dto.event.PutEventDto;
 import be.xplore.notifyme.dto.facility.CreateFacilityDto;
