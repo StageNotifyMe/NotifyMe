@@ -80,7 +80,7 @@ public class AdminController {
 
   @PostMapping("/promoteUserToVmanager")
   public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
-      long venueId) {
+                                                          long venueId) {
     venueService.makeUserVenueManager(userId, venueId);
     return ResponseEntity.noContent().build();
   }
@@ -99,6 +99,13 @@ public class AdminController {
     return ResponseEntity.ok(organisations);
   }
 
+  /**
+   * HTTP POST: creates a new venue.
+   *
+   * @param createVenueDto contains all information for Venue domain object.
+   * @param principal      authorization header.
+   * @return the created Venue object.
+   */
   @PostMapping("/venue")
   public ResponseEntity<Object> createVenue(
       @RequestBody @NotNull CreateVenueDto createVenueDto,
