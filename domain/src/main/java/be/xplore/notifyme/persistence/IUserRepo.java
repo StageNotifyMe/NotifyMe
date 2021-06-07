@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IUserRepo {
+
   User save(User user);
 
   Optional<User> findById(String userId);
@@ -14,4 +15,6 @@ public interface IUserRepo {
   User findByIdIncOrganisations(String userId);
 
   User findByIdIncAppliedUsers(String userId);
+
+  User findByIdIncTeamApplications(String userId);
 }

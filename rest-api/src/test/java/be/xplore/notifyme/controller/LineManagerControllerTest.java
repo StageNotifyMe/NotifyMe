@@ -19,6 +19,7 @@ import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
 import be.xplore.notifyme.services.IEventService;
 import be.xplore.notifyme.services.ILineService;
+import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.ITeamService;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,6 +45,9 @@ class LineManagerControllerTest {
 
   @Autowired
   private LineManagerController lineManagerController;
+
+  @MockBean
+  private INotificationService notificationService;
 
   @BeforeEach
   public void setup() {
@@ -120,7 +124,7 @@ class LineManagerControllerTest {
   }
 
   private void mockGetCreateTeam() {
-    var dummyTeam = new Team(1L, new Line(), new ArrayList<>(), new HashSet<>());
+    var dummyTeam = new Team(1L, new Line(), new ArrayList<>(), new HashSet<>(), new ArrayList<>());
     when(teamService.getTeam(1L)).thenReturn(dummyTeam);
     when(teamService.createTeam(1L, 1L)).thenReturn(dummyTeam);
   }
@@ -222,6 +226,21 @@ class LineManagerControllerTest {
     doNothing().when(teamService).deleteOrganisationFromTeam(1L, 1L);
 
     mockMvc.perform(delete("/lmanager/team/organisation?teamId=1&organisationId=1"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  @Test
+  @WithMockUser(username = "lmanager", roles = {"user", "line_manager"})
+  void createNotificationForOmanager() throws Exception {
+    doNothing().when(notificationService).notifyOrganisationManagers(1L, "userId", "title", "text");
+
+    mockMvc.perform(post("/lmanager/notify/organisation").contentType(MediaType.APPLICATION_JSON)
+        .content("{\n"
+            + "\t\"senderId\":\"userId\",\n"
+            + "\t\"receivingOrgId\":1,\n"
+            + "\t\"title\":\"title\",\n"
+            + "\t\"text\":\"text\"\n"
+            + "}"))
         .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 

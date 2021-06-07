@@ -1,25 +1,31 @@
 package be.xplore.notifyme.controller;
 
-import be.xplore.notifyme.domain.Line;
-import be.xplore.notifyme.dto.CreateEventDto;
-import be.xplore.notifyme.dto.CreateFacilityDto;
-import be.xplore.notifyme.dto.CreateLineDto;
-import be.xplore.notifyme.dto.GetLineDto;
+import be.xplore.notifyme.domain.EventStatus;
+import be.xplore.notifyme.domain.Venue;
+import be.xplore.notifyme.dto.event.CreateEventDto;
+import be.xplore.notifyme.dto.event.PutEventDto;
+import be.xplore.notifyme.dto.facility.CreateFacilityDto;
+import be.xplore.notifyme.dto.line.CreateLineDto;
+import be.xplore.notifyme.dto.venue.GetVenueDto;
 import be.xplore.notifyme.services.IEventService;
 import be.xplore.notifyme.services.IFacilityService;
 import be.xplore.notifyme.services.ILineService;
+import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.representations.account.UserRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/vmanager")
-@RolesAllowed("venue_manager")
+@RolesAllowed({"venue_manager", "admin"})
 @RequiredArgsConstructor
 @Validated
 public class VenueManagerController {
@@ -36,11 +42,22 @@ public class VenueManagerController {
   private final IVenueService venueService;
   private final IFacilityService facilityService;
   private final ILineService lineService;
+  private final IUserService userService;
 
+  /**
+   * HTTP POST: creates a new Event.
+   *
+   * @param createEventDto contains all relevant information for domain event object.
+   * @param principal      authorization header.
+   * @return created event.
+   */
   @PostMapping("/event")
   public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto,
       Principal principal) {
-    var result = eventService.createEvent(createEventDto, principal);
+    var result = eventService
+        .createEvent(createEventDto.getTitle(), createEventDto.getDescription(),
+            createEventDto.getArtist(), createEventDto.getDateTime(), createEventDto.getVenueId(),
+            principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(result);
   }
 
@@ -51,24 +68,34 @@ public class VenueManagerController {
   }
 
   /**
-   * Gets all of the lines for a certain event.
+   * Updates the status of an event.
    *
-   * @param eventId the unique id of the event.
-   * @return the lines related to this event.
+   * @param putEventDto needs to contain eventId and status.
+   * @return updated event object.
    */
-  @GetMapping("/lines")
-  public ResponseEntity<Object> getAllLinesForEvent(@RequestParam long eventId) {
-    var lines = lineService.getAllLinesByEvent(eventId);
-    var dtoLines = new LinkedList<GetLineDto>();
-    for (Line line : lines) {
-      dtoLines.add(new GetLineDto(line));
-    }
-    return ResponseEntity.ok(dtoLines);
+  @PutMapping("/event/status")
+  public ResponseEntity<Object> updateEventStatus(@RequestBody PutEventDto putEventDto) {
+    var updatedEvent =
+        eventService.updateEventStatus(putEventDto.getEventId(),
+            EventStatus.valueOf(putEventDto.getEventStatus()));
+    return ResponseEntity.ok(updatedEvent);
   }
 
+  /**
+   * HTTP GET: gets all venues of which the user is venue manager.
+   *
+   * @param userId of the venue manager.
+   * @return List of venue objects.
+   */
   @GetMapping("/venues")
   public ResponseEntity<Object> getAllVenuesForUser(@RequestParam @NotBlank String userId) {
-    return ResponseEntity.ok(venueService.getVenuesForUser(userId));
+    var venues = venueService.getVenuesForUser(userId);
+    var venueDtos = new ArrayList<GetVenueDto>();
+    for (Venue venue : venues) {
+      venueDtos.add(new GetVenueDto(venue.getId(), venue.getName(), venue.getDescription(),
+          venue.getAddress()));
+    }
+    return ResponseEntity.ok(venueDtos);
   }
 
   @GetMapping("/venue")
@@ -77,17 +104,34 @@ public class VenueManagerController {
     return ResponseEntity.ok(venue);
   }
 
+  /**
+   * HTTP POST: creates a new Line object.
+   *
+   * @param createLineDto all information need for domain Line object.
+   * @param principal     authorization header.
+   * @return the crated Line object.
+   */
   @PostMapping("/line")
   public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto,
       Principal principal) {
-    var line = lineService.createLine(createLineDto, principal);
+    var line = lineService.createLine(createLineDto.getNote(), createLineDto.getRequiredStaff(),
+        createLineDto.getFacilityId(), createLineDto.getEventId(), principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(line);
   }
 
+  /**
+   * HTTP POST: creates a new facility object.
+   *
+   * @param createFacilityDto contains all information for domain facility object.
+   * @return created facility.
+   */
   @PostMapping("/facility")
   public ResponseEntity<Object> createFacility(
       @RequestBody @NotNull CreateFacilityDto createFacilityDto) {
-    var facility = facilityService.createFacility(createFacilityDto);
+    var facility = facilityService
+        .createFacility(createFacilityDto.getDescription(), createFacilityDto.getLocation(),
+            createFacilityDto.getMinimalStaff(), createFacilityDto.getMaximalStaff(),
+            createFacilityDto.getVenueId());
     return ResponseEntity.status(HttpStatus.CREATED).body(facility);
   }
 
@@ -108,5 +152,17 @@ public class VenueManagerController {
   public ResponseEntity<Object> getLineManagersForEvent(@RequestParam long eventId) {
     var result = eventService.getEvent(eventId).getLineManagers();
     return ResponseEntity.ok(result);
+  }
+
+  /**
+   * Gets a list of all keycloak users.
+   *
+   * @return a list of keycloak user representations in dto format.
+   */
+  @GetMapping("/users")
+  public ResponseEntity<List<UserRepresentation>> getUsers() {
+    var userRepresentations = userService
+        .getAllUserInfo();
+    return ResponseEntity.ok(userRepresentations);
   }
 }

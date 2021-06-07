@@ -1,5 +1,6 @@
 package be.xplore.notifyme.jpaobjects;
 
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.User;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,7 @@ public class JpaUser {
   //@GeneratedValue(strategy = GenerationType.IDENTITY)
   private String userId;
   private String userName;
+  private AvailableLanguages preferedLanguage;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<JpaOrganisationUser> organisations;
@@ -41,6 +43,8 @@ public class JpaUser {
   private List<JpaNotification> notifications;
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
   private List<JpaCommunicationPreference> communicationPreferences;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "appliedUser")
+  private List<JpaTeamApplication> teamApplications;
 
   /**
    * Converts a jpa-object to a domain variant.
@@ -51,6 +55,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .venues(this.venues.stream().map(JpaVenue::toDomain).collect(Collectors.toList()))
         .events(this.events.stream().map(JpaEvent::toDomain).collect(Collectors.toList()))
         .organisations(this.organisations.stream().map(JpaOrganisationUser::toDomain).collect(
@@ -71,9 +76,25 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .appliedOrganisations(
             this.appliedOrganisations.stream().map(JpaUserOrgApplication::toDomainBase).collect(
                 Collectors.toList()))
+        .build();
+  }
+
+  /**
+   * Converts jpa user to domain user with applied organisations.
+   *
+   * @return domain user with applied orgs.
+   */
+  public User toDomainIncTeamApplications() {
+    return User.builder()
+        .userId(this.userId)
+        .userName(this.userName)
+        .teamApplications(
+            this.teamApplications.stream().map(JpaTeamApplication::toDomainBase).collect(
+                Collectors.toSet()))
         .build();
   }
 
@@ -86,6 +107,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .notifications(this.notifications.stream().map(JpaNotification::toDomainBase).collect(
             Collectors.toList()))
         .build();
@@ -100,6 +122,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .communicationPreferences(
             this.communicationPreferences.stream().map(JpaCommunicationPreference::toDomainBase)
                 .collect(Collectors.toList()))
@@ -115,6 +138,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .build();
   }
 
@@ -126,6 +150,7 @@ public class JpaUser {
   public JpaUser(User user) {
     this.userId = user.getUserId();
     this.userName = user.getUserName();
+    this.preferedLanguage = user.getPreferedLanguage();
     this.organisations = user.getOrganisations().stream().map(JpaOrganisationUser::new).collect(
         Collectors.toList());
     this.appliedOrganisations = user.getAppliedOrganisations().stream()
@@ -147,6 +172,7 @@ public class JpaUser {
     return User.builder()
         .userId(this.userId)
         .userName(this.userName)
+        .preferedLanguage(this.preferedLanguage)
         .organisations(
             this.organisations.stream().map(JpaOrganisationUser::toDomainBaseIncOrganisations)
                 .collect(Collectors.toList()))

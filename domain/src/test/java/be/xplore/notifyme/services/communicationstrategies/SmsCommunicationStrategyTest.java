@@ -12,6 +12,8 @@ import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.User;
+import be.xplore.notifyme.services.communicationstrategies.implementations.SmsCommunicationStrategy;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +25,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {SmsCommunicationStrategy.class})
 class SmsCommunicationStrategyTest {
+
   @Autowired
   private SmsCommunicationStrategy smsCommunicationStrategy;
   @MockBean
@@ -44,7 +47,10 @@ class SmsCommunicationStrategyTest {
     var message = new Message("title", "text");
     var user = mock(User.class);
     var notification =
-        new Notification(1L, "+32123456789", comPref, "smscommunicationstrategy", message, user);
+        Notification.builder()
+            .id(1L).communicationAddress("+32123456789").communicationPreference(comPref)
+            .usedCommunicationStrategy("smscommunicationstrategy").message(message)
+            .receiver(user).timestamp(LocalDateTime.now()).hidden(false).sender("SYSTEM").build();
 
     doNothing().when(smsService).send("+32123456789", message);
 

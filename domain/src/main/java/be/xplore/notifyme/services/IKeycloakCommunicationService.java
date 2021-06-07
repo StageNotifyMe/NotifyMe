@@ -19,11 +19,15 @@ public interface IKeycloakCommunicationService {
 
   UserRepresentation getUserInfoUsername(String username);
 
+  UserRepresentation getUserInfoId(String userId);
+
   String getAdminAccesstoken();
 
   MultiValueMap<String, String> addAuthorization(MultiValueMap<String, String> map);
 
   String getUserInfoRest(String accessToken, String username);
+
+  String getUserInfoRestById(String accessToken, String userId);
 
   HttpEntity<String> createJsonHttpEntity(String accessToken);
 
@@ -40,4 +44,11 @@ public interface IKeycloakCommunicationService {
   RelevantClientInfoDto getClient(String clientId);
 
   List<RelevantClientInfoDto> getAllClients();
+
+  void verifyPhoneNo(String username, String code);
+
+  void checkPhoneVerification(String username);
+
+  void updateUserInfo(UserRepresentation userRep, boolean resendEmailVerification,
+                      boolean resendPhoneVerification);
 }

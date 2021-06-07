@@ -7,19 +7,27 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.Team;
+import be.xplore.notifyme.domain.TeamApplication;
+import be.xplore.notifyme.domain.TeamApplicationStatus;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ITeamRepo;
+import be.xplore.notifyme.services.implementations.TeamService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,17 +35,23 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {TeamService.class})
 class TeamServiceTest {
+
   @Autowired
   private TeamService teamService;
   @MockBean
   private ITeamRepo teamRepo;
+  @MockBean
+  private IUserService userService;
+  @MockBean
+  private INotificationService notificationService;
 
   private void setupTeamRepo() {
     final var dummyLine = new Line("note", 10);
     dummyLine.setId(1L);
     final var dummyOrgList = new ArrayList<Organisation>();
     final var dummyMemberSet = new HashSet<User>();
-    final var dummyTeam = new Team(1L, dummyLine, dummyOrgList, dummyMemberSet);
+    final var dummyTeamApps = new ArrayList<TeamApplication>();
+    final var dummyTeam = new Team(1L, dummyLine, dummyOrgList, dummyMemberSet, dummyTeamApps);
     final var dummyOrg = new Organisation(1L, "organisation", new ArrayList<>());
     final var dummyUsr = new User("userId", "username");
 
@@ -45,7 +59,7 @@ class TeamServiceTest {
   }
 
   private void setUpRepoMockito(Team dummyTeam, Organisation dummyOrg, User dummyUsr,
-                                List<Organisation> dummyOrglist) {
+      List<Organisation> dummyOrglist) {
     when(teamRepo.findById(1L)).thenReturn(Optional.of(dummyTeam));
     when(teamRepo.create(1L, 1L)).thenReturn(dummyTeam);
     when(teamRepo.addOrganisation(1L, 1L)).thenReturn(addOrgToTeam(dummyTeam, dummyOrg));
@@ -63,6 +77,11 @@ class TeamServiceTest {
 
   private Team addUsrToTeam(Team team, User user) {
     team.getTeamMembers().add(user);
+    return team;
+  }
+
+  private Team removeUsrsFromTeam(Team team) {
+    team.getTeamMembers().removeIf(user -> user.getUserId().equals("userId"));
     return team;
   }
 
@@ -94,6 +113,17 @@ class TeamServiceTest {
     assertThat(result, instanceOf(Team.class));
     assertEquals(1L, result.getId());
     assertTrue(result.getTeamMembers().stream().anyMatch(m -> m.getUserId().equals("userId")));
+  }
+
+  @Test
+  void removeUserFromTeam() {
+    var team = Team.builder().id(1L).teamMembers(new HashSet<>()).line(Line.builder().event(
+        Event.builder().title("anEvent").build()).build()).build();
+    when(teamRepo.removeUser(anyLong(), anyString())).thenReturn(team);
+    var result = teamService.removeUserFromTeam(1L, "userId");
+    assertThat(result, instanceOf(Team.class));
+    assertEquals(1L, result.getId());
+    assertTrue(result.getTeamMembers().stream().noneMatch(m -> m.getUserId().equals("userId")));
   }
 
   @Test
@@ -134,5 +164,20 @@ class TeamServiceTest {
     assertDoesNotThrow(() -> {
       teamService.deleteOrganisationFromTeam(1L, 1L);
     });
+  }
+
+  @Test
+  void changeApplicationStatus() {
+    var team = new Team();
+    when(teamRepo.changeApplicationStatus(anyString(), anyLong(), any())).thenReturn(team);
+    assertEquals(team,
+        teamService.changeApplicationStatus("test", 1L, TeamApplicationStatus.ACCEPTED));
+  }
+
+  @Test
+  void getTeamsForUser() {
+    Set<Team> teams = new HashSet<>();
+    when(teamRepo.getTeamsForUser(anyString())).thenReturn(teams);
+    assertEquals(teams, teamService.getTeamsForUser("testUser"));
   }
 }

@@ -3,6 +3,7 @@ package be.xplore.notifyme.services;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -15,6 +16,8 @@ import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
+import be.xplore.notifyme.services.implementations.OrganisationService;
+import be.xplore.notifyme.services.implementations.UserService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +108,7 @@ class OrganisationServiceTest {
   }
 
   private void setupPromotionMocking(Principal principal, UserRepresentation userRepresentation,
-      User user) {
+                                     User user) {
     when(organisationRepo.findById(anyLong())).thenReturn(Optional.of(testOrg));
     when(userService.getUserInfo(anyString(), any(Principal.class))).thenReturn(userRepresentation);
     when(userService.getUser(any())).thenReturn(user);
@@ -188,4 +191,29 @@ class OrganisationServiceTest {
         organisationService.changeApplicationStatus("iets", 1L, OrgApplicationStatus.APPLIED));
   }
 
+  private List<User> getDummyUserList() {
+    List<User> userList = new ArrayList<>();
+    User user = new User("userId", "userName");
+    userList.add(user);
+    return userList;
+  }
+
+
+  @Test
+  void getOrganisationManagersForEvent() {
+    var userList = getDummyUserList();
+    when(organisationRepo.getAllOrganisationManagersForEvent(1L)).thenReturn(userList);
+
+    var result = organisationService.getOrganisationManagersForEvent(1L);
+    assertTrue(result.stream().anyMatch(u -> u.getUserId().equals(userList.get(0).getUserId())));
+  }
+
+  @Test
+  void getOrganisationManagers() {
+    var userList = getDummyUserList();
+    when(organisationRepo.getAllOrganisationManagers(1L)).thenReturn(userList);
+
+    var result = organisationService.getOrganisationManagers(1L);
+    assertTrue(result.stream().anyMatch(u -> u.getUserId().equals(userList.get(0).getUserId())));
+  }
 }

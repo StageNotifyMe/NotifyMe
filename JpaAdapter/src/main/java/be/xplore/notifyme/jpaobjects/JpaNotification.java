@@ -1,6 +1,7 @@
 package be.xplore.notifyme.jpaobjects;
 
 import be.xplore.notifyme.domain.Notification;
+import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JpaNotification {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -30,10 +32,13 @@ public class JpaNotification {
   private JpaMessage message;
   @OneToOne(cascade = CascadeType.ALL)
   private JpaUser receiver;
+  private String sender;
+  boolean hidden;
+  LocalDateTime timestamp;
 
   /**
-   * Constructor used to create a new notification and
-   * wire message, user and communicationPreference correctly.
+   * Constructor used to create a new notification and wire message, user and
+   * communicationPreference correctly.
    *
    * @param jpaMessage jpa version of the message.
    * @param jpaUser    jpa version of the receiver.
@@ -45,6 +50,7 @@ public class JpaNotification {
     this.communicationPreference = jpaCommunicationPreference;
     this.usedCommunicationStrategy =
         jpaCommunicationPreference.getCommunicationStrategy().toString();
+    this.timestamp = LocalDateTime.now();
   }
 
   /**
@@ -61,6 +67,8 @@ public class JpaNotification {
     this.usedCommunicationStrategy = notification.getUsedCommunicationStrategy();
     this.message = new JpaMessage(notification.getMessage());
     this.receiver = jpaUser;
+    this.sender = notification.getSender();
+    this.timestamp = notification.getTimestamp();
   }
 
   /**
@@ -76,6 +84,8 @@ public class JpaNotification {
         .receiver(this.receiver.toDomainBase())
         .communicationPreference(this.communicationPreference.toDomainBase())
         .message(this.message.toDomainBase())
+        .sender(this.sender)
+        .timestamp(this.timestamp)
         .build();
   }
 
@@ -92,5 +102,7 @@ public class JpaNotification {
     this.usedCommunicationStrategy = notification.getUsedCommunicationStrategy();
     this.message = new JpaMessage(notification.getMessage());
     this.receiver = new JpaUser(notification.getReceiver());
+    this.sender = notification.getSender();
+    this.timestamp = notification.getTimestamp();
   }
 }

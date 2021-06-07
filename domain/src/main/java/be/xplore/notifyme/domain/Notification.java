@@ -1,5 +1,6 @@
 package be.xplore.notifyme.domain;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,20 +14,24 @@ import org.keycloak.representations.account.UserRepresentation;
 @NoArgsConstructor
 @Builder
 public class Notification {
+
   private long id;
   private String communicationAddress;
   private CommunicationPreference communicationPreference;
   private String usedCommunicationStrategy;
   private Message message;
   private User receiver;
+  private String sender;
+  private boolean hidden;
+  private LocalDateTime timestamp = LocalDateTime.now();
 
   public void send() {
     this.getCommunicationPreference().getCommunicationStrategy().send(this);
   }
 
   /**
-   * Uses instance of User in this object in combination with a UserRepresentation object
-   * to set the communicationaddress and used strategy.
+   * Uses instance of User in this object in combination with a UserRepresentation object to set the
+   * communicationaddress and used strategy.
    *
    * @param userInfo UserRepresentation object.
    */

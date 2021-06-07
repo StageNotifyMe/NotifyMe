@@ -1,22 +1,31 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.CommunicationPreference;
-import be.xplore.notifyme.dto.ApplicationOrgNameDto;
-import be.xplore.notifyme.dto.NotificationDto;
-import be.xplore.notifyme.dto.OrganisationsLimitedInfoDto;
+import be.xplore.notifyme.domain.Line;
+import be.xplore.notifyme.domain.Team;
+import be.xplore.notifyme.domain.TeamApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.dto.communicationpreference.GetCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.PostCommunicationPreferenceDto;
 import be.xplore.notifyme.dto.communicationpreference.UpdateCommunicationPreferenceDto;
+import be.xplore.notifyme.dto.notification.NotificationDto;
+import be.xplore.notifyme.dto.organisation.OrganisationsLimitedInfoDto;
+import be.xplore.notifyme.dto.organisationapplication.ApplicationOrgNameDto;
+import be.xplore.notifyme.dto.user.GetUserDto;
+import be.xplore.notifyme.dto.user.PutUserDto;
 import be.xplore.notifyme.services.ICommunicationPreferenceService;
 import be.xplore.notifyme.services.IKeycloakCommunicationService;
+import be.xplore.notifyme.services.ILineService;
 import be.xplore.notifyme.services.IOrganisationService;
+import be.xplore.notifyme.services.ITeamApplicationService;
+import be.xplore.notifyme.services.ITeamService;
 import be.xplore.notifyme.services.IUserOrgApplicationService;
 import be.xplore.notifyme.services.IUserService;
-import be.xplore.notifyme.services.NotificationService;
+import be.xplore.notifyme.services.implementations.NotificationService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,11 +50,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final IUserService userService;
+  private final ILineService lineService;
   private final IOrganisationService organisationService;
   private final IUserOrgApplicationService userOrgApplicationService;
   private final IKeycloakCommunicationService keycloakCommunicationService;
   private final ICommunicationPreferenceService communicationPreferenceService;
   private final NotificationService notificationService;
+  private final ITeamApplicationService teamApplicationService;
+  private final ITeamService teamService;
 
   @GetMapping(value = "/token")
   public ResponseEntity<String> getAccessTokenForUser(String username, String password) {
@@ -129,6 +141,37 @@ public class UserController {
     return ResponseEntity.ok(userService.getUserInfo(username, principal));
   }
 
+  /**
+   * HTTP GET: used to get user account information.
+   *
+   * @param username  of the user you want to retrieve information from.
+   * @param principal Keycloak Authorization header.
+   * @return relevant account information.
+   */
+  @GetMapping(value = "/account")
+  public ResponseEntity<Object> getAccountSetting(@RequestParam String username,
+      Principal principal) {
+    var keycloakUser = userService.getUserInfo(username, principal);
+    var dbUser = userService.getUser(keycloakUser.getId());
+    var getUserDto = new GetUserDto(dbUser, keycloakUser);
+
+    return ResponseEntity.ok(getUserDto);
+  }
+
+  /**
+   * HTTP PUT: used to update user account information.
+   *
+   * @param putUserDto contains updated user account attributes.
+   * @return 204 | no content
+   */
+  @PutMapping(value = "/account")
+  public ResponseEntity<Object> updateAccountSettings(@RequestBody PutUserDto putUserDto) {
+    userService.updateAccountInfo(putUserDto.getUserId(), putUserDto.getUsername(),
+        putUserDto.getFirstName(), putUserDto.getLastName(), putUserDto.getEmail(),
+        putUserDto.getPhoneNumber(), putUserDto.getPreferedLanguage());
+    return ResponseEntity.noContent().build();
+  }
+
   @GetMapping(value = "/organisations")
   public ResponseEntity<OrganisationsLimitedInfoDto> getOrganisations() {
     return ResponseEntity
@@ -140,6 +183,13 @@ public class UserController {
       @RequestParam Long organisationId, Principal principal) {
     userOrgApplicationService.applyToOrganisation(organisationId, principal);
     return ResponseEntity.ok().build();
+  }
+
+  @GetMapping(value = "activatePhone")
+  public ResponseEntity<String> activatePhone(@RequestParam(name = "username") String username,
+      @RequestParam(name = "code") String code) {
+    keycloakCommunicationService.verifyPhoneNo(username, code);
+    return ResponseEntity.ok("Your number is now ready to receive notifications through text.");
   }
 
   /**
@@ -170,5 +220,70 @@ public class UserController {
     var notificationsDto = new ArrayList<NotificationDto>();
     notifications.forEach(n -> notificationsDto.add(new NotificationDto(n)));
     return ResponseEntity.ok(notificationsDto);
+  }
+
+  /**
+   * Gets a list of lines the calling user can apply to.
+   *
+   * @param principal injected by securitycontext.
+   * @return Response entity containing the list of notifications of the user.
+   */
+  @GetMapping(value = "lines")
+  public ResponseEntity<List<Line>> getAvailableLines(Principal principal) {
+    return ResponseEntity
+        .ok(lineService
+            .getAvailableLinesForUser(userService.getUserFromPrincipal(principal).getUserId()));
+  }
+
+
+  /**
+   * Gets a list of team applications for the calling user.
+   *
+   * @param principal injected by securitycontext.
+   * @return Response entity containing the list of applications for a user.
+   */
+  @GetMapping(value = "teamApplications")
+  public ResponseEntity<Set<TeamApplication>> getTeamApplications(Principal principal) {
+    return ResponseEntity
+        .ok(teamApplicationService.getUserApplications(principal));
+  }
+
+  /**
+   * Sends out a user application for a team.
+   *
+   * @param principal injected by securitycontext.
+   * @return Response entity containing the list of notifications of the user.
+   */
+  @PostMapping(value = "teamApplication")
+  public ResponseEntity<Void> applyForTeam(@RequestParam(name = "teamId") Long teamId,
+      Principal principal) {
+    teamApplicationService.applyForEventLine(teamId, principal);
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Gets the teams that the user calling the method was added to.
+   *
+   * @param principal injected by securitycontext.
+   * @return Response entity containing a set of teams the user was added to.
+   */
+  @GetMapping(value = "teams")
+  public ResponseEntity<Set<Team>> getTeams(Principal principal) {
+    var user = userService.getUserFromPrincipal(principal);
+    return ResponseEntity.ok(teamService.getTeamsForUser(user.getUserId()));
+  }
+
+  /**
+   * Remove a user from the team they are assigned to.
+   *
+   * @param principal injected by securitycontext.
+   * @param teamId    unique id of the team.
+   * @return Response entity containing the list of notifications of the user.
+   */
+  @DeleteMapping(value = "team")
+  public ResponseEntity<Team> removeFromTeam(@RequestParam(name = "teamId") Long teamId,
+      Principal principal) {
+    var user = userService.getUserFromPrincipal(principal);
+    return ResponseEntity.ok(teamService.removeUserFromTeam(teamId, user.getUserId()));
   }
 }

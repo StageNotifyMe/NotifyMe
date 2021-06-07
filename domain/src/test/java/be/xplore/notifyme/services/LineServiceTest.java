@@ -4,18 +4,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import be.xplore.notifyme.domain.Event;
+import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.ILineRepo;
+import be.xplore.notifyme.services.implementations.EventService;
+import be.xplore.notifyme.services.implementations.FacilityService;
+import be.xplore.notifyme.services.implementations.LineService;
+import be.xplore.notifyme.services.implementations.UserService;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,20 +40,18 @@ class LineServiceTest {
   @Autowired
   private LineService lineService;
   @MockBean
-  @Autowired
   private EventService eventService;
   @MockBean
-  @Autowired
   private FacilityService facilityService;
   @MockBean
   private ILineRepo lineRepo;
   @MockBean
-  @Autowired
   private UserService userService;
 
-  private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
+  //private final CreateLineDto createLineDto = new CreateLineDto("note", 10, 1L, 1L);
   private final Event event =
-      new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), new Venue(),
+      new Event(1L, "titel", "descriptie", "artiest", LocalDateTime.now(), EventStatus.OK,
+          new Venue(),
           new LinkedList<>(), new HashSet<>());
   private final Facility facility =
       new Facility(1L, "descriptie", "locatie", 1, 20, new Venue(), new LinkedList<>());
@@ -59,8 +63,8 @@ class LineServiceTest {
     KeycloakAuthenticationToken principal = Mockito.mock(KeycloakAuthenticationToken.class);
     when(lineRepo.create(any(Line.class), anyLong(), anyLong())).thenReturn(line);
 
-    var result = lineService.createLine(createLineDto, principal);
-    assertEquals(line,result);
+    var result = lineService.createLine("note", 10, 1L, 1L, principal);
+    assertEquals(line, result);
   }
 
   @Test
@@ -69,7 +73,7 @@ class LineServiceTest {
     doThrow(new CrudException("Could not find event for id 1")).when(lineRepo)
         .create(any(), anyLong(), anyLong());
 
-    assertThrows(CrudException.class, () -> lineService.createLine(createLineDto, principal));
+    assertThrows(CrudException.class, () -> lineService.createLine("note", 10, 1L, 1L, principal));
   }
 
   @Test
@@ -78,7 +82,7 @@ class LineServiceTest {
     doThrow(new CrudException("Could not find facility for id 1")).when(lineRepo)
         .create(any(), anyLong(), anyLong());
 
-    assertThrows(CrudException.class, () -> lineService.createLine(createLineDto, principal));
+    assertThrows(CrudException.class, () -> lineService.createLine("note", 10, 1L, 1L, principal));
   }
 
   @Test
@@ -109,5 +113,12 @@ class LineServiceTest {
     when(lineRepo.findById(anyLong())).thenReturn(Optional.empty());
 
     assertThrows(CrudException.class, () -> lineService.getLine(1L));
+  }
+
+  @Test
+  void getAvailableLinesForUser() {
+    var lines = new ArrayList<Line>();
+    when(lineRepo.getAvailableLinesForUser(anyString())).thenReturn(lines);
+    assertEquals(lines,lineService.getAvailableLinesForUser("test"));
   }
 }

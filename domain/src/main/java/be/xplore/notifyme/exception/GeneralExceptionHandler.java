@@ -1,7 +1,6 @@
 package be.xplore.notifyme.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 @Slf4j
-@Order(Ordered.LOWEST_PRECEDENCE)
+@Order()
 public class GeneralExceptionHandler {
 
   @ExceptionHandler(value = {Exception.class})
@@ -39,7 +38,7 @@ public class GeneralExceptionHandler {
   protected ResponseEntity<Object> handleNpeException(RuntimeException ex) {
     log.error(ex.getMessage());
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Server could not handle request correctly.");
+        .body("The server encountered a nullpointer exception: " + ex.getMessage());
   }
 
   @ExceptionHandler(value = {OrgApplicationNotFoundException.class})
@@ -49,15 +48,8 @@ public class GeneralExceptionHandler {
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler(value = {SaveToDatabaseException.class})
+  @ExceptionHandler(value = {SaveToDatabaseException.class, TokenHandlerException.class})
   protected ResponseEntity<Object> handleConversionException(RuntimeException re) {
-    log.error(re.getMessage());
-    return ResponseEntity.badRequest().body(re.getMessage());
-  }
-
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler(value = {TokenHandlerException.class})
-  protected ResponseEntity<Object> handleTokenConversionException(RuntimeException re) {
     log.error(re.getMessage());
     return ResponseEntity.badRequest().body(re.getMessage());
   }

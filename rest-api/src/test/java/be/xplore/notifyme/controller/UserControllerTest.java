@@ -14,25 +14,32 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
+import be.xplore.notifyme.domain.AvailableLanguages;
 import be.xplore.notifyme.domain.CommunicationPreference;
 import be.xplore.notifyme.domain.Message;
 import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.OrgApplicationStatus;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.OrganisationUserKey;
+import be.xplore.notifyme.domain.Team;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.dto.UserRegistrationDto;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
-import be.xplore.notifyme.services.CommunicationPreferenceService;
-import be.xplore.notifyme.services.KeycloakCommunicationService;
-import be.xplore.notifyme.services.NotificationService;
-import be.xplore.notifyme.services.OrganisationService;
-import be.xplore.notifyme.services.UserOrgApplicationService;
-import be.xplore.notifyme.services.UserService;
-import be.xplore.notifyme.services.communicationstrategies.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.ILineService;
+import be.xplore.notifyme.services.ITeamApplicationService;
+import be.xplore.notifyme.services.ITeamService;
 import be.xplore.notifyme.services.communicationstrategies.ICommunicationStrategy;
+import be.xplore.notifyme.services.communicationstrategies.implementations.EmailCommunicationStrategy;
+import be.xplore.notifyme.services.implementations.CommunicationPreferenceService;
+import be.xplore.notifyme.services.implementations.KeycloakCommunicationService;
+import be.xplore.notifyme.services.implementations.NotificationService;
+import be.xplore.notifyme.services.implementations.OrganisationService;
+import be.xplore.notifyme.services.implementations.UserOrgApplicationService;
+import be.xplore.notifyme.services.implementations.UserService;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +55,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 
 @SpringBootTest(classes = {UserController.class})
 @AutoConfigureMockMvc(addFilters = false)
@@ -78,6 +86,12 @@ class UserControllerTest {
   private CommunicationPreferenceService communicationPreferenceService;
   @MockBean
   private NotificationService notificationService;
+  @MockBean
+  private ILineService lineService;
+  @MockBean
+  private ITeamApplicationService teamApplicationService;
+  @MockBean
+  private ITeamService teamService;
 
   @Test
   void getAccessTokenForUserValid() throws Exception {
@@ -247,5 +261,121 @@ class UserControllerTest {
         .header("Content-Type", "application/json")
     ).andExpect(MockMvcResultMatchers.status().isOk());
   }
+
+  @Test
+  void activatePhoneNo() throws Exception {
+    mockMvc.perform(get("/user/activatePhone?username=testUser&code=12345abcde")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  void getAccountSettings() throws Exception {
+    when(userService.getUser(anyString()))
+        .thenReturn(User.builder().userId("userId").userName("username").preferedLanguage(
+            AvailableLanguages.EN).build());
+    when(userService.getUserInfo(anyString(), any())).thenReturn(getDummyUserRepresentation());
+
+    mockMvc.perform(get("/user/account?username=username"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andDo(result -> {
+          System.out.println(result.getResponse().getContentAsString());
+        })
+        .andExpect(MockMvcResultMatchers.content().json(
+            "{\"userId\":\"userId\",\"username\":\"username\",\"preferedLanguage\":\"EN\","
+                + "\"firstName\":\"firstName\",\"lastName\":\"lastName\","
+                + "\"email\":\"email@mail.com\","
+                + "\"phoneNumber\":\"+32123456789\",\"emailVerified\":true,\"phoneVerified\":true,"
+                + "\"availableLanguages\":[\"EN\",\"NL\"]}"));
+  }
+
+  @Test
+  void updateAccountSettings() throws Exception {
+    doNothing().when(userService)
+        .updateAccountInfo(anyString(), anyString(), anyString(), anyString(), anyString(),
+            anyString(), anyString());
+
+    mockMvc.perform(put("/user/account").contentType(MediaType.APPLICATION_JSON).content(
+        "{\"userId\":\"userId\",\"username\":\"username\",\"preferedLanguage\":\"EN\",\"firstName\""
+            + ":\"firstName\",\"lastName\":\"lastName\",\"email\""
+            + ":\"email@mail.com\",\"phoneNumber\":"
+            + "\"+32123456789\",\"emailVerified\":true,\"phoneVerified\""
+            + ":true,\"availableLanguages\":[\"EN\",\"NL\"]}"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getTeamApplications() throws Exception {
+    when(teamApplicationService.getUserApplications(any())).thenReturn(new HashSet<>());
+    mockMvc.perform(get("/user/teamApplications")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getAvailableLines() throws Exception {
+    when(userService.getUserFromPrincipal(any()))
+        .thenReturn(User.builder().userId("userId").userName("username").preferedLanguage(
+            AvailableLanguages.EN).build());
+    when(lineService.getAvailableLinesForUser(any())).thenReturn(new ArrayList<>());
+    mockMvc.perform(get("/user/lines")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void postTeamApplications() throws Exception {
+    mockMvc.perform(post("/user/teamApplication?teamId=1")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void getTeams() throws Exception {
+    when(userService.getUserFromPrincipal(any())).thenReturn(User.builder().userId("id").build());
+    when(teamService.getTeamsForUser(anyString())).thenReturn(new HashSet<>());
+
+    mockMvc.perform(get("/user/teams")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void removeUserFromTeam() throws Exception {
+    when(userService.getUserFromPrincipal(any())).thenReturn(User.builder().userId("id").build());
+    when(teamService.removeUserFromTeam(anyLong(), anyString())).thenReturn(new Team());
+
+    mockMvc.perform(delete("/user/team?teamId=1")
+        .header("Content-Type", "application/json")
+    ).andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+
+  private UserRepresentation getDummyUserRepresentation() {
+    var userRep = new UserRepresentation();
+    userRep.setId("userId");
+    userRep.setUsername("username");
+    userRep.setFirstName("firstName");
+    userRep.setLastName("lastName");
+    userRep.setEmail("email@mail.com");
+    userRep.setEmailVerified(true);
+    var attributes = getAttributesForDummyUserRep();
+    userRep.setAttributes(attributes);
+    return userRep;
+  }
+
+  private HashMap<String, List<String>> getAttributesForDummyUserRep() {
+    var attributes = new HashMap<String, List<String>>();
+    attributes.put("phone_number", List.of("+32123456789"));
+    attributes.put("phone_number_verification_code", List.of("code"));
+    attributes.put("phone_number_verified", List.of("true"));
+    return attributes;
+  }
+
 
 }

@@ -19,6 +19,10 @@ import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.UserOrgApplication;
 import be.xplore.notifyme.exception.OrgApplicationNotFoundException;
 import be.xplore.notifyme.persistence.IOrganisationRepo;
+import be.xplore.notifyme.services.implementations.NotificationService;
+import be.xplore.notifyme.services.implementations.OrganisationService;
+import be.xplore.notifyme.services.implementations.UserOrgApplicationService;
+import be.xplore.notifyme.services.implementations.UserService;
 import be.xplore.notifyme.services.security.OrganisationSecurityService;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -53,14 +57,35 @@ class UserOrgApplicationServiceTest {
   void applyToOrganisation() {
     var user = User.builder().userId("testJoiner").userName("test.joiner")
         .appliedOrganisations(new ArrayList<>()).build();
+    doNothing().when(notificationService)
+        .createAndSendSystemNotification(anyString(), any(), any());
     when(userService.getUserFromPrincipal(any())).thenReturn(user);
     when(organisationService.getOrganisation(anyLong())).thenReturn(new Organisation());
     when(userService.updateUser(any())).thenReturn(new User());
-    setupNotifyOrgAdminsForApplication();
+    setUpApplyToOrganisation();
 
     assertDoesNotThrow(() -> {
       userOrgApplicationService.applyToOrganisation(1L, getKeycloakPrincipal());
     });
+  }
+
+  private void setUpApplyToOrganisation() {
+    var org = Organisation.builder().name("testOrg").id(1L).build();
+    var appliedUsers = new ArrayList<UserOrgApplication>();
+    var appliedUser = UserOrgApplication.builder()
+        .appliedUser(User.builder().userName("userName").userId("userId").build())
+        .appliedOrganisation(org).build();
+    appliedUsers.add(appliedUser);
+    org.setAppliedUsers(appliedUsers);
+
+    var orgUser = OrganisationUser.builder()
+        .user(User.builder().userName("userName").userId("userId").build())
+        .build();
+    var orgUserList = new ArrayList<OrganisationUser>();
+    orgUserList.add(orgUser);
+    org.setUsers(orgUserList);
+    when(organisationService.getOrganisationIncAppliedUsers(anyLong())).thenReturn(org);
+
   }
 
   private void setupNotifyOrgAdminsForApplication() {

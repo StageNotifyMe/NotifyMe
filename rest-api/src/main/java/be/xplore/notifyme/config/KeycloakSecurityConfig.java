@@ -29,12 +29,12 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     super.configure(http);
-    http.authorizeRequests().antMatchers("/admin/**").hasRole("admin")
-        .antMatchers("/user/**").permitAll()
-        .antMatchers("/vmanager/**").hasRole("venue_manager")
-        .antMatchers("/lmanager/**").hasRole("line_manager")
+    http.authorizeRequests()
+        .antMatchers("/admin/**").hasRole("admin")
+        .antMatchers("/vmanager/**").hasAnyRole("admin","venue_manager")
+        .antMatchers("/lmanager/**").hasAnyRole("line_manager","venue_manager")
         .antMatchers("/omanager/**").hasRole("organisation_manager")
-        .anyRequest().permitAll();
+        .antMatchers("/user/**").permitAll();
     http.csrf().disable();
     http.cors();
   }

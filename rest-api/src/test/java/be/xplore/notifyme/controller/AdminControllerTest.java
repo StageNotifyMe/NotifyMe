@@ -10,15 +10,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
+import be.xplore.notifyme.domain.Message;
+import be.xplore.notifyme.domain.Notification;
 import be.xplore.notifyme.domain.Organisation;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.GeneralExceptionHandler;
-import be.xplore.notifyme.services.KeycloakCommunicationService;
-import be.xplore.notifyme.services.OrganisationService;
-import be.xplore.notifyme.services.UserService;
-import be.xplore.notifyme.services.VenueService;
+import be.xplore.notifyme.services.INotificationService;
+import be.xplore.notifyme.services.implementations.KeycloakCommunicationService;
+import be.xplore.notifyme.services.implementations.OrganisationService;
+import be.xplore.notifyme.services.implementations.UserService;
+import be.xplore.notifyme.services.implementations.VenueService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +49,9 @@ class AdminControllerTest {
 
   @Autowired
   private AdminController adminController;
+
+  @MockBean
+  private INotificationService notificationService;
 
   @BeforeEach
   public void setup() {
@@ -156,7 +164,9 @@ class AdminControllerTest {
   @Test
   @WithMockUser(username = "adminUser", roles = {"user", "admin"})
   void createVenue() throws Exception {
-    when(venueService.createVenue(any(), any()))
+    when(venueService
+        .createVenue(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),
+            any()))
         .thenReturn(new Venue());
 
     mockMvc.perform(post("/admin/venue").content("{"
@@ -194,5 +204,25 @@ class AdminControllerTest {
 
     mockMvc.perform(get("/admin/venueManagers?venueId=1"))
         .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @WithMockUser(username = "adminUser", roles = {"user", "admin"})
+  void getAllNotifications() throws Exception {
+    var notifications = new ArrayList<Notification>();
+    notifications.add(
+        Notification.builder().message(Message.builder().id(1L).text("text").title("title").build()
+        ).communicationAddress("address").id(1L).hidden(false).sender("Sender")
+            .receiver(User.builder().userId("userId").userName("username").build()).timestamp(
+            LocalDateTime.now()).usedCommunicationStrategy("strategy").build());
+    when(notificationService.getAllNotifications()).thenReturn(notifications);
+
+    mockMvc.perform(get("/admin/notifications"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andDo(System.out::println)
+        .andExpect(MockMvcResultMatchers.content().json(
+            "[{\"id\":1,\"sender\":\"Sender\",\"receiver\":\"username\",\"messageTitle\":"
+                +
+                "\"title\",\"messageText\":\"text\",\"usedCommunicationStrategy\":\"strategy\"}]"));
   }
 }

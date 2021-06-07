@@ -21,4 +21,6 @@ public class Team {
   private Line line;
   private List<Organisation> organisations = new ArrayList<>();
   private Set<User> teamMembers = new HashSet<>();
+  private List<TeamApplication> appliedUsers = new ArrayList<>();
+
 }

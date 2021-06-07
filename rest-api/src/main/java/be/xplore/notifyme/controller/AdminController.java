@@ -1,15 +1,18 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.dto.CreateVenueDto;
-import be.xplore.notifyme.dto.OrganisationDto;
-import be.xplore.notifyme.dto.UserOrgRequestDto;
+import be.xplore.notifyme.dto.notification.GetNotificationDto;
+import be.xplore.notifyme.dto.organisation.OrganisationDto;
+import be.xplore.notifyme.dto.organisationapplication.UserOrgRequestDto;
+import be.xplore.notifyme.dto.venue.CreateVenueDto;
+import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.IOrganisationService;
 import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -39,6 +42,7 @@ public class AdminController {
   private final IOrganisationService organisationService;
   private final IVenueService venueService;
   private final IUserService userService;
+  private final INotificationService notificationService;
 
   /**
    * Test method for admin auth.
@@ -76,7 +80,7 @@ public class AdminController {
 
   @PostMapping("/promoteUserToVmanager")
   public ResponseEntity<Object> promoteUserToVenueManager(@RequestParam String userId,
-      long venueId) {
+                                                          long venueId) {
     venueService.makeUserVenueManager(userId, venueId);
     return ResponseEntity.noContent().build();
   }
@@ -95,11 +99,22 @@ public class AdminController {
     return ResponseEntity.ok(organisations);
   }
 
+  /**
+   * HTTP POST: creates a new venue.
+   *
+   * @param createVenueDto contains all information for Venue domain object.
+   * @param principal      authorization header.
+   * @return the created Venue object.
+   */
   @PostMapping("/venue")
   public ResponseEntity<Object> createVenue(
       @RequestBody @NotNull CreateVenueDto createVenueDto,
       Principal principal) {
-    var venue = venueService.createVenue(createVenueDto, principal);
+    var venue = venueService
+        .createVenue(createVenueDto.getName(), createVenueDto.getDescription(),
+            createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
+            createVenueDto.getVillage(), createVenueDto.getCountry(),
+            principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(venue);
   }
 
@@ -139,6 +154,19 @@ public class AdminController {
   public ResponseEntity<Object> getAllVenueManagers(@RequestParam long venueId) {
     var managers = venueService.getAllVenueManagers(venueId);
     return ResponseEntity.ok(managers);
+  }
+
+  /**
+   * HTTP GET: gets all non-hidden notifications.
+   *
+   * @return List of GetNotificationDto.
+   */
+  @GetMapping("/notifications")
+  public ResponseEntity<Object> getSystemNotifications() {
+    var notifications = notificationService.getAllNotifications();
+    var parsedNotifications = notifications.stream().map(GetNotificationDto::new).collect(
+        Collectors.toList());
+    return ResponseEntity.ok(parsedNotifications);
   }
 
 }
