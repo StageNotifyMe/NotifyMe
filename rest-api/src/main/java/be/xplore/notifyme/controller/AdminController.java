@@ -1,7 +1,7 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Organisation;
-import be.xplore.notifyme.dto.CreateVenueDto;
+import be.xplore.notifyme.dto.venue.CreateVenueDto;
 import be.xplore.notifyme.dto.OrganisationDto;
 import be.xplore.notifyme.dto.UserOrgRequestDto;
 import be.xplore.notifyme.dto.notification.GetNotificationDto;
@@ -103,7 +103,11 @@ public class AdminController {
   public ResponseEntity<Object> createVenue(
       @RequestBody @NotNull CreateVenueDto createVenueDto,
       Principal principal) {
-    var venue = venueService.createVenue(createVenueDto, principal);
+    var venue = venueService
+        .createVenue(createVenueDto.getName(), createVenueDto.getDescription(),
+            createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
+            createVenueDto.getVillage(), createVenueDto.getCountry(),
+            principal);
     return ResponseEntity.status(HttpStatus.CREATED).body(venue);
   }
 

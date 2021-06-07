@@ -3,7 +3,6 @@ package be.xplore.notifyme.services.implementations;
 import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.GetVenueDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
@@ -31,19 +30,16 @@ public class VenueService implements IVenueService {
   /**
    * Creates a new venue.
    *
-   * @param createVenueDto DTO containing all information abou the venue (name, description,
-   *                       address).
    * @param principal      used to identify the user.
    * @return 203 if successful, 400 if unsuccessful.
    */
   @Override
-  public Venue createVenue(CreateVenueDto createVenueDto, Principal principal) {
+  public Venue createVenue(String name, String description, String streetAndNumber,
+                           String postalCode, String village, String country, Principal principal) {
     var accessToken = tokenService.getIdToken(principal);
-    var address =
-        new Address(createVenueDto.getStreetAndNumber(), createVenueDto.getPostalCode(),
-            createVenueDto.getVillage(), createVenueDto.getCountry());
+    var address = new Address(streetAndNumber, postalCode, village, country);
     var venue =
-        new Venue(createVenueDto.getName(), createVenueDto.getDescription(), address);
+        new Venue(name, description, address);
     venue = venueRepo.save(venue);
     venue = venueRepo.addVenueManager(venue.getId(), accessToken.getSubject());
     return venue;

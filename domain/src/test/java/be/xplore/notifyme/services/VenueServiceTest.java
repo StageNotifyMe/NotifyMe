@@ -15,7 +15,6 @@ import static org.mockito.Mockito.when;
 import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.User;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.dto.CreateVenueDto;
 import be.xplore.notifyme.dto.GetVenueDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.exception.SaveToDatabaseException;
@@ -63,7 +62,9 @@ class VenueServiceTest {
     when(userService.getUser("abcd")).thenReturn(user);
 
     assertEquals(venue,
-        venueService.createVenue(getTestCreateVenueDto(), mockPrincipal));
+        venueService
+            .createVenue("ConcertHall", "A concerthall", "Concertway 10", "1000", "Brussels",
+                "Belgium", mockPrincipal));
   }
 
   @Test
@@ -71,26 +72,28 @@ class VenueServiceTest {
     Principal mockPrincipal = Mockito.mock(Principal.class);
     IDToken mockIdToken = getMockIdToken();
     when(tokenService.getIdToken(mockPrincipal)).thenReturn(mockIdToken);
-    CreateVenueDto cvdto = getTestCreateVenueDto();
 
     doThrow(new CrudException(
         String.format("User with id %s could not be found", mockIdToken.getSubject())))
         .when(venueRepo).save(any());
 
     assertThrows(CrudException.class, () ->
-        venueService.createVenue(cvdto, mockPrincipal));
+        venueService
+            .createVenue("ConcertHall", "A concerthall", "Concertway 10", "1000", "Brussels",
+                "Belgium", mockPrincipal));
   }
 
   @Test
   void createVenueTokenDecodeFails() {
     Principal mockPrincipal = Mockito.mock(Principal.class);
-    CreateVenueDto cvdto = getTestCreateVenueDto();
 
     doThrow(new TokenHandlerException(String.format("Could not convert %s object to IDToken object",
         mockPrincipal.getClass().getName()))).when(tokenService).getIdToken(mockPrincipal);
 
     assertThrows(TokenHandlerException.class, () ->
-        venueService.createVenue(cvdto, mockPrincipal));
+        venueService
+            .createVenue("ConcertHall", "A concerthall", "Concertway 10", "1000", "Brussels",
+                "Belgium", mockPrincipal));
   }
 
   @Test
@@ -208,17 +211,6 @@ class VenueServiceTest {
     User user = new User();
     user.setUserId("abcd");
     return user;
-  }
-
-  private CreateVenueDto getTestCreateVenueDto() {
-    CreateVenueDto createVenueDto = new CreateVenueDto();
-    createVenueDto.setName("ConcertHall");
-    createVenueDto.setDescription("A concerthall");
-    createVenueDto.setCountry("Belgium");
-    createVenueDto.setPostalCode("1000");
-    createVenueDto.setVillage("Brussels");
-    createVenueDto.setStreetAndNumber("Concertway 10");
-    return createVenueDto;
   }
 
 }
