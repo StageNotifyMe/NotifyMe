@@ -2,7 +2,7 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.dto.event.CreateEventDto;
-import be.xplore.notifyme.dto.CreateFacilityDto;
+import be.xplore.notifyme.dto.facility.CreateFacilityDto;
 import be.xplore.notifyme.dto.CreateLineDto;
 import be.xplore.notifyme.dto.event.PutEventDto;
 import be.xplore.notifyme.services.IEventService;
@@ -92,7 +92,10 @@ public class VenueManagerController {
   @PostMapping("/facility")
   public ResponseEntity<Object> createFacility(
       @RequestBody @NotNull CreateFacilityDto createFacilityDto) {
-    var facility = facilityService.createFacility(createFacilityDto);
+    var facility = facilityService
+        .createFacility(createFacilityDto.getDescription(), createFacilityDto.getLocation(),
+            createFacilityDto.getMinimalStaff(), createFacilityDto.getMaximalStaff(),
+            createFacilityDto.getVenueId());
     return ResponseEntity.status(HttpStatus.CREATED).body(facility);
   }
 

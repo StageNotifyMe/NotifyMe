@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.Facility;
 import be.xplore.notifyme.domain.Venue;
-import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IFacilityRepo;
 import be.xplore.notifyme.persistence.IVenueRepo;
@@ -30,8 +29,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @SpringBootTest(classes = {FacilityService.class})
 class FacilityServiceTest {
 
-  private final CreateFacilityDto createFacilityDto =
-      new CreateFacilityDto("descriptie", "locatie", 1, 10, 1L);
   private final Facility returnFacility = new Facility(1L, "descriptie", "locatie", 1, 10, null,
       null);
   private final Venue venue =
@@ -51,7 +48,8 @@ class FacilityServiceTest {
     when(venueService.getVenue(1L)).thenReturn(venue);
     when(facilityRepo.create(any(Facility.class), anyLong())).thenReturn(returnFacility);
 
-    var result = facilityService.createFacility(createFacilityDto);
+    var result = facilityService
+        .createFacility("descriptie", "locatie", 1, 10, 1L);
     assertEquals(returnFacility, result);
   }
 
@@ -59,7 +57,8 @@ class FacilityServiceTest {
   void createFacilityVenueNotFound() {
     doThrow(new CrudException("Could not find venue for id 1")).when(facilityRepo)
         .create(any(), anyLong());
-    assertThrows(CrudException.class, () -> facilityService.createFacility(createFacilityDto));
+    assertThrows(CrudException.class, () -> facilityService
+        .createFacility("descriptie", "locatie", 1, 10, 1L));
   }
 
   @Test

@@ -1,6 +1,7 @@
 package be.xplore.notifyme.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -259,7 +260,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void postFacilitySuccessful() throws Exception {
-    when(facilityService.createFacility(any()))
+    when(facilityService.createFacility(anyString(), anyString(), anyInt(), anyInt(), anyLong()))
         .thenReturn(new Facility());
 
     mockMvc
@@ -271,7 +272,7 @@ class VenueManagerControllerTest {
   @Test
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void postFacilityUnuccessful() throws Exception {
-    when(facilityService.createFacility(any()))
+    when(facilityService.createFacility(anyString(), anyString(), anyInt(), anyInt(), anyLong()))
         .thenThrow(new CrudException("Could not create facility."));
 
     mockMvc

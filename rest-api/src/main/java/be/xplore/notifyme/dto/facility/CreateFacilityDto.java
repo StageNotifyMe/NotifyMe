@@ -1,4 +1,4 @@
-package be.xplore.notifyme.dto;
+package be.xplore.notifyme.dto.facility;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

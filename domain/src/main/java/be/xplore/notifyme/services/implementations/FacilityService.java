@@ -1,7 +1,6 @@
 package be.xplore.notifyme.services.implementations;
 
 import be.xplore.notifyme.domain.Facility;
-import be.xplore.notifyme.dto.CreateFacilityDto;
 import be.xplore.notifyme.exception.CrudException;
 import be.xplore.notifyme.persistence.IFacilityRepo;
 import be.xplore.notifyme.services.IFacilityService;
@@ -43,15 +42,15 @@ public class FacilityService implements IFacilityService {
   /**
    * Creates a facility based on a createFacilityDto object.
    *
-   * @param createFacilityDto dto with all relevant properties in a JSON-friendly format.
    * @return the created facility.
    */
   @Override
-  public Facility createFacility(CreateFacilityDto createFacilityDto) {
+  public Facility createFacility(String description, String location, int minimalStaff,
+                                 int maximalStaff, long venueId) {
     var facility =
-        new Facility(createFacilityDto.getDescription(), createFacilityDto.getLocation(),
-            createFacilityDto.getMinimalStaff(), createFacilityDto.getMaximalStaff());
-    facility = facilityRepo.create(facility, createFacilityDto.getVenueId());
+        new Facility(description, location,
+            minimalStaff, maximalStaff);
+    facility = facilityRepo.create(facility, venueId);
     return facility;
   }
 }

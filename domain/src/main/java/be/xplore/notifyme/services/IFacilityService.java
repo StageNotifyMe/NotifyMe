@@ -1,7 +1,6 @@
 package be.xplore.notifyme.services;
 
 import be.xplore.notifyme.domain.Facility;
-import be.xplore.notifyme.dto.CreateFacilityDto;
 import java.util.List;
 
 public interface IFacilityService {
@@ -10,5 +9,6 @@ public interface IFacilityService {
 
   List<Facility> getAllFacilitesForVenue(long venueId);
 
-  Facility createFacility(CreateFacilityDto createFacilityDto);
+  Facility createFacility(String description, String location, int minimalStaff,
+                          int maximalStaff, long venueId);
 }
