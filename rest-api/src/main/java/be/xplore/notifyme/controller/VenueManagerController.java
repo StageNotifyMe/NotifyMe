@@ -1,16 +1,19 @@
 package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.EventStatus;
+import be.xplore.notifyme.domain.Venue;
+import be.xplore.notifyme.dto.GetVenueDto;
 import be.xplore.notifyme.dto.event.CreateEventDto;
+import be.xplore.notifyme.dto.event.PutEventDto;
 import be.xplore.notifyme.dto.facility.CreateFacilityDto;
 import be.xplore.notifyme.dto.line.CreateLineDto;
-import be.xplore.notifyme.dto.event.PutEventDto;
 import be.xplore.notifyme.services.IEventService;
 import be.xplore.notifyme.services.IFacilityService;
 import be.xplore.notifyme.services.ILineService;
 import be.xplore.notifyme.services.IUserService;
 import be.xplore.notifyme.services.IVenueService;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.constraints.NotBlank;
@@ -73,7 +76,13 @@ public class VenueManagerController {
 
   @GetMapping("/venues")
   public ResponseEntity<Object> getAllVenuesForUser(@RequestParam @NotBlank String userId) {
-    return ResponseEntity.ok(venueService.getVenuesForUser(userId));
+    var venues = venueService.getVenuesForUser(userId);
+    var venueDtos = new ArrayList<GetVenueDto>();
+    for (Venue venue : venues) {
+      venueDtos.add(new GetVenueDto(venue.getId(), venue.getName(), venue.getDescription(),
+          venue.getAddress()));
+    }
+    return ResponseEntity.ok(venueDtos);
   }
 
   @GetMapping("/venue")

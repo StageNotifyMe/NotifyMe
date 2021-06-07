@@ -1,4 +1,4 @@
-package be.xplore.notifyme.dto;
+package be.xplore.notifyme.dto.line;
 
 import be.xplore.notifyme.domain.Line;
 import lombok.AllArgsConstructor;
