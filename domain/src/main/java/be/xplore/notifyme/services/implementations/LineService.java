@@ -46,7 +46,6 @@ public class LineService implements ILineService {
   /**
    * Creates a line based on a createLineDto.
    *
-   * @param createLineDto contains all relevant properties of a line in a JSON-friendly format.
    * @return the created line.
    */
   @Override

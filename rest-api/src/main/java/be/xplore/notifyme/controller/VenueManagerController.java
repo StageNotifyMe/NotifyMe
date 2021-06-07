@@ -44,6 +44,13 @@ public class VenueManagerController {
   private final ILineService lineService;
   private final IUserService userService;
 
+  /**
+   * HTTP POST: creates a new Event.
+   *
+   * @param createEventDto contains all relevant information for domain event object.
+   * @param principal      authorization header.
+   * @return created event.
+   */
   @PostMapping("/event")
   public ResponseEntity<Object> createEvent(@RequestBody @NotNull CreateEventDto createEventDto,
                                             Principal principal) {
@@ -74,6 +81,12 @@ public class VenueManagerController {
     return ResponseEntity.ok(updatedEvent);
   }
 
+  /**
+   * HTTP GET: gets all venues of which the user is venue manager.
+   *
+   * @param userId of the venue manager.
+   * @return List of venue objects.
+   */
   @GetMapping("/venues")
   public ResponseEntity<Object> getAllVenuesForUser(@RequestParam @NotBlank String userId) {
     var venues = venueService.getVenuesForUser(userId);
@@ -91,6 +104,13 @@ public class VenueManagerController {
     return ResponseEntity.ok(venue);
   }
 
+  /**
+   * HTTP POST: creates a new Line object.
+   *
+   * @param createLineDto all information need for domain Line object.
+   * @param principal     authorization header.
+   * @return the crated Line object.
+   */
   @PostMapping("/line")
   public ResponseEntity<Object> createLine(@RequestBody @NotNull CreateLineDto createLineDto,
                                            Principal principal) {
@@ -99,6 +119,12 @@ public class VenueManagerController {
     return ResponseEntity.status(HttpStatus.CREATED).body(line);
   }
 
+  /**
+   * HTTP POST: creates a new facility object.
+   *
+   * @param createFacilityDto contains all information for domain facility object.
+   * @return created facility.
+   */
   @PostMapping("/facility")
   public ResponseEntity<Object> createFacility(
       @RequestBody @NotNull CreateFacilityDto createFacilityDto) {
