@@ -2,6 +2,7 @@ package be.xplore.notifyme.controller;
 
 import be.xplore.notifyme.domain.Line;
 import be.xplore.notifyme.domain.Team;
+import be.xplore.notifyme.dto.event.GetEventDto;
 import be.xplore.notifyme.dto.line.GetLineDto;
 import be.xplore.notifyme.dto.notification.PostOrgNotificationDto;
 import be.xplore.notifyme.dto.team.PostTeamDto;
@@ -11,6 +12,7 @@ import be.xplore.notifyme.services.ILineService;
 import be.xplore.notifyme.services.INotificationService;
 import be.xplore.notifyme.services.ITeamService;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +40,8 @@ public class LineManagerController {
   @GetMapping("/events")
   public ResponseEntity<Object> getAllEventsForLineManager(@RequestParam String userId) {
     var events = eventService.getAllEventsForLineManager(userId);
-    return ResponseEntity.ok(events);
+    var eventDtos = events.stream().map(GetEventDto::new).collect(Collectors.toList());
+    return ResponseEntity.ok(eventDtos);
   }
 
   /**
