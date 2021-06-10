@@ -37,6 +37,12 @@ public class LineManagerController {
   private final ILineService lineService;
   private final INotificationService notificationService;
 
+  /**
+   * HTTP GET: gets all events that a linemanager manages.
+   *
+   * @param userId of the line manager.
+   * @return OK | 200 | list of events
+   */
   @GetMapping("/events")
   public ResponseEntity<Object> getAllEventsForLineManager(@RequestParam String userId) {
     var events = eventService.getAllEventsForLineManager(userId);

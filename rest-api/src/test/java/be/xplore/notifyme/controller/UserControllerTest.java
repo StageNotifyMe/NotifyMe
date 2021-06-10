@@ -355,6 +355,15 @@ class UserControllerTest {
     ).andExpect(MockMvcResultMatchers.status().isOk());
   }
 
+  @Test
+  @WithMockUser(username = "user", roles = {"user"})
+  void hideNotification() throws Exception {
+    doNothing().when(notificationService).hideNotification(anyLong());
+
+    mockMvc.perform(put("/user/notification/hide?notificationId=1"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
 
   private UserRepresentation getDummyUserRepresentation() {
     var userRep = new UserRepresentation();
