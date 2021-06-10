@@ -148,4 +148,9 @@ public class NotificationService implements INotificationService {
   public List<Notification> getAllNotifications() {
     return notificationRepo.getAllNotifications();
   }
+
+  @Override
+  public void hideNotification(long notificationId) {
+    notificationRepo.hideNotification(notificationId);
+  }
 }

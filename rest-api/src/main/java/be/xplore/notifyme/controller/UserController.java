@@ -222,6 +222,12 @@ public class UserController {
     return ResponseEntity.ok(notificationsDto);
   }
 
+  @PutMapping(value = "/notification/hide")
+  public ResponseEntity<Object> hideNotification(@RequestParam long notificationId){
+    notificationService.hideNotification(notificationId);
+    return ResponseEntity.noContent().build();
+  }
+
   /**
    * Gets a list of lines the calling user can apply to.
    *

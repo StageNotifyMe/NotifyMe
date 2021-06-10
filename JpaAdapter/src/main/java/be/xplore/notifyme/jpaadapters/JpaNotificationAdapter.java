@@ -78,6 +78,14 @@ public class JpaNotificationAdapter implements INotificationRepo {
         .map(JpaNotification::toDomainBase).collect(Collectors.toList());
   }
 
+  @Override
+  public void hideNotification(long notificationId) {
+    var jpaNotification = jpaNotificationRepository.findById(notificationId).orElseThrow(
+        () -> new JpaNotFoundException("Could not find notification for id " + notificationId));
+    jpaNotification.setHidden(true);
+    jpaNotificationRepository.save(jpaNotification);
+  }
+
   /**
    * Creates a notification that can be either urgent or default.
    *
