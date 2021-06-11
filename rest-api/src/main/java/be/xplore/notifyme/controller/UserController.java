@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Controller that handles user authentication related requests.
  */
-@CrossOrigin({"http://127.0.0.1:8080", "http://localhost:8080"})
+@CrossOrigin
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
