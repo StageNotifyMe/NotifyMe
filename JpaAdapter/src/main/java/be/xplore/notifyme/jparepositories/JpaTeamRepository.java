@@ -4,10 +4,8 @@ import be.xplore.notifyme.jpaobjects.JpaTeam;
 import be.xplore.notifyme.jpaobjects.JpaTeamApplication;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface JpaTeamRepository extends JpaRepository<JpaTeam, Long> {
@@ -26,9 +24,4 @@ public interface JpaTeamRepository extends JpaRepository<JpaTeam, Long> {
       + "         JOIN teams.teamMembers members"
       + " WHERE members.userId = :userId")
   Set<JpaTeam> getTeamApplicationsForUser(String userId);
-
-  @Modifying
-  @Transactional
-  @Query(nativeQuery = true, value = "UPDATE jpa_team SET line_id = :lineId WHERE id = :teamId")
-  void updateTeamLineMapping(long lineId, long teamId);
 }
