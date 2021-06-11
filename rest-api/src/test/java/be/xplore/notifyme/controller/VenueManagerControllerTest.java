@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import be.xplore.notifyme.config.KeycloakSecurityConfig;
 import be.xplore.notifyme.config.RestConfig;
+import be.xplore.notifyme.domain.Address;
 import be.xplore.notifyme.domain.Event;
 import be.xplore.notifyme.domain.EventStatus;
 import be.xplore.notifyme.domain.Facility;
@@ -193,11 +194,21 @@ class VenueManagerControllerTest {
   @WithMockUser(username = "vmanager", roles = {"venue_manager"})
   void getVenuesForUserSuccessful() throws Exception {
     when(venueService.getVenuesForUser(anyString()))
-        .thenReturn(new ArrayList<>());
+        .thenReturn(
+            List.of(Venue.builder().name("venue").id(1L).description("description")
+                .address(new Address("street", "postalcode", "village", "country"))
+                .managers(Set.of(User.builder().userId("test").userName("bob").build()))
+                .facilities(List.of(Facility.builder().id(1L).description("description").build()))
+                .build()));
 
     mockMvc
         .perform(get("/vmanager/venues?userId=test"))
-        .andExpect(MockMvcResultMatchers.status().isOk());
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().json(
+            "[{\"id\":1,\"name\":\"venue\",\"description\":\"description\","
+                + "\"streetAndNumber\":\"street\",\"postalCode\":\"postalcode\","
+                + "\"village\":\"village\",\"country\":\"country\"}]"))
+        .andDo(r -> System.out.println(r.getResponse().getContentAsString()));
   }
 
   @Test

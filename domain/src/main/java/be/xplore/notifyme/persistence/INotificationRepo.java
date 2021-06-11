@@ -20,4 +20,6 @@ public interface INotificationRepo {
   public List<Notification> findByUser(String userId);
 
   List<Notification> getAllNotifications();
+
+  void hideNotification(long notificationId);
 }

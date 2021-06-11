@@ -36,4 +36,6 @@ public interface INotificationService {
       Object[] attribute);
 
   List<Notification> getAllNotifications();
+
+  void hideNotification(long notificationId);
 }
