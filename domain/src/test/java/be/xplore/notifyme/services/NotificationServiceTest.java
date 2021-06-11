@@ -410,4 +410,12 @@ class NotificationServiceTest {
         .thenReturn(List.of(Notification.builder().id(1L).build()));
     assertTrue(notificationService.getAllNotifications().stream().anyMatch(n -> n.getId() == 1L));
   }
+
+  @Test
+  void testHideNotification() {
+    doNothing().when(notificationRepo).hideNotification(anyLong());
+    assertDoesNotThrow(() -> {
+      notificationService.hideNotification(1L);
+    });
+  }
 }

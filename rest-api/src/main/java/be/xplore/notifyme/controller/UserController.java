@@ -137,7 +137,7 @@ public class UserController {
 
   @GetMapping(value = "/userInfo")
   public ResponseEntity<Object> getUserInfo(@RequestParam @NotBlank String username,
-      Principal principal) {
+                                            Principal principal) {
     return ResponseEntity.ok(userService.getUserInfo(username, principal));
   }
 
@@ -150,7 +150,7 @@ public class UserController {
    */
   @GetMapping(value = "/account")
   public ResponseEntity<Object> getAccountSetting(@RequestParam String username,
-      Principal principal) {
+                                                  Principal principal) {
     var keycloakUser = userService.getUserInfo(username, principal);
     var dbUser = userService.getUser(keycloakUser.getId());
     var getUserDto = new GetUserDto(dbUser, keycloakUser);
@@ -187,7 +187,7 @@ public class UserController {
 
   @GetMapping(value = "activatePhone")
   public ResponseEntity<String> activatePhone(@RequestParam(name = "username") String username,
-      @RequestParam(name = "code") String code) {
+                                              @RequestParam(name = "code") String code) {
     keycloakCommunicationService.verifyPhoneNo(username, code);
     return ResponseEntity.ok("Your number is now ready to receive notifications through text.");
   }
@@ -220,6 +220,12 @@ public class UserController {
     var notificationsDto = new ArrayList<NotificationDto>();
     notifications.forEach(n -> notificationsDto.add(new NotificationDto(n)));
     return ResponseEntity.ok(notificationsDto);
+  }
+
+  @PutMapping(value = "/notification/hide")
+  public ResponseEntity<Object> hideNotification(@RequestParam long notificationId) {
+    notificationService.hideNotification(notificationId);
+    return ResponseEntity.noContent().build();
   }
 
   /**
@@ -256,7 +262,7 @@ public class UserController {
    */
   @PostMapping(value = "teamApplication")
   public ResponseEntity<Void> applyForTeam(@RequestParam(name = "teamId") Long teamId,
-      Principal principal) {
+                                           Principal principal) {
     teamApplicationService.applyForEventLine(teamId, principal);
     return ResponseEntity.ok().build();
   }
@@ -282,7 +288,7 @@ public class UserController {
    */
   @DeleteMapping(value = "team")
   public ResponseEntity<Team> removeFromTeam(@RequestParam(name = "teamId") Long teamId,
-      Principal principal) {
+                                             Principal principal) {
     var user = userService.getUserFromPrincipal(principal);
     return ResponseEntity.ok(teamService.removeUserFromTeam(teamId, user.getUserId()));
   }
