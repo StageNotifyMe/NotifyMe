@@ -49,7 +49,7 @@ public class JpaLineAdapter implements ILineRepo {
     var jpaFacility = jpaFacilityRepository.findById(facilityId)
         .orElseThrow(() -> new CrudException("Could not find facility for id " + facilityId));
     var jpaLine =  jpaLineRepository.save(new JpaLine(line, jpaEvent, jpaFacility));
-    jpaTeamRepository.updateTeamLineMapping(jpaLine.getId(), jpaLine.getTeam().getId());
+    //jpaTeamRepository.updateTeamLineMapping(jpaLine.getId(), jpaLine.getTeam().getId());
     return jpaLine.toDomainBase();
   }
 
